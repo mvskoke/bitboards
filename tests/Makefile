@@ -10,6 +10,7 @@ test.o: test.c
 	$(CC) $(CFLAGS) -c $^
 
 $(OBJ)/bb.o: ../src/bb.c ../src/bb.h
+	mkdir $(OBJ)
 	$(CC) $(CFLAGS) -c $<
 	mv bb.o $(OBJ)/
 
