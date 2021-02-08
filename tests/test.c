@@ -79,7 +79,7 @@ void test_set_bit(void)
 	// all bits have been set
 	TEST_ASSERT_EQUAL(UINT64_MAX, bb);
 	// now clear every bit
-	TEST_ASSERT_EQUAL(0, clear_bits(&bb));
+	TEST_ASSERT_EQUAL(0, clear_bb(&bb));
 }
 
 void test_flip_bit(void)
@@ -348,15 +348,130 @@ void test_get_sq_index(void)
 	TEST_ASSERT_EQUAL(63, get_sq_index("h8"));
 }
 
+void test_clear_bit(void)
+{
+	uint64_t bb = 0;
+	TEST_ASSERT_EQUAL(0, clear_bit(&bb, 0));
+	TEST_ASSERT_EQUAL(0, clear_bit(&bb, 8));
+	TEST_ASSERT_EQUAL(0, clear_bit(&bb, 63));
+	TEST_ASSERT_EQUAL(0, clear_bit(&bb, 12));
+
+	bb = UINT64_MAX;
+	// ... 1110 1111 1111
+	TEST_ASSERT_EQUAL(0xFFFFFFFFFFFFFEFF, clear_bit(&bb, 8));
+	
+	bb = UINT64_MAX;
+	// 0111 1111 1111 ...
+	TEST_ASSERT_EQUAL(0x7FFFFFFFFFFFFFFF, clear_bit(&bb, 63));
+	TEST_ASSERT_EQUAL(0x3FFFFFFFFFFFFFFF, clear_bit(&bb, 62));
+	TEST_ASSERT_EQUAL(0x1FFFFFFFFFFFFFFF, clear_bit(&bb, 61));
+	TEST_ASSERT_EQUAL(0x1FFFFFFFFFFEFFFF, clear_bit(&bb, 16));
+	TEST_ASSERT_EQUAL(0x1FFFFFFEFFFEFFFF, clear_bit(&bb, 32));
+	TEST_ASSERT_EQUAL(0x1FFFFFFEFFFE7FFF, clear_bit(&bb, 15));
+	TEST_ASSERT_EQUAL(0x1FFFFFFEFBFE7FFF, clear_bit(&bb, 26));
+	clear_bit(&bb, 28);
+	clear_bit(&bb, 29);
+	clear_bit(&bb, 53);
+	clear_bit(&bb, 42);
+	clear_bit(&bb, 43);
+	TEST_ASSERT_EQUAL(0x1FDFF3FECBFE7FFF, bb);
+	clear_bit(&bb, 19);
+	clear_bit(&bb, 34);
+	clear_bit(&bb, 40);
+	clear_bit(&bb, 47);
+	clear_bit(&bb, 48);
+	clear_bit(&bb, 3);
+	clear_bit(&bb, 4);
+	TEST_ASSERT_EQUAL(0x1FDE72FACBF67FE7, bb);
+
+	// ... 1111 1111 1101
+	//TEST_ASSERT_EQUAL(0x1FFFFFFFFFFEFFFD, clear_bit(&bb, 1));
+	TEST_ASSERT_EQUAL(0, clear_bb(&bb));
+}
+
+void test_encode_move(void)
+{
+	int encoding;
+	//int decoding;
+
+	encoding = encode_move("e2e4");
+	TEST_ASSERT_EQUAL(12 | (28 << 5), encoding);
+	encoding = encode_move("e7e5");
+	TEST_ASSERT_EQUAL(52 | (36 << 5), encoding);
+	encoding = encode_move("a1h8");
+	TEST_ASSERT_EQUAL(0 | (63 << 5), encoding);
+}
+
+void test_get_piece_type(void)
+{
+	struct BitBoards *bb = malloc(sizeof(struct BitBoards));
+	init_bb(bb);
+	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "a2"));
+	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "b2"));
+	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "c2"));
+	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "d2"));
+	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "e2"));
+	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "f2"));
+	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "g2"));
+	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "h2"));
+
+	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "a7"));
+	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "b7"));
+	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "c7"));
+	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "d7"));
+	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "e7"));
+	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "f7"));
+	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "g7"));
+	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "h7"));
+
+	// this should never happen for real
+	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "e3"));
+	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "a5"));
+	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "b5"));
+	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "c5"));
+	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "d5"));
+	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "e5"));
+	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "f5"));
+	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "g5"));
+	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "h5"));
+
+	TEST_ASSERT_EQUAL(WHITE_ROOK, get_piece_type(bb, "a1"));
+	TEST_ASSERT_EQUAL(WHITE_KNIGHT, get_piece_type(bb, "b1"));
+	TEST_ASSERT_EQUAL(WHITE_BISHOP, get_piece_type(bb, "c1"));
+	TEST_ASSERT_EQUAL(WHITE_QUEEN, get_piece_type(bb, "d1"));
+	TEST_ASSERT_EQUAL(WHITE_KING, get_piece_type(bb, "e1"));
+	TEST_ASSERT_EQUAL(WHITE_BISHOP, get_piece_type(bb, "f1"));
+	TEST_ASSERT_EQUAL(WHITE_KNIGHT, get_piece_type(bb, "g1"));
+	TEST_ASSERT_EQUAL(WHITE_ROOK, get_piece_type(bb, "h1"));
+
+	TEST_ASSERT_EQUAL(BLACK_ROOK, get_piece_type(bb, "a8"));
+	TEST_ASSERT_EQUAL(BLACK_KNIGHT, get_piece_type(bb, "b8"));
+	TEST_ASSERT_EQUAL(BLACK_BISHOP, get_piece_type(bb, "c8"));
+	TEST_ASSERT_EQUAL(BLACK_QUEEN, get_piece_type(bb, "d8"));
+	TEST_ASSERT_EQUAL(BLACK_KING, get_piece_type(bb, "e8"));
+	TEST_ASSERT_EQUAL(BLACK_BISHOP, get_piece_type(bb, "f8"));
+	TEST_ASSERT_EQUAL(BLACK_KNIGHT, get_piece_type(bb, "g8"));
+	TEST_ASSERT_EQUAL(BLACK_ROOK, get_piece_type(bb, "h8"));
+
+	free(bb);
+}
+
 void test_update_bb(void)
 {
 	struct BitBoards *bb = malloc(sizeof(struct BitBoards));
 	init_bb(bb);
-	// maybe encode the entire move (eg "e2e4") into a single integer?
-	// and have separate function to extract the src and dest indices?
-	update_bb(bb, WHITE_PAWN, get_sq_index("e2"), get_sq_index("e4"));
+
+	// ruy lopez = 0xFDEF04121020EF9F
+	update_bb(bb, "e2e4");
 	TEST_ASSERT_EQUAL(0x1000EF00, bb->wPieces[PAWNS]);
-	print_bb(bb->wPieces[ALL] | bb->bPieces[ALL]);
+	update_bb(bb, "e7e5");
+	update_bb(bb, "g1f3");
+	update_bb(bb, "b8c6");
+	update_bb(bb, "f1b5");
+
+	//print_bb(bb->wPieces[ALL] | bb->bPieces[ALL]);
+	//print_all_bb(bb);
+	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->wPieces[ALL] | bb->bPieces[ALL]);
 	free(bb);
 }
 
@@ -369,6 +484,9 @@ int main(void)
 	//RUN_TEST(test_print_bb);
 	//RUN_TEST(test_init_bb);
 	RUN_TEST(test_get_sq_index);
+	RUN_TEST(test_clear_bit);
+	RUN_TEST(test_encode_move);
+	RUN_TEST(test_get_piece_type);
 	RUN_TEST(test_update_bb);
 	return UNITY_END();
 }

@@ -7,25 +7,38 @@
 /* THESE BIT FUNCTIONS RETURN THE MODIFIED BITBOARD
    BECAUSE IT MADE UNITY TESTING EASIER */
 
-int set_bit(uint64_t *bb, int index)
+uint64_t set_bit(uint64_t *bb, const int index)
 {
 	*bb |= 1ULL << index;
 	return *bb;
 }
 
-int flip_bit(uint64_t *bb, int index)
+uint64_t flip_bit(uint64_t *bb, const int index)
 {
 	*bb ^= 1ULL << index;
 	return *bb;
 }
 
-int clear_bits(uint64_t *bb)
+uint64_t clear_bb(uint64_t *bb)
 {
 	*bb = 0;
 	return *bb;
 }
 
-int get_bit(uint64_t bb, int index)
+uint64_t clear_bit(uint64_t *bb, const int index)
+{
+	// mask out the bit at int index
+	// to make mask, xor UINT64_MAX with the mask's complement
+	// ...1111111111
+	// ...0000000100
+	// ...1111111011
+	uint64_t mask = UINT64_MAX;
+	mask ^= (1ULL << index);
+	*bb &= mask;
+	return *bb;
+}
+
+int get_bit(const uint64_t bb, const int index)
 {
 	return (bb >> index) & 1ULL;
 }
@@ -57,27 +70,37 @@ void print_bb(uint64_t bb)
 	printf("\n\n");
 }
 
+void print_all_bb(struct BitBoards *bb)
+{
+	for (int i = 0; i < TOTAL_BB; i++)
+	{
+		print_bb(bb->wPieces[i]);
+		print_bb(bb->bPieces[i]);
+	}
+	print_bb(bb->wPieces[ALL] | bb->bPieces[ALL]);
+}
+
 void init_bb(struct BitBoards *bb)
 {
 	/**** PIECE LOCATIONS ****/
 
 	//                                                                                     7654 3210
-	// 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 1111 1111 / 0000 0000
+	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 1111 1111 | 0000 0000
 	bb->wPieces[PAWNS]      = 0x000000000000FF00;
 
-	// 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0100 0010
+	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0100 0010
 	bb->wPieces[KNIGHTS]    = 0x0000000000000042;
 
-	// 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0010 0100
+	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0010 0100
 	bb->wPieces[BISHOPS]    = 0x0000000000000024;
 
-	// 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 1000 0001
+	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 1000 0001
 	bb->wPieces[ROOKS]      = 0x0000000000000081;
 
-	// 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 1000
+	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 1000
 	bb->wPieces[QUEENS]     = 0x0000000000000008;
 
-	// 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0001 0000
+	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0001 0000
 	bb->wPieces[KING]       = 0x0000000000000010;
 
 	bb->wPieces[ALL]        = 0x000000000000FFFF;
@@ -113,7 +136,7 @@ void init_bb(struct BitBoards *bb)
 	bb->bAttacks[KING]      = 0x0000000000000000;
 }
 
-int get_sq_index(char* sq)
+int get_sq_index(const char* sq)
 {
 	// example:
 	// index  0 1
@@ -132,10 +155,48 @@ int get_sq_index(char* sq)
 	return (rank + offset);
 }
 
+int encode_move(char* move)
+{
+	char* tmp = move;
+	int start = get_sq_index(tmp);
+	tmp += 2;
+	int end = get_sq_index(tmp);
+	// 63 = 0001 1111
+	// every index will fit in 5 bits
+	return start | (end << 5);
+}
+
+// you can pass in a move or a single square. it only checks
+// the first two chars
+int get_piece_type(struct BitBoards *bb, char* move)
+{
+	int index = get_sq_index(move);
+	for (int i = 0; i < TOTAL_BB; i++)
+	{
+		// piece exists at bb
+		if (((bb->bPieces[i] & (1ULL << index))) != 0)
+		{
+			return i;
+		}
+		else if (((bb->wPieces[i]) & (1ULL << index)) != 0)
+		{
+			// see bb.h:
+			// white piece enums are offset by 6
+			return i+6;
+		}
+	}
+	// THIS SHOULD NEVER HAPPEN.
+	// YOU SHOULD VALIDATE PIECE EXISTENCE BEFORE CALLING THIS.
+	return -1;
+}
+
 // move a piece
 // move should be validated BEFORE you call this func
-void update_bb(struct BitBoards *bb, int piece, int start, int end)
+void update_bb(struct BitBoards *bb, char* move)
 {
+	int piece = get_piece_type(bb, move);
+	int start = get_sq_index(move);
+	int end = get_sq_index(move+=2);
 	switch (piece)
 	{
 	case BLACK_PAWN:

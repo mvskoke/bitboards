@@ -5,18 +5,19 @@
 
 enum
 {
-	BLACK_PAWN,
-	BLACK_KNIGHT,
-	BLACK_BISHOP,
-	BLACK_ROOK,
-	BLACK_QUEEN,
-	BLACK_KING,
-	WHITE_PAWN,
-	WHITE_KNIGHT,
-	WHITE_BISHOP,
-	WHITE_ROOK,
-	WHITE_QUEEN,
-	WHITE_KING
+	BLACK_PAWN,     // 0 == i
+	BLACK_KNIGHT,   // 1
+	BLACK_BISHOP,   // 2
+	BLACK_ROOK,     // 3
+	BLACK_QUEEN,    // 4
+	BLACK_KING,     // 5
+
+	WHITE_PAWN,     // 6 == i+6
+	WHITE_KNIGHT,   // 7
+	WHITE_BISHOP,   // 8
+	WHITE_ROOK,     // 9
+	WHITE_QUEEN,    // 10
+	WHITE_KING      // 11
 };
 
 // indexes for the arrays of bitboards
@@ -50,15 +51,19 @@ struct BitBoards
 /* SHOULD PROBABLY ADD bb_ PREFIX WHEN MAKING 
    ACTUAL IMPLEMENTATION FOR cchess */
 
-int set_bit(uint64_t *bb, int index);
-int flip_bit(uint64_t *bb, int index);
-int clear_bits(uint64_t *bb);
-int get_bit(uint64_t bb, int index);
+uint64_t set_bit(uint64_t *bb, const int index);
+uint64_t flip_bit(uint64_t *bb, const int index);
+uint64_t clear_bb(uint64_t *bb);
+uint64_t clear_bit(uint64_t *bb, const int index);
+int get_bit(const uint64_t bb, const int index);
 
 void print_bb(uint64_t bb);
+void print_all_bb(struct BitBoards *bb);
 
 void init_bb(struct BitBoards *bb);
-int get_sq_index(char *sq);
-void update_bb(struct BitBoards *bb, int piece, int start, int end);
+int get_sq_index(const char *sq);
+int encode_move(char *move);
+int get_piece_type(struct BitBoards *bb, char *move);
+void update_bb(struct BitBoards *bb, char *move);
 
 #endif
