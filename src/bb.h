@@ -71,7 +71,6 @@ void print_all_bb(struct BitBoards *bb);
 
 void init_bb(struct BitBoards *bb);
 int get_sq_index(const char *sq);
-int encode_move(char *move);
 int get_piece_type(struct BitBoards *bb, char *move);
 void update_board(struct BitBoards *bb, char *move);
 

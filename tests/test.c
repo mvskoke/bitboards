@@ -389,19 +389,6 @@ void test_clear_bit(void)
 	TEST_ASSERT_EQUAL(0, clear_bb(&bb));
 }
 
-void test_encode_move(void)
-{
-	int encoding;
-	//int decoding;
-
-	encoding = encode_move("e2e4");
-	TEST_ASSERT_EQUAL(12 | (28 << 5), encoding);
-	encoding = encode_move("e7e5");
-	TEST_ASSERT_EQUAL(52 | (36 << 5), encoding);
-	encoding = encode_move("a1h8");
-	TEST_ASSERT_EQUAL(0 | (63 << 5), encoding);
-}
-
 void test_get_piece_type(void)
 {
 	struct BitBoards *bb = malloc(sizeof(struct BitBoards));
@@ -487,7 +474,6 @@ int main(void)
 	//RUN_TEST(test_init_bb);
 	RUN_TEST(test_get_sq_index);
 	RUN_TEST(test_clear_bit);
-	RUN_TEST(test_encode_move);
 	RUN_TEST(test_get_piece_type);
 	RUN_TEST(test_update_board);
 	return UNITY_END();

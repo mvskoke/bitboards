@@ -267,17 +267,6 @@ int get_sq_index(const char* sq)
 	return rank + offset;
 }
 
-int encode_move(char* move)
-{
-	char* tmp = move;
-	int start = get_sq_index(tmp);
-	tmp += 2;
-	int end = get_sq_index(tmp);
-	// 63 = 0001 1111
-	// every index will fit in 5 bits
-	return start | (end << 5);
-}
-
 // you can pass in a move or a single square. it only checks
 // the first two chars
 int get_piece_type(struct BitBoards *bb, char* move)
@@ -304,16 +293,6 @@ int get_piece_type(struct BitBoards *bb, char* move)
 
 static void update_pretty_board(struct BitBoards *bb, int start, int end)
 {
-	//int start_i = move[0] - 'a';
-	//int start_j = move[1] - '1';
-	// e2
-	// 'e' - 'a' = 4
-	// '2' - '1' = 1
-	// pretty_board[4][1] = index 12 = e2
-
-	//int end_i = move[2] - 'a';
-	//int end_j = move[3] - '1';
-
 	int start_i = start % 8;
 	int start_j = (start - start_i) / 8;
 
