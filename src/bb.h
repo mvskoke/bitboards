@@ -52,7 +52,7 @@ enum PieceBitboardIndexesPlural
 	// pluralize the rest
 };
 
-struct BitBoards
+struct Bitboards
 {
 	char pretty_board[8][8];
 
@@ -75,13 +75,13 @@ uint64_t clear_bb(uint64_t *bb);
 uint64_t clear_bit(uint64_t *bb, const int index);
 int get_bit(const uint64_t bb, const int index);
 
-void print_bb_pretty(struct BitBoards *bb, int orient, int turn);
+void print_bb_pretty(struct Bitboards *bb, int orient, int turn);
 void print_bb(uint64_t bb);
-void print_all_bb(struct BitBoards *bb);
+void print_all_bb(struct Bitboards *bb);
 
-void init_bb(struct BitBoards *bb);
+void init_bb(struct Bitboards *bb);
 int get_sq_index(const char *sq);
-int get_piece_type(struct BitBoards *bb, char *move);
-void update_board(struct BitBoards *bb, char *move);
+int get_piece_type(struct Bitboards *bb, char *move);
+void update_board(struct Bitboards *bb, char *move);
 
 #endif

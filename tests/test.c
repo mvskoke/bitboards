@@ -238,7 +238,7 @@ void test_print_bb(void)
 
 void test_init_bb(void)
 {
-	struct BitBoards *bb = malloc(sizeof(struct BitBoards));
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb(bb);
 	printf("WHITE PAWNS:\n");
 	print_bb(bb->pieces[WHITE_PAWNS]);
@@ -252,8 +252,8 @@ void test_init_bb(void)
 	print_bb(bb->pieces[WHITE_QUEENS]);
 	printf("WHITE KING:\n");
 	print_bb(bb->pieces[WHITE_KING]);
-	// printf("WHITE ALL:\n");
-	// print_bb(bb->pieces[WHITE_ALL]);
+	printf("WHITE ALL:\n");
+	print_bb(bb->pieces[WHITE_ALL]);
 
 	printf("BLACK PAWNS:\n");
 	print_bb(bb->pieces[BLACK_PAWNS]);
@@ -267,8 +267,8 @@ void test_init_bb(void)
 	print_bb(bb->pieces[BLACK_QUEENS]);
 	printf("BLACK KING:\n");
 	print_bb(bb->pieces[BLACK_KING]);
-	// printf("BLACK ALL:\n");
-	// print_bb(bb->pieces[BLACK_ALL]);
+	printf("BLACK ALL:\n");
+	print_bb(bb->pieces[BLACK_ALL]);
 
 	printf("THE ENTIRE BOARD:\n");
 	print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
@@ -414,7 +414,7 @@ void test_clear_bit(void)
 
 void test_get_piece_type(void)
 {
-	struct BitBoards *bb = malloc(sizeof(struct BitBoards));
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb(bb);
 	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "a2"));
 	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "b2"));
@@ -469,7 +469,7 @@ void test_get_piece_type(void)
 
 void test_update_board(void)
 {
-	struct BitBoards *bb = malloc(sizeof(struct BitBoards));
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb(bb);
 
 	// ruy lopez = 0xFDEF04121020EF9F

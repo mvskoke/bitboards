@@ -67,7 +67,7 @@ static void print_piece(char piece, int j, int i)
 	
 }
 
-void print_bb_pretty(struct BitBoards *bb, int orient, int turn)
+void print_bb_pretty(struct Bitboards *bb, int orient, int turn)
 {
 	if (orient == turn)
 	{
@@ -140,7 +140,7 @@ void print_bb(uint64_t bb)
 	printf("\n\n");
 }
 
-void print_all_bb(struct BitBoards *bb)
+void print_all_bb(struct Bitboards *bb)
 {
 	for (int i = 0; i < TOTAL_BB; i++)
 	{
@@ -150,7 +150,7 @@ void print_all_bb(struct BitBoards *bb)
 	print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 }
 
-void init_bb(struct BitBoards *bb)
+void init_bb(struct Bitboards *bb)
 {
 	/**** PIECE LOCATIONS ****/
 
@@ -269,7 +269,7 @@ int get_sq_index(const char* sq)
 
 // you can pass in a move or a single square. it only checks
 // the first two chars
-int get_piece_type(struct BitBoards *bb, char* move)
+int get_piece_type(struct Bitboards *bb, char* move)
 {
 	int index = get_sq_index(move);
 	for (int i = 0; i < TOTAL_BB; i++)
@@ -285,7 +285,7 @@ int get_piece_type(struct BitBoards *bb, char* move)
 	return -1;
 }
 
-static void update_pretty_board(struct BitBoards *bb, int start, int end)
+static void update_pretty_board(struct Bitboards *bb, int start, int end)
 {
 	int start_i = start % 8;
 	int start_j = (start - start_i) / 8;
@@ -298,7 +298,7 @@ static void update_pretty_board(struct BitBoards *bb, int start, int end)
 
 // move a piece
 // move should be validated BEFORE you call this func
-void update_board(struct BitBoards *bb, char* move)
+void update_board(struct Bitboards *bb, char* move)
 {
 	int piece = get_piece_type(bb, move);
 	int start = get_sq_index(move);
