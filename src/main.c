@@ -19,7 +19,8 @@ int main(void)
 	int type;
 
 	print_bb_pretty(bb, orient, turn);
-	while (1)
+	int playing = 1;
+	while (playing)
 	{
 		/* TESTING COMMAND FUNCTIONS*/
 		command = get_command(buffer, BUFFER_SIZE, turn);
@@ -30,7 +31,7 @@ int main(void)
 		case RESIGN: break;
 		case DRAW:   break;
 		case FLIP:   break;
-		case QUIT:   return 0;
+		case QUIT:   playing = 0; break;
 		case HELP:   break;
 		case MOVE:
 			update_board(bb, command);
@@ -40,7 +41,6 @@ int main(void)
 		}
 		turn = !turn;
 	}
-
 	free(bb);
 	return 0;
 }
