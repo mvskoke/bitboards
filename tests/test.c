@@ -425,6 +425,7 @@ void test_get_piece_type(void)
 	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "h7"));
 
 	// this should never happen for real
+	// but im testing anyway to make sure it works
 	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "e3"));
 	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "a5"));
 	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "b5"));
@@ -437,11 +438,11 @@ void test_get_piece_type(void)
 
 	TEST_ASSERT_EQUAL(WHITE_ROOK, get_piece_type(bb, "a1"));
 	TEST_ASSERT_EQUAL(WHITE_KNIGHT, get_piece_type(bb, "b1"));
-	TEST_ASSERT_EQUAL(WHITE_BISHOP, get_piece_type(bb, "c1"));
+	TEST_ASSERT_EQUAL(WHITE_BISHOP, get_piece_type(bb, "c1sdfsdjflk"));
 	TEST_ASSERT_EQUAL(WHITE_QUEEN, get_piece_type(bb, "d1"));
 	TEST_ASSERT_EQUAL(WHITE_KING, get_piece_type(bb, "e1"));
 	TEST_ASSERT_EQUAL(WHITE_BISHOP, get_piece_type(bb, "f1"));
-	TEST_ASSERT_EQUAL(WHITE_KNIGHT, get_piece_type(bb, "g1"));
+	TEST_ASSERT_EQUAL(WHITE_KNIGHT, get_piece_type(bb, "g101010110101010101000"));
 	TEST_ASSERT_EQUAL(WHITE_ROOK, get_piece_type(bb, "h1"));
 
 	TEST_ASSERT_EQUAL(BLACK_ROOK, get_piece_type(bb, "a8"));
@@ -456,22 +457,23 @@ void test_get_piece_type(void)
 	free(bb);
 }
 
-void test_update_bb(void)
+void test_update_board(void)
 {
 	struct BitBoards *bb = malloc(sizeof(struct BitBoards));
 	init_bb(bb);
 
 	// ruy lopez = 0xFDEF04121020EF9F
-	update_bb(bb, "e2e4");
-	TEST_ASSERT_EQUAL(0x1000EF00, bb->wPieces[PAWNS]);
-	update_bb(bb, "e7e5");
-	update_bb(bb, "g1f3");
-	update_bb(bb, "b8c6");
-	update_bb(bb, "f1b5");
+	update_board(bb, "e2e4");
+	update_board(bb, "e7e5");
+	update_board(bb, "g1f3");
+	update_board(bb, "b8c6");
+	update_board(bb, "f1b5");
 
 	//print_bb(bb->wPieces[ALL] | bb->bPieces[ALL]);
 	//print_all_bb(bb);
+	TEST_ASSERT_EQUAL(0x1000EF00, bb->wPieces[PAWNS]);
 	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->wPieces[ALL] | bb->bPieces[ALL]);
+	print_bb_pretty(bb, BLACK, WHITE);
 	free(bb);
 }
 
@@ -487,6 +489,6 @@ int main(void)
 	RUN_TEST(test_clear_bit);
 	RUN_TEST(test_encode_move);
 	RUN_TEST(test_get_piece_type);
-	RUN_TEST(test_update_bb);
+	RUN_TEST(test_update_board);
 	return UNITY_END();
 }

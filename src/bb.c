@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "bb.h"
 
@@ -41,6 +40,77 @@ uint64_t clear_bit(uint64_t *bb, const int index)
 int get_bit(const uint64_t bb, const int index)
 {
 	return (bb >> index) & 1ULL;
+}
+
+static void print_empty_square(int j, int i)
+{
+	if ((j%2 == 1) ^ (i%2 == 1))
+	{
+		printf("|   ");
+	}
+	else
+	{
+		printf("|***");
+	}
+}
+
+static void print_piece(char piece, int j, int i)
+{
+	if ((j%2 == 1) ^ (i%2 == 1))
+	{
+		printf("| %c ", piece);
+	}
+	else
+	{
+		printf("|*%c*", piece);
+	}
+	
+}
+
+void print_bb_pretty(struct BitBoards *bb, int orient, int turn)
+{
+	if (orient == turn)
+	{
+		printf(" =>  a   b   c   d   e   f   g   h\n");
+	}
+	else
+	{
+		printf("     a   b   c   d   e   f   g   h\n");
+	}
+	printf("   +-------------------------------+\n");
+
+	for (int i = 7; i >= 0; i--)
+	{
+		printf(" %d ", i+1);
+		for (int j = 0; j < FILES; j++)
+		{
+			if (bb->pretty_board[j][i] == '\0')
+			{
+				print_empty_square(j, i);
+			}
+			else
+			{
+				print_piece(bb->pretty_board[j][i], j, i);
+			}
+		}
+		// one rank done
+		printf("| %d\n", i+1);
+		if (i != 0)
+		{
+			printf("   ---------------------------------\n");
+		}
+
+	}
+	printf("   +-------------------------------+\n");
+
+	if (orient != turn)
+	{
+		printf(" =>  a   b   c   d   e   f   g   h\n");
+	}
+	else
+	{
+		printf("     a   b   c   d   e   f   g   h\n");
+	}
 }
 
 void print_bb(uint64_t bb)
@@ -134,6 +204,48 @@ void init_bb(struct BitBoards *bb)
 	bb->bAttacks[ROOKS]     = 0x0000000000000000;
 	bb->bAttacks[QUEENS]    = 0x0000000000000000;
 	bb->bAttacks[KING]      = 0x0000000000000000;
+
+	/**** PRETTY BOARD ****/
+	// pretty_board[i][j]
+	// i = file a-h, j = rank 1-8
+
+	// initialize empty squares to null char
+	for (int i = 0; i < FILES; i++)
+	{
+		for (int j = 2; j <= 5; j++)
+		{
+			bb->pretty_board[i][j] = '\0';
+		}
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		bb->pretty_board[i][1] = 'P';
+		bb->pretty_board[i][6] = 'p';
+	}
+	bb->pretty_board[0][0] = 'R';
+	bb->pretty_board[0][7] = 'r';
+
+	bb->pretty_board[1][0] = 'N';
+	bb->pretty_board[1][7] = 'n';
+
+	bb->pretty_board[2][0] = 'B';
+	bb->pretty_board[2][7] = 'b';
+
+	bb->pretty_board[3][0] = 'Q';
+	bb->pretty_board[3][7] = 'q';
+
+	bb->pretty_board[4][0] = 'K';
+	bb->pretty_board[4][7] = 'k';
+
+	bb->pretty_board[5][0] = 'B';
+	bb->pretty_board[5][7] = 'b';
+
+	bb->pretty_board[6][0] = 'N';
+	bb->pretty_board[6][7] = 'n';
+
+	bb->pretty_board[7][0] = 'R';
+	bb->pretty_board[7][7] = 'r';
 }
 
 int get_sq_index(const char* sq)
@@ -152,7 +264,7 @@ int get_sq_index(const char* sq)
 	// 101 - 97 == 4
 
 	// 8 + 4 == 12
-	return (rank + offset);
+	return rank + offset;
 }
 
 int encode_move(char* move)
@@ -173,12 +285,12 @@ int get_piece_type(struct BitBoards *bb, char* move)
 	int index = get_sq_index(move);
 	for (int i = 0; i < TOTAL_BB; i++)
 	{
-		// piece exists at bb
-		if (((bb->bPieces[i] & (1ULL << index))) != 0)
+		// bitboard is set at index
+		if (bb->bPieces[i] & (1ULL << index))
 		{
 			return i;
 		}
-		else if (((bb->wPieces[i]) & (1ULL << index)) != 0)
+		else if (bb->wPieces[i] & (1ULL << index))
 		{
 			// see bb.h:
 			// white piece enums are offset by 6
@@ -190,13 +302,35 @@ int get_piece_type(struct BitBoards *bb, char* move)
 	return -1;
 }
 
+static void update_pretty_board(struct BitBoards *bb, int start, int end)
+{
+	//int start_i = move[0] - 'a';
+	//int start_j = move[1] - '1';
+	// e2
+	// 'e' - 'a' = 4
+	// '2' - '1' = 1
+	// pretty_board[4][1] = index 12 = e2
+
+	//int end_i = move[2] - 'a';
+	//int end_j = move[3] - '1';
+
+	int start_i = start % 8;
+	int start_j = (start - start_i) / 8;
+
+	int end_i = end % 8;
+	int end_j = (end - end_i) / 8;
+	bb->pretty_board[end_i][end_j] = bb->pretty_board[start_i][start_j];
+	bb->pretty_board[start_i][start_j] = '\0';
+}
+
 // move a piece
 // move should be validated BEFORE you call this func
-void update_bb(struct BitBoards *bb, char* move)
+void update_board(struct BitBoards *bb, char* move)
 {
 	int piece = get_piece_type(bb, move);
 	int start = get_sq_index(move);
 	int end = get_sq_index(move+=2);
+	update_pretty_board(bb, start, end);
 	switch (piece)
 	{
 	case BLACK_PAWN:

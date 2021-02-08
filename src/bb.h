@@ -1,6 +1,14 @@
 #ifndef BITBOARDS_H
 #define BITBOARDS_H
 
+#define ROWS 8
+#define COLS 8
+#define RANKS 8
+#define FILES 8
+
+#define BLACK 0
+#define WHITE 1
+
 #include <stdint.h>
 
 enum
@@ -35,7 +43,7 @@ enum
 
 struct BitBoards
 {
-	//char pretty_board[8][8];
+	char pretty_board[8][8];
 
 	// locations
 	uint64_t wPieces[TOTAL_BB];
@@ -57,6 +65,7 @@ uint64_t clear_bb(uint64_t *bb);
 uint64_t clear_bit(uint64_t *bb, const int index);
 int get_bit(const uint64_t bb, const int index);
 
+void print_bb_pretty(struct BitBoards *bb, int orient, int turn);
 void print_bb(uint64_t bb);
 void print_all_bb(struct BitBoards *bb);
 
@@ -64,6 +73,6 @@ void init_bb(struct BitBoards *bb);
 int get_sq_index(const char *sq);
 int encode_move(char *move);
 int get_piece_type(struct BitBoards *bb, char *move);
-void update_bb(struct BitBoards *bb, char *move);
+void update_board(struct BitBoards *bb, char *move);
 
 #endif
