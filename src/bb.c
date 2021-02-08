@@ -132,7 +132,6 @@ int get_sq_index(char* sq)
 	return (rank + offset);
 }
 
-
 // move a piece
 // move should be validated BEFORE you call this func
 void update_bb(struct BitBoards *bb, int piece, int start, int end)
