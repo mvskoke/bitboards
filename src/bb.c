@@ -282,8 +282,9 @@ int get_piece_type(struct BitBoards *bb, char* move)
 		else if (bb->wPieces[i] & (1ULL << index))
 		{
 			// see bb.h:
-			// white piece enums are offset by 6
-			return i+6;
+			// white piece enums are offset by the start
+			// of the first white piece enum, aka WHITE_PAWN
+			return i + WHITE_PAWN;
 		}
 	}
 	// THIS SHOULD NEVER HAPPEN.
@@ -310,6 +311,16 @@ void update_board(struct BitBoards *bb, char* move)
 	int start = get_sq_index(move);
 	int end = get_sq_index(move+=2);
 	update_pretty_board(bb, start, end);
+
+/*
+
+flip_bit(&(bb->pieces[piece]), start);
+flip_bit(&(bb->pieces[ALL]), start);
+set_bit(&(bb->pieces[piece]), end);
+set_bit(&(bb->pieces[ALL]), end);
+
+*/
+
 	switch (piece)
 	{
 	case BLACK_PAWN:
