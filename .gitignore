@@ -2,4 +2,4 @@ obj/*.o
 tests/*.o
 tests/test
 tests/output.c
-
+main
