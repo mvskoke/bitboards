@@ -11,34 +11,45 @@
 
 #include <stdint.h>
 
-enum
+// indexes for the arrays of bitboards
+enum PieceBitboardIndexes
 {
-	BLACK_PAWN,     // 0 == i
-	BLACK_KNIGHT,   // 1
-	BLACK_BISHOP,   // 2
-	BLACK_ROOK,     // 3
-	BLACK_QUEEN,    // 4
-	BLACK_KING,     // 5
+	BLACK_PAWN,   // 0 == i
+	BLACK_KNIGHT, // 1
+	BLACK_BISHOP, // 2
+	BLACK_ROOK,   // 3
+	BLACK_QUEEN,  // 4
+	BLACK_KING,   // 5
 
-	WHITE_PAWN,     // 6 == i+6
-	WHITE_KNIGHT,   // 7
-	WHITE_BISHOP,   // 8
-	WHITE_ROOK,     // 9
-	WHITE_QUEEN,    // 10
-	WHITE_KING      // 11
+	WHITE_PAWN,   // 6 == i+6
+	WHITE_KNIGHT, // 7
+	WHITE_BISHOP, // 8
+	WHITE_ROOK,   // 9
+	WHITE_QUEEN,  // 10
+	WHITE_KING,   // 11
+
+	BLACK_ALL,
+	WHITE_ALL,
+	TOTAL_BB
 };
 
-// indexes for the arrays of bitboards
-enum
+// same as above but plural
+enum PieceBitboardIndexesPlural
 {
-	PAWNS,	 // 0
-	KNIGHTS, // 1
-	BISHOPS, // 2
-	ROOKS,	 // 3
-	QUEENS,	 // 4
-	KING,	 // 5
-	ALL,	 // 6 -- the attack bitboards don't use this
-	TOTAL_BB // 7
+	BLACK_PAWNS,
+	BLACK_KNIGHTS,
+	BLACK_BISHOPS,
+	BLACK_ROOKS,
+	BLACK_QUEENS,
+	DONT_NEED_TO_PLURALIZE_THIS_ENUM1,
+
+	WHITE_PAWNS,
+	WHITE_KNIGHTS,
+	WHITE_BISHOPS,
+	WHITE_ROOKS,
+	WHITE_QUEENS
+	// we can end here, no need to
+	// pluralize the rest
 };
 
 struct BitBoards
@@ -46,14 +57,13 @@ struct BitBoards
 	char pretty_board[8][8];
 
 	// locations
-	uint64_t wPieces[TOTAL_BB];
-	uint64_t bPieces[TOTAL_BB];
+	uint64_t pieces[TOTAL_BB];
 
 	// pseudo-legal attacks
 	// square is either empty or has enemy piece to capture
 	// but unknown if move would leave you in check
-	uint64_t wAttacks[TOTAL_BB-1];
-	uint64_t bAttacks[TOTAL_BB-1];
+	uint64_t attacks[TOTAL_BB-2];
+	// -2 to ignore WHITE_ALL and BLACK_ALL
 };
 
 /* SHOULD PROBABLY ADD bb_ PREFIX WHEN MAKING 

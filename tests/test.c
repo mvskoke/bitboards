@@ -240,43 +240,66 @@ void test_init_bb(void)
 {
 	struct BitBoards *bb = malloc(sizeof(struct BitBoards));
 	init_bb(bb);
-	printf("PAWNS:\n");
-	print_bb(bb->wPieces[PAWNS]);
-	printf("KNIGHTS:\n");
-	print_bb(bb->wPieces[KNIGHTS]);
-	printf("BISHOPS:\n");
-	print_bb(bb->wPieces[BISHOPS]);
-	printf("ROOKS:\n");
-	print_bb(bb->wPieces[ROOKS]);
-	printf("QUEENS:\n");
-	print_bb(bb->wPieces[QUEENS]);
-	printf("KING:\n");
-	print_bb(bb->wPieces[KING]);
+	printf("WHITE PAWNS:\n");
+	print_bb(bb->pieces[WHITE_PAWNS]);
+	printf("WHITE KNIGHTS:\n");
+	print_bb(bb->pieces[WHITE_KNIGHTS]);
+	printf("WHITE BISHOPS:\n");
+	print_bb(bb->pieces[WHITE_BISHOPS]);
+	printf("WHITE ROOKS:\n");
+	print_bb(bb->pieces[WHITE_ROOKS]);
+	printf("WHITE QUEENS:\n");
+	print_bb(bb->pieces[WHITE_QUEENS]);
+	printf("WHITE KING:\n");
+	print_bb(bb->pieces[WHITE_KING]);
+	// printf("WHITE ALL:\n");
+	// print_bb(bb->pieces[WHITE_ALL]);
 
-	printf("PAWNS:\n");
-	print_bb(bb->bPieces[PAWNS]);
-	printf("KNIGHTS:\n");
-	print_bb(bb->bPieces[KNIGHTS]);
-	printf("BISHOPS:\n");
-	print_bb(bb->bPieces[BISHOPS]);
-	printf("ROOKS:\n");
-	print_bb(bb->bPieces[ROOKS]);
-	printf("QUEENS:\n");
-	print_bb(bb->bPieces[QUEENS]);
-	printf("KING:\n");
-	print_bb(bb->bPieces[KING]);
+	printf("BLACK PAWNS:\n");
+	print_bb(bb->pieces[BLACK_PAWNS]);
+	printf("BLACK KNIGHTS:\n");
+	print_bb(bb->pieces[BLACK_KNIGHTS]);
+	printf("BLACK BISHOPS:\n");
+	print_bb(bb->pieces[BLACK_BISHOPS]);
+	printf("BLACK ROOKS:\n");
+	print_bb(bb->pieces[BLACK_ROOKS]);
+	printf("BLACK QUEENS:\n");
+	print_bb(bb->pieces[BLACK_QUEENS]);
+	printf("BLACK KING:\n");
+	print_bb(bb->pieces[BLACK_KING]);
+	// printf("BLACK ALL:\n");
+	// print_bb(bb->pieces[BLACK_ALL]);
+
 	printf("THE ENTIRE BOARD:\n");
-	print_bb(bb->wPieces[ALL] | bb->bPieces[ALL]);
-	TEST_ASSERT_EQUAL(0xFFFF00000000FFFF, bb->wPieces[ALL] | bb->bPieces[ALL]);
+	print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
+	TEST_ASSERT_EQUAL(0xFFFF00000000FFFF, bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 
-	printf("PAWN MOVES:\n");
-	print_bb(bb->wAttacks[PAWNS]);
-	printf("KNIGHT MOVES:\n");
-	print_bb(bb->wAttacks[KNIGHTS]);
-	printf("PAWN MOVES:\n");
-	print_bb(bb->bAttacks[PAWNS]);
-	printf("KNIGHT MOVES:\n");
-	print_bb(bb->bAttacks[KNIGHTS]);
+	printf("WHITE PAWN MOVES:\n");
+	print_bb(bb->attacks[WHITE_PAWNS]);
+	printf("WHITE KNIGHT MOVES:\n");
+	print_bb(bb->attacks[WHITE_KNIGHTS]);
+	printf("WHITE BISHOP MOVES:\n");
+	print_bb(bb->attacks[WHITE_BISHOPS]);
+	printf("WHITE ROOK MOVES:\n");
+	print_bb(bb->attacks[WHITE_ROOKS]);
+	printf("WHITE QUEEN MOVES:\n");
+	print_bb(bb->attacks[WHITE_QUEENS]);
+	printf("WHITE KING MOVES:\n");
+	print_bb(bb->attacks[WHITE_KING]);
+
+	printf("BLACK PAWN MOVES:\n");
+	print_bb(bb->attacks[BLACK_PAWNS]);
+	printf("BLACK KNIGHT MOVES:\n");
+	print_bb(bb->attacks[BLACK_KNIGHTS]);
+	printf("BLACK BISHOP MOVES:\n");
+	print_bb(bb->attacks[BLACK_BISHOPS]);
+	printf("BLACK ROOK MOVES:\n");
+	print_bb(bb->attacks[BLACK_ROOKS]);
+	printf("BLACK QUEEN MOVES:\n");
+	print_bb(bb->attacks[BLACK_QUEENS]);
+	printf("BLACK KING MOVES:\n");
+	print_bb(bb->attacks[BLACK_KING]);
+
 	free(bb);
 }
 
@@ -456,11 +479,11 @@ void test_update_board(void)
 	update_board(bb, "b8c6");
 	update_board(bb, "f1b5");
 
-	//print_bb(bb->wPieces[ALL] | bb->bPieces[ALL]);
+	//print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 	//print_all_bb(bb);
-	TEST_ASSERT_EQUAL(0x1000EF00, bb->wPieces[PAWNS]);
-	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->wPieces[ALL] | bb->bPieces[ALL]);
 	print_bb_pretty(bb, BLACK, WHITE);
+	TEST_ASSERT_EQUAL(0x1000EF00, bb->pieces[WHITE_PAWNS]);
+	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 	free(bb);
 }
 
@@ -471,7 +494,7 @@ int main(void)
 	RUN_TEST(test_flip_bit);
 	RUN_TEST(test_get_bit);
 	//RUN_TEST(test_print_bb);
-	//RUN_TEST(test_init_bb);
+	RUN_TEST(test_init_bb);
 	RUN_TEST(test_get_sq_index);
 	RUN_TEST(test_clear_bit);
 	RUN_TEST(test_get_piece_type);

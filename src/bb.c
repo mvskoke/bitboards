@@ -144,10 +144,10 @@ void print_all_bb(struct BitBoards *bb)
 {
 	for (int i = 0; i < TOTAL_BB; i++)
 	{
-		print_bb(bb->wPieces[i]);
-		print_bb(bb->bPieces[i]);
+		print_bb(bb->pieces[i]);
+		//print_bb(bb->bPieces[i]);
 	}
-	print_bb(bb->wPieces[ALL] | bb->bPieces[ALL]);
+	print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 }
 
 void init_bb(struct BitBoards *bb)
@@ -156,54 +156,54 @@ void init_bb(struct BitBoards *bb)
 
 	//                                                                                     7654 3210
 	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 1111 1111 | 0000 0000
-	bb->wPieces[PAWNS]      = 0x000000000000FF00;
+	bb->pieces[WHITE_PAWNS]      = 0x000000000000FF00;
 
 	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0100 0010
-	bb->wPieces[KNIGHTS]    = 0x0000000000000042;
+	bb->pieces[WHITE_KNIGHTS]    = 0x0000000000000042;
 
 	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0010 0100
-	bb->wPieces[BISHOPS]    = 0x0000000000000024;
+	bb->pieces[WHITE_BISHOPS]    = 0x0000000000000024;
 
 	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 1000 0001
-	bb->wPieces[ROOKS]      = 0x0000000000000081;
+	bb->pieces[WHITE_ROOKS]      = 0x0000000000000081;
 
 	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 1000
-	bb->wPieces[QUEENS]     = 0x0000000000000008;
+	bb->pieces[WHITE_QUEENS]     = 0x0000000000000008;
 
 	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0001 0000
-	bb->wPieces[KING]       = 0x0000000000000010;
+	bb->pieces[WHITE_KING]       = 0x0000000000000010;
 
-	bb->wPieces[ALL]        = 0x000000000000FFFF;
+	bb->pieces[WHITE_ALL]        = 0x000000000000FFFF;
 
 	// for black pieces, move the pawns right by 5 bytes, other pieces by 7 bytes
-	bb->bPieces[PAWNS]      = 0x00FF000000000000;
-	bb->bPieces[KNIGHTS]    = 0x4200000000000000;
-	bb->bPieces[BISHOPS]    = 0x2400000000000000;
-	bb->bPieces[ROOKS]      = 0x8100000000000000;
-	bb->bPieces[QUEENS]     = 0x0800000000000000;
-	bb->bPieces[KING]       = 0x1000000000000000;
-	bb->bPieces[ALL]        = 0xFFFF000000000000;
+	bb->pieces[BLACK_PAWNS]      = 0x00FF000000000000;
+	bb->pieces[BLACK_KNIGHTS]    = 0x4200000000000000;
+	bb->pieces[BLACK_BISHOPS]    = 0x2400000000000000;
+	bb->pieces[BLACK_ROOKS]      = 0x8100000000000000;
+	bb->pieces[BLACK_QUEENS]     = 0x0800000000000000;
+	bb->pieces[BLACK_KING]       = 0x1000000000000000;
+	bb->pieces[BLACK_ALL]        = 0xFFFF000000000000;
 
 	/**** PSEUDO-LEGAL ATTACKS ****/
 
 	// we can hardcode these because it's just the setup
-	bb->wAttacks[PAWNS]     = 0x00000000FFFF0000;
+	bb->attacks[WHITE_PAWNS]     = 0x00000000FFFF0000;
 
 	// 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 1010 0101 / 0000 0000 / 0000 0000
-	bb->wAttacks[KNIGHTS]   = 0x0000000000A50000;
+	bb->attacks[WHITE_KNIGHTS]   = 0x0000000000A50000;
 
 	// you can only move pawns and knights on the first turn
-	bb->wAttacks[BISHOPS]   = 0x0000000000000000;
-	bb->wAttacks[ROOKS]     = 0x0000000000000000;
-	bb->wAttacks[QUEENS]    = 0x0000000000000000;
-	bb->wAttacks[KING]      = 0x0000000000000000;
+	bb->attacks[WHITE_BISHOPS]   = 0x0000000000000000;
+	bb->attacks[WHITE_ROOKS]     = 0x0000000000000000;
+	bb->attacks[WHITE_QUEENS]    = 0x0000000000000000;
+	bb->attacks[WHITE_KING]      = 0x0000000000000000;
 
-	bb->bAttacks[PAWNS]     = 0x0000FFFF00000000;
-	bb->bAttacks[KNIGHTS]   = 0x0000A50000000000;
-	bb->bAttacks[BISHOPS]   = 0x0000000000000000;
-	bb->bAttacks[ROOKS]     = 0x0000000000000000;
-	bb->bAttacks[QUEENS]    = 0x0000000000000000;
-	bb->bAttacks[KING]      = 0x0000000000000000;
+	bb->attacks[BLACK_PAWNS]     = 0x0000FFFF00000000;
+	bb->attacks[BLACK_KNIGHTS]   = 0x0000A50000000000;
+	bb->attacks[BLACK_BISHOPS]   = 0x0000000000000000;
+	bb->attacks[BLACK_ROOKS]     = 0x0000000000000000;
+	bb->attacks[BLACK_QUEENS]    = 0x0000000000000000;
+	bb->attacks[BLACK_KING]      = 0x0000000000000000;
 
 	/**** PRETTY BOARD ****/
 	// pretty_board[i][j]
@@ -275,16 +275,9 @@ int get_piece_type(struct BitBoards *bb, char* move)
 	for (int i = 0; i < TOTAL_BB; i++)
 	{
 		// bitboard is set at index
-		if (bb->bPieces[i] & (1ULL << index))
+		if (bb->pieces[i] & (1ULL << index))
 		{
 			return i;
-		}
-		else if (bb->wPieces[i] & (1ULL << index))
-		{
-			// see bb.h:
-			// white piece enums are offset by the start
-			// of the first white piece enum, aka WHITE_PAWN
-			return i + WHITE_PAWN;
 		}
 	}
 	// THIS SHOULD NEVER HAPPEN.
@@ -310,93 +303,29 @@ void update_board(struct BitBoards *bb, char* move)
 	int piece = get_piece_type(bb, move);
 	int start = get_sq_index(move);
 	int end = get_sq_index(move+=2);
+	int color;
+	if (piece < WHITE_PAWNS)
+	{
+		color = BLACK;
+	}
+	else
+	{
+		color = WHITE;
+	}
 	update_pretty_board(bb, start, end);
 
-/*
-
-flip_bit(&(bb->pieces[piece]), start);
-flip_bit(&(bb->pieces[ALL]), start);
-set_bit(&(bb->pieces[piece]), end);
-set_bit(&(bb->pieces[ALL]), end);
-
-*/
-
-	switch (piece)
+	if (color == BLACK)
 	{
-	case BLACK_PAWN:
-		// remove from start square
-		flip_bit(&(bb->bPieces[PAWNS]), start);
-		flip_bit(&(bb->bPieces[ALL]), start);
-		// and move to end square
-		set_bit(&(bb->bPieces[PAWNS]), end);
-		set_bit(&(bb->bPieces[ALL]), end);
-		break;
-	case BLACK_KNIGHT:
-		flip_bit(&(bb->bPieces[KNIGHTS]), start);
-		flip_bit(&(bb->bPieces[ALL]), start);
-		set_bit(&(bb->bPieces[KNIGHTS]), end);
-		set_bit(&(bb->bPieces[ALL]), end);
-		break;
-	case BLACK_BISHOP:
-		flip_bit(&(bb->bPieces[BISHOPS]), start);
-		flip_bit(&(bb->bPieces[ALL]), start);
-		set_bit(&(bb->bPieces[BISHOPS]), end);
-		set_bit(&(bb->bPieces[ALL]), end);
-		break;
-	case BLACK_ROOK:
-		flip_bit(&(bb->bPieces[ROOKS]), start);
-		flip_bit(&(bb->bPieces[ALL]), start);
-		set_bit(&(bb->bPieces[ROOKS]), end);
-		set_bit(&(bb->bPieces[ALL]), end);
-		break;
-	case BLACK_QUEEN:
-		flip_bit(&(bb->bPieces[QUEENS]), start);
-		flip_bit(&(bb->bPieces[ALL]), start);
-		set_bit(&(bb->bPieces[QUEENS]), end);
-		set_bit(&(bb->bPieces[ALL]), end);
-		break;
-	case BLACK_KING:
-		flip_bit(&(bb->bPieces[KING]), start);
-		flip_bit(&(bb->bPieces[ALL]), start);
-		set_bit(&(bb->bPieces[KING]), end);
-		set_bit(&(bb->bPieces[ALL]), end);
-		break;
-
-	case WHITE_PAWN:
-		flip_bit(&(bb->wPieces[PAWNS]), start);
-		flip_bit(&(bb->wPieces[ALL]), start);
-		set_bit(&(bb->wPieces[PAWNS]), end);
-		set_bit(&(bb->wPieces[ALL]), end);
-		break;
-	case WHITE_KNIGHT:
-		flip_bit(&(bb->wPieces[KNIGHTS]), start);
-		flip_bit(&(bb->wPieces[ALL]), start);
-		set_bit(&(bb->wPieces[KNIGHTS]), end);
-		set_bit(&(bb->wPieces[ALL]), end);
-		break;
-	case WHITE_BISHOP:
-		flip_bit(&(bb->wPieces[BISHOPS]), start);
-		flip_bit(&(bb->wPieces[ALL]), start);
-		set_bit(&(bb->wPieces[BISHOPS]), end);
-		set_bit(&(bb->wPieces[ALL]), end);
-		break;
-	case WHITE_ROOK:
-		flip_bit(&(bb->wPieces[ROOKS]), start);
-		flip_bit(&(bb->wPieces[ALL]), start);
-		set_bit(&(bb->wPieces[ROOKS]), end);
-		set_bit(&(bb->wPieces[ALL]), end);
-		break;
-	case WHITE_QUEEN:
-		flip_bit(&(bb->wPieces[QUEENS]), start);
-		flip_bit(&(bb->wPieces[ALL]), start);
-		set_bit(&(bb->wPieces[QUEENS]), end);
-		set_bit(&(bb->wPieces[ALL]), end);
-		break;
-	case WHITE_KING:
-		flip_bit(&(bb->wPieces[KING]), start);
-		flip_bit(&(bb->wPieces[ALL]), start);
-		set_bit(&(bb->wPieces[KING]), end);
-		set_bit(&(bb->wPieces[ALL]), end);
-		break;
+		flip_bit(&(bb->pieces[piece]), start);
+		flip_bit(&(bb->pieces[BLACK_ALL]), start);
+		set_bit(&(bb->pieces[piece]), end);
+		set_bit(&(bb->pieces[BLACK_ALL]), end);
+	}
+	else
+	{
+		flip_bit(&(bb->pieces[piece]), start);
+		flip_bit(&(bb->pieces[WHITE_ALL]), start);
+		set_bit(&(bb->pieces[piece]), end);
+		set_bit(&(bb->pieces[WHITE_ALL]), end);
 	}
 }
