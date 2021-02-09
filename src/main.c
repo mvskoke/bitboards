@@ -22,9 +22,11 @@ int main(void)
 	int playing = 1;
 	while (playing)
 	{
-		/* TESTING COMMAND FUNCTIONS*/
-		command = get_command(buffer, BUFFER_SIZE, turn);
-		type = validate_command(command);
+		do
+		{
+			command = get_command(buffer, BUFFER_SIZE, turn);
+			type = validate_command(command);
+		} while (type == ILLEGAL);
 
 		switch (type)
 		{
@@ -37,10 +39,14 @@ int main(void)
 			update_board(bb, command);
 			print_bb_pretty(bb, orient, turn);
 			break;
-		case ILLEGAL: break;
 		}
-		turn = !turn;
+
+		if (type != ILLEGAL)
+		{
+			turn = !turn;
+		}
 	}
 	free(bb);
 	return 0;
 }
+
