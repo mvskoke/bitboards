@@ -8,38 +8,38 @@
 /* THESE BIT FUNCTIONS RETURN THE MODIFIED BITBOARD
    BECAUSE IT MADE UNITY TESTING EASIER */
 
-uint64_t set_bit(uint64_t *bb, const int index)
+U64 set_bit(U64 *bb, const int index)
 {
 	*bb |= 1ULL << index;
 	return *bb;
 }
 
-uint64_t flip_bit(uint64_t *bb, const int index)
+U64 flip_bit(U64 *bb, const int index)
 {
 	*bb ^= 1ULL << index;
 	return *bb;
 }
 
-uint64_t clear_bb(uint64_t *bb)
+U64 clear_bb(U64 *bb)
 {
 	*bb = 0;
 	return *bb;
 }
 
-uint64_t clear_bit(uint64_t *bb, const int index)
+U64 clear_bit(U64 *bb, const int index)
 {
 	// mask out the bit at int index
 	// to make mask, xor UINT64_MAX with the mask's complement
 	// ...1111111111
 	// ...0000000100
 	// ...1111111011
-	uint64_t mask = UINT64_MAX;
+	U64 mask = UINT64_MAX;
 	mask ^= (1ULL << index);
 	*bb &= mask;
 	return *bb;
 }
 
-int get_bit(const uint64_t bb, const int index)
+int get_bit(const U64 bb, const int index)
 {
 	return (bb >> index) & 1ULL;
 }
@@ -128,7 +128,7 @@ void print_bb_small(struct Bitboards *bb)
 	printf("\n");
 }
 
-void print_bb(uint64_t bb)
+void print_bb(U64 bb)
 {
 	int index;
 	int curr_bit;
@@ -384,27 +384,6 @@ enum PieceType letter_to_piece_type(char c)
 	}
 }
 
-enum PieceType letter_to_color(char c)
-{
-	switch (c)
-	{
-	case 'p': return BLACK_ALL;
-	case 'n': return BLACK_ALL;
-	case 'b': return BLACK_ALL;
-	case 'r': return BLACK_ALL;
-	case 'q': return BLACK_ALL;
-	case 'k': return BLACK_ALL;
-
-	case 'P': return WHITE_ALL;
-	case 'N': return WHITE_ALL;
-	case 'B': return WHITE_ALL;
-	case 'R': return WHITE_ALL;
-	case 'Q': return WHITE_ALL;
-	case 'K': return WHITE_ALL;
-	default: return NONEXISTENT;
-	}
-}
-
 // update pretty board AFTER A MOVE
 static void update_pretty_board(struct Bitboards *bb, int start, int end)
 {
@@ -461,11 +440,22 @@ static void add_to_pretty_board(struct Bitboards *bb, char piece, int index)
 	bb->pretty_board[i][j] = piece;
 }
 
+// function expects a valid piece!!!
 void fen_updates_bb(struct Bitboards *bb, char piece, int index)
 {
 	add_to_pretty_board(bb, piece, index);
 	enum PieceType type = letter_to_piece_type(piece);
-	enum PieceType color = letter_to_color(piece);
+
+	// set specific piece...
 	set_bit(&bb->pieces[type], index);
-	set_bit(&bb->pieces[color], index);
+	
+	// and the piece's color
+	if (islower(piece))
+	{
+		set_bit(&bb->pieces[BLACK_ALL], index);
+	}
+	else
+	{
+		set_bit(&bb->pieces[WHITE_ALL], index);
+	}
 }

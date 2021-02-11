@@ -13,6 +13,8 @@
 // in the bitboard's pretty board
 #define EMPTY_SQ '.'
 
+#define U64 uint64_t
+
 #include <stdint.h>
 
 // indexing the arrays of bitboards of pieces
@@ -65,27 +67,27 @@ struct Bitboards
 	char pretty_board[8][8];
 
 	// locations
-	uint64_t pieces[TOTAL_BB];
+	U64 pieces[TOTAL_BB];
 
 	// pseudo-legal attacks
 	// square is either empty or has enemy piece to capture
 	// but unknown if move would leave you in check
-	uint64_t attacks[TOTAL_BB-2];
+	U64 attacks[TOTAL_BB-2];
 	// -2 to ignore WHITE_ALL and BLACK_ALL
 };
 
 /* SHOULD PROBABLY ADD bb_ PREFIX WHEN MAKING 
    ACTUAL IMPLEMENTATION FOR cchess */
 
-uint64_t set_bit(uint64_t *bb, const int index);
-uint64_t flip_bit(uint64_t *bb, const int index);
-uint64_t clear_bb(uint64_t *bb);
-uint64_t clear_bit(uint64_t *bb, const int index);
-int get_bit(const uint64_t bb, const int index);
+U64 set_bit(U64 *bb, const int index);
+U64 flip_bit(U64 *bb, const int index);
+U64 clear_bb(U64 *bb);
+U64 clear_bit(U64 *bb, const int index);
+int get_bit(const U64 bb, const int index);
 
 void print_bb_pretty(struct Bitboards *bb, int orient, int turn);
 void print_bb_small(struct Bitboards *bb);
-void print_bb(uint64_t bb);
+void print_bb(U64 bb);
 void print_all_bb(struct Bitboards *bb);
 
 void init_bb(struct Bitboards *bb);
