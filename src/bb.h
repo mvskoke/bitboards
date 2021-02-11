@@ -89,9 +89,13 @@ void print_bb(uint64_t bb);
 void print_all_bb(struct Bitboards *bb);
 
 void init_bb(struct Bitboards *bb);
-void init_bb_blank(struct Bitboards *bb);
+void init_bb_fen(struct Bitboards *bb, char fen[]);
+
 int get_sq_index(const char *sq);
 enum PieceType get_piece_type(struct Bitboards *bb, char *move);
+enum PieceType letter_to_piece_type(char c);
+
 void update_board(struct Bitboards *bb, char *move);
+void fen_updates_bb(struct Bitboards *bb, char piece, int index);
 
 #endif

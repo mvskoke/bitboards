@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,7 +121,7 @@ void print_bb_small(struct Bitboards *bb)
 	{
 		for (int j = 0; j < FILES; j++)
 		{
-			printf("%c", bb->pretty_board[j][i]);
+			printf(" %c", bb->pretty_board[j][i]);
 		}
 		printf("\n");
 	}
@@ -274,10 +275,11 @@ void init_bb(struct Bitboards *bb)
 	bb->pretty_board[7][7] = 'r';
 }
 
-void init_bb_blank(struct Bitboards *bb)
+static void init_bb_blank(struct Bitboards *bb)
 {
 	verify_safe_malloc(bb);
 
+	// initialize bitboards: pieces and attacks
 	for (int i = 0; i < TOTAL_BB; i++)
 	{
 		bb->pieces[i] = 0;
@@ -288,11 +290,38 @@ void init_bb_blank(struct Bitboards *bb)
 		bb->attacks[i] = 0;
 	}
 
+	// initialize pretty board
 	for (int i = 0; i < FILES; i++)
 	{
 		for (int j = 0; j < RANKS; j++)
 		{
 			bb->pretty_board[i][j] = EMPTY_SQ;
+		}
+	}
+}
+
+void init_bb_fen(struct Bitboards *bb, char fen[])
+{
+	init_bb_blank(bb);
+	int index = 56; // MUST BE ZERO-INDEXED TO ALLOW EASY BIT-SETTING
+	int rank = 7;
+
+	for (char *tmp = fen; *tmp != '\0'; tmp++)
+	{
+		if (isalpha(*tmp))
+		{
+			fen_updates_bb(bb, *tmp, index);
+			index++;
+		}
+		if (isdigit(*tmp))
+		{
+			// convert digit char to int
+			index += *tmp - '0';
+		}
+		if (*tmp == '/')
+		{
+			rank--;
+			index = rank * 8;
 		}
 	}
 }
@@ -334,6 +363,49 @@ enum PieceType get_piece_type(struct Bitboards *bb, char *move)
 	return NONEXISTENT;
 }
 
+enum PieceType letter_to_piece_type(char c)
+{
+	switch (c)
+	{
+	case 'p': return BLACK_PAWN;
+	case 'n': return BLACK_KNIGHT;
+	case 'b': return BLACK_BISHOP;
+	case 'r': return BLACK_ROOK;
+	case 'q': return BLACK_QUEEN;
+	case 'k': return BLACK_KING;
+
+	case 'P': return WHITE_PAWN;
+	case 'N': return WHITE_KNIGHT;
+	case 'B': return WHITE_BISHOP;
+	case 'R': return WHITE_ROOK;
+	case 'Q': return WHITE_QUEEN;
+	case 'K': return WHITE_KING;
+	default: return NONEXISTENT;
+	}
+}
+
+enum PieceType letter_to_color(char c)
+{
+	switch (c)
+	{
+	case 'p': return BLACK_ALL;
+	case 'n': return BLACK_ALL;
+	case 'b': return BLACK_ALL;
+	case 'r': return BLACK_ALL;
+	case 'q': return BLACK_ALL;
+	case 'k': return BLACK_ALL;
+
+	case 'P': return WHITE_ALL;
+	case 'N': return WHITE_ALL;
+	case 'B': return WHITE_ALL;
+	case 'R': return WHITE_ALL;
+	case 'Q': return WHITE_ALL;
+	case 'K': return WHITE_ALL;
+	default: return NONEXISTENT;
+	}
+}
+
+// update pretty board AFTER A MOVE
 static void update_pretty_board(struct Bitboards *bb, int start, int end)
 {
 	int start_i = start % 8;
@@ -379,4 +451,21 @@ void update_board(struct Bitboards *bb, char* move)
 		set_bit(&(bb->pieces[piece]), end);
 		set_bit(&(bb->pieces[WHITE_ALL]), end);
 	}
+}
+
+static void add_to_pretty_board(struct Bitboards *bb, char piece, int index)
+{
+	// convert bit index to (i,j) index
+	int i = index % 8;
+	int j = ((index - i) / 8);
+	bb->pretty_board[i][j] = piece;
+}
+
+void fen_updates_bb(struct Bitboards *bb, char piece, int index)
+{
+	add_to_pretty_board(bb, piece, index);
+	enum PieceType type = letter_to_piece_type(piece);
+	enum PieceType color = letter_to_color(piece);
+	set_bit(&bb->pieces[type], index);
+	set_bit(&bb->pieces[color], index);
 }
