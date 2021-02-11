@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -19,7 +20,7 @@ int main(void)
 	int type;
 
 	print_bb_pretty(bb, orient, turn);
-	int playing = 1;
+	bool playing = true;
 	while (playing)
 	{
 		do
@@ -33,7 +34,7 @@ int main(void)
 		case RESIGN: break;
 		case DRAW:   break;
 		case FLIP:   break;
-		case QUIT:   playing = 0; break;
+		case QUIT:   playing = false; break;
 		case HELP:   break;
 		case MOVE:
 			update_board(bb, command);
@@ -41,6 +42,8 @@ int main(void)
 			break;
 		}
 
+		// if command was illegal, the next iteration should
+		// not change the current color
 		if (type != ILLEGAL)
 		{
 			turn = !turn;

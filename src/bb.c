@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "bb.h"
 
@@ -84,7 +85,7 @@ void print_bb_pretty(struct Bitboards *bb, int orient, int turn)
 		printf(" %d ", i+1);
 		for (int j = 0; j < FILES; j++)
 		{
-			if (bb->pretty_board[j][i] == '\0')
+			if (bb->pretty_board[j][i] == EMPTY_SQ)
 			{
 				print_empty_square(j, i);
 			}
@@ -111,6 +112,19 @@ void print_bb_pretty(struct Bitboards *bb, int orient, int turn)
 	{
 		printf("     a   b   c   d   e   f   g   h\n");
 	}
+}
+
+void print_bb_small(struct Bitboards *bb)
+{
+	for (int i = 7; i >= 0; i--)
+	{
+		for (int j = 0; j < FILES; j++)
+		{
+			printf("%c", bb->pretty_board[j][i]);
+		}
+		printf("\n");
+	}
+	printf("\n");
 }
 
 void print_bb(uint64_t bb)
@@ -150,8 +164,19 @@ void print_all_bb(struct Bitboards *bb)
 	print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 }
 
+void verify_safe_malloc(void *ptr)
+{
+	if (ptr == NULL)
+	{
+		fprintf(stderr, "ERROR: could not allocate enough memory.\n");
+		exit(EXIT_FAILURE);
+	}
+}
+
 void init_bb(struct Bitboards *bb)
 {
+	verify_safe_malloc(bb);
+
 	/**** PIECE LOCATIONS ****/
 
 	//                                                                                     7654 3210
@@ -209,12 +234,13 @@ void init_bb(struct Bitboards *bb)
 	// pretty_board[i][j]
 	// i = file a-h, j = rank 1-8
 
-	// initialize empty squares to null char
+	// initialize empty squares to a period
+	// solely for the sake of print_bb_small()
 	for (int i = 0; i < FILES; i++)
 	{
 		for (int j = 2; j <= 5; j++)
 		{
-			bb->pretty_board[i][j] = '\0';
+			bb->pretty_board[i][j] = EMPTY_SQ;
 		}
 	}
 
@@ -248,6 +274,29 @@ void init_bb(struct Bitboards *bb)
 	bb->pretty_board[7][7] = 'r';
 }
 
+void init_bb_blank(struct Bitboards *bb)
+{
+	verify_safe_malloc(bb);
+
+	for (int i = 0; i < TOTAL_BB; i++)
+	{
+		bb->pieces[i] = 0;
+	}
+
+	for (int i = 0; i < TOTAL_ATTACKS; i++)
+	{
+		bb->attacks[i] = 0;
+	}
+
+	for (int i = 0; i < FILES; i++)
+	{
+		for (int j = 0; j < RANKS; j++)
+		{
+			bb->pretty_board[i][j] = EMPTY_SQ;
+		}
+	}
+}
+
 int get_sq_index(const char* sq)
 {
 	// example:
@@ -269,7 +318,7 @@ int get_sq_index(const char* sq)
 
 // you can pass in a move or a single square. it only checks
 // the first two chars
-int get_piece_type(struct Bitboards *bb, char* move)
+enum PieceType get_piece_type(struct Bitboards *bb, char *move)
 {
 	int index = get_sq_index(move);
 	for (int i = 0; i < TOTAL_BB; i++)
@@ -282,7 +331,7 @@ int get_piece_type(struct Bitboards *bb, char* move)
 	}
 	// THIS SHOULD NEVER HAPPEN.
 	// YOU SHOULD VALIDATE PIECE EXISTENCE BEFORE CALLING THIS.
-	return -1;
+	return NONEXISTENT;
 }
 
 static void update_pretty_board(struct Bitboards *bb, int start, int end)
@@ -293,18 +342,20 @@ static void update_pretty_board(struct Bitboards *bb, int start, int end)
 	int end_i = end % 8;
 	int end_j = (end - end_i) / 8;
 	bb->pretty_board[end_i][end_j] = bb->pretty_board[start_i][start_j];
-	bb->pretty_board[start_i][start_j] = '\0';
+	bb->pretty_board[start_i][start_j] = EMPTY_SQ;
 }
 
 // move a piece
 // move should be validated BEFORE you call this func
 void update_board(struct Bitboards *bb, char* move)
 {
-	int piece = get_piece_type(bb, move);
+	enum PieceType piece = get_piece_type(bb, move);
 	int start = get_sq_index(move);
 	int end = get_sq_index(move+=2);
 	int color;
-	if (piece < WHITE_PAWNS)
+
+	// pieces are sorted black to white, pawn to king
+	if (piece < WHITE_PAWN)
 	{
 		color = BLACK;
 	}

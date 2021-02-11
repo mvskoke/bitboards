@@ -436,15 +436,15 @@ void test_get_piece_type(void)
 
 	// this should never happen for real
 	// but im testing anyway to make sure it works
-	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "e3"));
-	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "a5"));
-	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "b5"));
-	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "c5"));
-	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "d5"));
-	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "e5"));
-	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "f5"));
-	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "g5"));
-	TEST_ASSERT_EQUAL(-1, get_piece_type(bb, "h5"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "e3"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "a5"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "b5"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "c5"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "d5"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "e5"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "f5"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "g5"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "h5"));
 
 	TEST_ASSERT_EQUAL(WHITE_ROOK, get_piece_type(bb, "a1"));
 	TEST_ASSERT_EQUAL(WHITE_KNIGHT, get_piece_type(bb, "b1"));
@@ -482,6 +482,7 @@ void test_update_board(void)
 	//print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 	//print_all_bb(bb);
 	print_bb_pretty(bb, BLACK, WHITE);
+	print_bb_small(bb);
 	TEST_ASSERT_EQUAL(0x1000EF00, bb->pieces[WHITE_PAWNS]);
 	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 	free(bb);

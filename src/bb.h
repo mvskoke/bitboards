@@ -9,10 +9,14 @@
 #define BLACK 0
 #define WHITE 1
 
+// represent empty squares with a period
+// in the bitboard's pretty board
+#define EMPTY_SQ '.'
+
 #include <stdint.h>
 
-// indexes for the arrays of bitboards
-enum PieceBitboardIndexes
+// indexing the arrays of bitboards of pieces
+enum PieceType
 {
 	BLACK_PAWN,   // 0 == i
 	BLACK_KNIGHT, // 1
@@ -30,24 +34,28 @@ enum PieceBitboardIndexes
 
 	BLACK_ALL,
 	WHITE_ALL,
-	TOTAL_BB
+	TOTAL_BB,
+	NONEXISTENT  // no piece
 };
 
-// same as above but plural
-enum PieceBitboardIndexesPlural
-{
-	BLACK_PAWNS,
-	BLACK_KNIGHTS,
-	BLACK_BISHOPS,
-	BLACK_ROOKS,
-	BLACK_QUEENS,
-	DONT_NEED_TO_PLURALIZE_THIS_ENUM1,
+#define TOTAL_ATTACKS TOTAL_BB-2
 
-	WHITE_PAWNS,
-	WHITE_KNIGHTS,
-	WHITE_BISHOPS,
-	WHITE_ROOKS,
-	WHITE_QUEENS
+// same as above but plural
+// and used for indexing the arrays of bitboards of attacks
+enum PieceBBIndex
+{
+	BLACK_PAWNS = BLACK_PAWN,
+	BLACK_KNIGHTS = BLACK_KNIGHT,
+	BLACK_BISHOPS = BLACK_BISHOP,
+	BLACK_ROOKS = BLACK_ROOK,
+	BLACK_QUEENS = BLACK_QUEEN,
+	// don't need a BLACK_KINGS
+
+	WHITE_PAWNS = WHITE_PAWN,
+	WHITE_KNIGHTS = WHITE_KNIGHT,
+	WHITE_BISHOPS = WHITE_BISHOP,
+	WHITE_ROOKS = WHITE_ROOK,
+	WHITE_QUEENS = WHITE_QUEEN,
 	// we can end here, no need to
 	// pluralize the rest
 };
@@ -76,12 +84,14 @@ uint64_t clear_bit(uint64_t *bb, const int index);
 int get_bit(const uint64_t bb, const int index);
 
 void print_bb_pretty(struct Bitboards *bb, int orient, int turn);
+void print_bb_small(struct Bitboards *bb);
 void print_bb(uint64_t bb);
 void print_all_bb(struct Bitboards *bb);
 
 void init_bb(struct Bitboards *bb);
+void init_bb_blank(struct Bitboards *bb);
 int get_sq_index(const char *sq);
-int get_piece_type(struct Bitboards *bb, char *move);
+enum PieceType get_piece_type(struct Bitboards *bb, char *move);
 void update_board(struct Bitboards *bb, char *move);
 
 #endif
