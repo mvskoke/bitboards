@@ -64,7 +64,7 @@ enum PieceBBIndex
 
 struct Bitboards
 {
-	char pretty_board[8][8];
+	char pretty_board[FILES][RANKS];
 
 	// locations
 	U64 pieces[TOTAL_BB];

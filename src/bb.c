@@ -107,11 +107,11 @@ void print_bb_pretty(struct Bitboards *bb, int orient, int turn)
 
 	if (orient != turn)
 	{
-		printf(" =>  a   b   c   d   e   f   g   h\n");
+		printf(" =>  a   b   c   d   e   f   g   h\n\n");
 	}
 	else
 	{
-		printf("     a   b   c   d   e   f   g   h\n");
+		printf("     a   b   c   d   e   f   g   h\n\n");
 	}
 }
 
@@ -119,13 +119,14 @@ void print_bb_small(struct Bitboards *bb)
 {
 	for (int i = 7; i >= 0; i--)
 	{
+		printf("%d ", i+1);
 		for (int j = 0; j < FILES; j++)
 		{
 			printf(" %c", bb->pretty_board[j][i]);
 		}
 		printf("\n");
 	}
-	printf("\n");
+	printf("\n   a b c d e f g h\n\n");
 }
 
 void print_bb(U64 bb)
