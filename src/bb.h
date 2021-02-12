@@ -72,7 +72,7 @@ struct Bitboards
 	// pseudo-legal attacks
 	// square is either empty or has enemy piece to capture
 	// but unknown if move would leave you in check
-	U64 attacks[TOTAL_BB-2];
+	U64 attacks[TOTAL_ATTACKS];
 	// -2 to ignore WHITE_ALL and BLACK_ALL
 };
 
