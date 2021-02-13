@@ -115,18 +115,21 @@ void print_bb_pretty(struct Bitboards *bb, int orient, int turn)
 	}
 }
 
+// special thanks to Oscar Gutierrez Toledo for the
+// formatting of this board style
+// "Toledo Chess 1" - https://nanochess.org/chess.html
 void print_bb_small(struct Bitboards *bb)
 {
 	for (int i = 7; i >= 0; i--)
 	{
-		printf("%d ", i+1);
+		printf("   %d ", i+1);
 		for (int j = 0; j < FILES; j++)
 		{
 			printf(" %c", bb->pretty_board[j][i]);
 		}
 		printf("\n");
 	}
-	printf("\n   a b c d e f g h\n\n");
+	printf("\n      a b c d e f g h\n\n");
 }
 
 void print_bb(U64 bb)
