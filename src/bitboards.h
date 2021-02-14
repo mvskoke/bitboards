@@ -34,7 +34,7 @@ enum PieceType
 	NONEXISTENT  // no piece
 };
 
-#define TOTAL_ATTACKS TOTAL_BB-2
+#define TOTAL_ATTACKS (TOTAL_BB-2)
 
 // same as above but plural
 // and used for indexing the arrays of bitboards of attacks
