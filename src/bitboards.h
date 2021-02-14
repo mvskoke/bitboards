@@ -1,21 +1,15 @@
 #ifndef BITBOARDS_H
 #define BITBOARDS_H
 
-#define ROWS 8
-#define COLS 8
-#define RANKS 8
-#define FILES 8
+#include <stdint.h>
 
-#define BLACK 0
-#define WHITE 1
+#include "colors.h"
+
+#define U64 uint64_t
 
 // represent empty squares with a period
 // in the bitboard's pretty board
 #define EMPTY_SQ '.'
-
-#define U64 uint64_t
-
-#include <stdint.h>
 
 // indexing the arrays of bitboards of pieces
 enum PieceType
@@ -76,28 +70,12 @@ struct Bitboards
 	// -2 to ignore WHITE_ALL and BLACK_ALL
 };
 
-/* SHOULD PROBABLY ADD bb_ PREFIX WHEN MAKING 
-   ACTUAL IMPLEMENTATION FOR cchess */
-
 U64 set_bit(U64 *bb, const int index);
 U64 flip_bit(U64 *bb, const int index);
 U64 clear_bb(U64 *bb);
 U64 clear_bit(U64 *bb, const int index);
 int get_bit(const U64 bb, const int index);
 
-void print_bb_pretty(struct Bitboards *bb, int orient, int turn);
-void print_bb_small(struct Bitboards *bb);
 void print_bb(U64 bb);
-void print_all_bb(struct Bitboards *bb);
-
-void init_bb(struct Bitboards *bb);
-void init_bb_fen(struct Bitboards *bb, char fen[]);
-
-int get_sq_index(const char *sq);
-enum PieceType get_piece_type(struct Bitboards *bb, char *move);
-enum PieceType letter_to_piece_type(char c);
-
-void update_board(struct Bitboards *bb, char *move);
-void fen_updates_bb(struct Bitboards *bb, char piece, int index);
 
 #endif

@@ -2,8 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../src/bitboards.h"
+#include "../src/colors.h"
+#include "../src/display.h"
+#include "../src/init.h"
+#include "../src/update.h"
 #include "../unity/unity.h"
-#include "../src/bb.h"
 
 void setUp(void) {}
 void tearDown(void) {}
@@ -227,15 +231,6 @@ void test_get_bit(void)
 	TEST_ASSERT_EQUAL(0, get_bit(bb, 63));
 }
 
-void test_print_bb(void)
-{
-	uint64_t bb = 0x55AA55AA55AA55AA;
-	print_bb(bb);
-
-	bb = 0xFF00FF00FF00FF00;
-	print_bb(bb);
-}
-
 void test_init_bb(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
@@ -303,74 +298,6 @@ void test_init_bb(void)
 	free(bb);
 }
 
-void test_get_sq_index(void)
-{
-	TEST_ASSERT_EQUAL(0, get_sq_index("a1"));
-	TEST_ASSERT_EQUAL(1, get_sq_index("b1"));
-	TEST_ASSERT_EQUAL(2, get_sq_index("c1"));
-	TEST_ASSERT_EQUAL(3, get_sq_index("d1"));
-	TEST_ASSERT_EQUAL(4, get_sq_index("e1"));
-	TEST_ASSERT_EQUAL(5, get_sq_index("f1"));
-	TEST_ASSERT_EQUAL(6, get_sq_index("g1"));
-	TEST_ASSERT_EQUAL(7, get_sq_index("h1"));
-	TEST_ASSERT_EQUAL(8, get_sq_index("a2"));
-	TEST_ASSERT_EQUAL(9, get_sq_index("b2"));
-	TEST_ASSERT_EQUAL(10, get_sq_index("c2"));
-	TEST_ASSERT_EQUAL(11, get_sq_index("d2"));
-	TEST_ASSERT_EQUAL(12, get_sq_index("e2"));
-	TEST_ASSERT_EQUAL(13, get_sq_index("f2"));
-	TEST_ASSERT_EQUAL(14, get_sq_index("g2"));
-	TEST_ASSERT_EQUAL(15, get_sq_index("h2"));
-	TEST_ASSERT_EQUAL(16, get_sq_index("a3"));
-	TEST_ASSERT_EQUAL(17, get_sq_index("b3"));
-	TEST_ASSERT_EQUAL(18, get_sq_index("c3"));
-	TEST_ASSERT_EQUAL(19, get_sq_index("d3"));
-	TEST_ASSERT_EQUAL(20, get_sq_index("e3"));
-	TEST_ASSERT_EQUAL(21, get_sq_index("f3"));
-	TEST_ASSERT_EQUAL(22, get_sq_index("g3"));
-	TEST_ASSERT_EQUAL(23, get_sq_index("h3"));
-	TEST_ASSERT_EQUAL(24, get_sq_index("a4"));
-	TEST_ASSERT_EQUAL(25, get_sq_index("b4"));
-	TEST_ASSERT_EQUAL(26, get_sq_index("c4"));
-	TEST_ASSERT_EQUAL(27, get_sq_index("d4"));
-	TEST_ASSERT_EQUAL(28, get_sq_index("e4"));
-	TEST_ASSERT_EQUAL(29, get_sq_index("f4"));
-	TEST_ASSERT_EQUAL(30, get_sq_index("g4"));
-	TEST_ASSERT_EQUAL(31, get_sq_index("h4"));
-	TEST_ASSERT_EQUAL(32, get_sq_index("a5"));
-	TEST_ASSERT_EQUAL(33, get_sq_index("b5"));
-	TEST_ASSERT_EQUAL(34, get_sq_index("c5"));
-	TEST_ASSERT_EQUAL(35, get_sq_index("d5"));
-	TEST_ASSERT_EQUAL(36, get_sq_index("e5"));
-	TEST_ASSERT_EQUAL(37, get_sq_index("f5"));
-	TEST_ASSERT_EQUAL(38, get_sq_index("g5"));
-	TEST_ASSERT_EQUAL(39, get_sq_index("h5"));
-	TEST_ASSERT_EQUAL(40, get_sq_index("a6"));
-	TEST_ASSERT_EQUAL(41, get_sq_index("b6"));
-	TEST_ASSERT_EQUAL(42, get_sq_index("c6"));
-	TEST_ASSERT_EQUAL(43, get_sq_index("d6"));
-	TEST_ASSERT_EQUAL(44, get_sq_index("e6"));
-	TEST_ASSERT_EQUAL(45, get_sq_index("f6"));
-	TEST_ASSERT_EQUAL(46, get_sq_index("g6"));
-	TEST_ASSERT_EQUAL(47, get_sq_index("h6"));
-	TEST_ASSERT_EQUAL(48, get_sq_index("a7"));
-	TEST_ASSERT_EQUAL(49, get_sq_index("b7"));
-	TEST_ASSERT_EQUAL(50, get_sq_index("c7"));
-	TEST_ASSERT_EQUAL(51, get_sq_index("d7"));
-	TEST_ASSERT_EQUAL(52, get_sq_index("e7"));
-	TEST_ASSERT_EQUAL(53, get_sq_index("f7"));
-	TEST_ASSERT_EQUAL(54, get_sq_index("g7"));
-	TEST_ASSERT_EQUAL(55, get_sq_index("h7"));
-	TEST_ASSERT_EQUAL(56, get_sq_index("a8"));
-	TEST_ASSERT_EQUAL(57, get_sq_index("b8"));
-	TEST_ASSERT_EQUAL(58, get_sq_index("c8"));
-	TEST_ASSERT_EQUAL(59, get_sq_index("d8"));
-	TEST_ASSERT_EQUAL(60, get_sq_index("e8"));
-	TEST_ASSERT_EQUAL(61, get_sq_index("f8"));
-	TEST_ASSERT_EQUAL(62, get_sq_index("g8"));
-	TEST_ASSERT_EQUAL(63, get_sq_index("h8"));
-}
-
 void test_clear_bit(void)
 {
 	uint64_t bb = 0;
@@ -412,61 +339,6 @@ void test_clear_bit(void)
 	TEST_ASSERT_EQUAL(0, clear_bb(&bb));
 }
 
-void test_get_piece_type(void)
-{
-	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
-	init_bb(bb);
-	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "a2"));
-	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "b2"));
-	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "c2"));
-	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "d2"));
-	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "e2"));
-	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "f2"));
-	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "g2"));
-	TEST_ASSERT_EQUAL(WHITE_PAWN, get_piece_type(bb, "h2"));
-
-	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "a7"));
-	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "b7"));
-	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "c7"));
-	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "d7"));
-	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "e7"));
-	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "f7"));
-	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "g7"));
-	TEST_ASSERT_EQUAL(BLACK_PAWN, get_piece_type(bb, "h7"));
-
-	// this should never happen for real
-	// but im testing anyway to make sure it works
-	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "e3"));
-	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "a5"));
-	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "b5"));
-	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "c5"));
-	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "d5"));
-	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "e5"));
-	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "f5"));
-	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "g5"));
-	TEST_ASSERT_EQUAL(NONEXISTENT, get_piece_type(bb, "h5"));
-
-	TEST_ASSERT_EQUAL(WHITE_ROOK, get_piece_type(bb, "a1"));
-	TEST_ASSERT_EQUAL(WHITE_KNIGHT, get_piece_type(bb, "b1"));
-	TEST_ASSERT_EQUAL(WHITE_BISHOP, get_piece_type(bb, "c1sdfsdjflk"));
-	TEST_ASSERT_EQUAL(WHITE_QUEEN, get_piece_type(bb, "d1"));
-	TEST_ASSERT_EQUAL(WHITE_KING, get_piece_type(bb, "e1"));
-	TEST_ASSERT_EQUAL(WHITE_BISHOP, get_piece_type(bb, "f1"));
-	TEST_ASSERT_EQUAL(WHITE_KNIGHT, get_piece_type(bb, "g101010110101010101000"));
-	TEST_ASSERT_EQUAL(WHITE_ROOK, get_piece_type(bb, "h1"));
-
-	TEST_ASSERT_EQUAL(BLACK_ROOK, get_piece_type(bb, "a8"));
-	TEST_ASSERT_EQUAL(BLACK_KNIGHT, get_piece_type(bb, "b8"));
-	TEST_ASSERT_EQUAL(BLACK_BISHOP, get_piece_type(bb, "c8"));
-	TEST_ASSERT_EQUAL(BLACK_QUEEN, get_piece_type(bb, "d8"));
-	TEST_ASSERT_EQUAL(BLACK_KING, get_piece_type(bb, "e8"));
-	TEST_ASSERT_EQUAL(BLACK_BISHOP, get_piece_type(bb, "f8"));
-	TEST_ASSERT_EQUAL(BLACK_KNIGHT, get_piece_type(bb, "g8"));
-	TEST_ASSERT_EQUAL(BLACK_ROOK, get_piece_type(bb, "h8"));
-
-	free(bb);
-}
-
 void test_update_board(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
@@ -494,11 +366,8 @@ int main(void)
 	RUN_TEST(test_set_bit);
 	RUN_TEST(test_flip_bit);
 	RUN_TEST(test_get_bit);
-	//RUN_TEST(test_print_bb);
 	RUN_TEST(test_init_bb);
-	RUN_TEST(test_get_sq_index);
 	RUN_TEST(test_clear_bit);
-	RUN_TEST(test_get_piece_type);
 	RUN_TEST(test_update_board);
 	return UNITY_END();
 }

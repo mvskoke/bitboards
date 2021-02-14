@@ -1,20 +1,24 @@
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -g
 
-main: obj/main.o obj/bb.o obj/commands.o
+OBJ = obj
+SRC = src
+DEP = $(OBJ)/main.o $(OBJ)/commands.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(OBJ)/update.o
+
+# before creating main executable, compile all object files
+main: $(DEP)
+	# now we can move all .o files, AFTER compiling ALL of them
+	# because now they are all in the root project directory
+	mv *.o $(OBJ)/
 	$(CC) $(CFLAGS) $^ -o main
 
-obj/main.o: src/main.c
+# main.c must be compiled in a separate
+# rule because there is no main.h file
+$(OBJ)/main.o: $(SRC)/main.c
 	$(CC) $(CFLAGS) -c $^
-	mv main.o obj/
 
-obj/bb.o: src/bb.c src/bb.h
+$(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CFLAGS) -c $<
-	mv bb.o obj/
-
-obj/commands.o: src/commands.c src/commands.h
-	$(CC) $(CFLAGS) -c $<
-	mv commands.o obj/
 
 clean:
-	rm -f main obj/main.o obj/bb.o obj/commands.o 
+	rm -f main $(OBJ)/*.o

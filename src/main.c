@@ -1,10 +1,12 @@
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 
-#include "bb.h"
+#include "bitboards.h"
 #include "colors.h"
 #include "commands.h"
+#include "display.h"
+#include "init.h"
+#include "update.h"
 
 #define BUFFER_SIZE 1024
 

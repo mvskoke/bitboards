@@ -2,17 +2,18 @@ CC = gcc
 CFLAGS = -Wall -Werror -Wextra -g
 
 OBJ = ../obj
+SRC = ../src
+DEP = $(OBJ)/test.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(OBJ)/update.o
 
-test: $(OBJ)/test.o $(OBJ)/bb.o
+test: $(DEP)
+	mv *.o $(OBJ)/
 	$(CC) $(CFLAGS) $^ ../unity/unity.c -o test
 
 $(OBJ)/test.o: test.c
 	$(CC) $(CFLAGS) -c $^
-	mv test.o $(OBJ)/
 
-$(OBJ)/bb.o: ../src/bb.c ../src/bb.h
+$(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CFLAGS) -c $<
-	mv bb.o $(OBJ)/
 
 clean:
 	rm -f test
