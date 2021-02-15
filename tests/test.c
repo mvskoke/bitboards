@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -353,7 +354,7 @@ void test_update_board(void)
 
 	//print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 	//print_all_bb(bb);
-	print_bb_pretty(bb, BLACK, WHITE);
+	print_bb_pretty(bb, BLACK, WHITE, false);
 	print_bb_small(bb);
 	TEST_ASSERT_EQUAL(0x1000EF00, bb->pieces[WHITE_PAWNS]);
 	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);

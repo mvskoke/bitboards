@@ -18,13 +18,15 @@ int main(void)
 	int turn = WHITE;
 	// comment out this orient variable if
 	// you use print_bb_small()
-	//int orient = BLACK;
+	int orient = BLACK;
+	bool ascii = false;
+
 	char buffer[BUFFER_SIZE];
 	char *command = NULL;
 	int type;
 
-	//print_bb_pretty(bb, orient, turn);
-	print_bb_small(bb);
+	print_bb_pretty(bb, orient, turn, ascii);
+	//print_bb_small(bb);
 
 	bool playing = true;
 	while (playing)
@@ -44,8 +46,8 @@ int main(void)
 		case HELP:   break;
 		case MOVE:
 			update_board(bb, command);
-			//print_bb_pretty(bb, orient, turn);
-			print_bb_small(bb);
+			print_bb_pretty(bb, orient, turn, ascii);
+			//print_bb_small(bb);
 			break;
 		}
 

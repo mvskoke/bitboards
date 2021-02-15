@@ -1,45 +1,73 @@
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "bitboards.h"
 #include "colors.h"
 #include "display.h"
 
-static void print_empty_square(int j, int i)
+static void print_empty_square(int j, int i, bool ascii)
 {
-	if ((j%2 == 1) ^ (i%2 == 1))
+	if (ascii)
 	{
-		printf("|   ");
+		if ((j%2 == 1) ^ (i%2 == 1))
+		{
+			printf(ASCII_EMPTY_LIGHT);
+		}
+		else
+		{
+			printf(ASCII_EMPTY_DARK);
+		}
 	}
 	else
 	{
-		printf("|***");
+		if ((j%2 == 1) ^ (i%2 == 1))
+		{
+			printf(UTF8_EMPTY_LIGHT);
+		}
+		else
+		{
+			printf(UTF8_EMPTY_DARK);
+		}
 	}
 }
 
-static void print_piece(char piece, int j, int i)
+static void print_piece(struct Bitboards *bb, int j, int i, bool ascii)
 {
-	if ((j%2 == 1) ^ (i%2 == 1))
+	if (ascii)
 	{
-		printf("| %c ", piece);
+		if ((j%2 == 1) ^ (i%2 == 1))
+		{
+			printf(ASCII_PIECE_LIGHT, bb->pretty_board[j][i]);
+		}
+		else
+		{
+			printf(ASCII_PIECE_DARK, bb->pretty_board[j][i]);
+		}
 	}
 	else
 	{
-		printf("|*%c*", piece);
+		if ((j%2 == 1) ^ (i%2 == 1))
+		{
+			printf(UTF8_PIECE_LIGHT, bb->pretty_board[j][i]);
+		}
+		else
+		{
+			printf(UTF8_PIECE_DARK, bb->pretty_board[j][i]);
+		}
 	}
-	
 }
 
-void print_bb_pretty(struct Bitboards *bb, int orient, int turn)
+void print_bb_pretty(struct Bitboards *bb, int orient, int turn, bool ascii)
 {
 	if (orient == turn)
 	{
-		printf(" =>  a   b   c   d   e   f   g   h\n");
+		puts(CURR_TURN);
 	}
 	else
 	{
-		printf("     a   b   c   d   e   f   g   h\n");
+		puts(NOT_TURN);
 	}
-	printf("   +-------------------------------+\n");
+	ascii ? puts(ASCII_TOP_BOTTOM) : puts(UTF8_TOP);
 
 	for (int i = 7; i >= 0; i--)
 	{
@@ -48,30 +76,32 @@ void print_bb_pretty(struct Bitboards *bb, int orient, int turn)
 		{
 			if (bb->pretty_board[j][i] == EMPTY_SQ)
 			{
-				print_empty_square(j, i);
+				print_empty_square(j, i, ascii);
 			}
 			else
 			{
-				print_piece(bb->pretty_board[j][i], j, i);
+				// pass in entire bb instead of just the
+				// piece, makes the line length shorter
+				print_piece(bb, j, i, ascii);
 			}
 		}
 		// one rank done
-		printf("| %d\n", i+1);
+		ascii ? printf(ASCII_END, i+1) : printf(UTF8_END, i+1);
 		if (i != 0)
 		{
-			printf("   ---------------------------------\n");
+			ascii ? puts(ASCII_ROW) : puts(UTF8_ROW);
 		}
 
 	}
-	printf("   +-------------------------------+\n");
+	ascii ? puts(ASCII_TOP_BOTTOM) : puts(UTF8_BOTTOM);
 
 	if (orient != turn)
 	{
-		printf(" =>  a   b   c   d   e   f   g   h\n\n");
+		puts(CURR_TURN);
 	}
 	else
 	{
-		printf("     a   b   c   d   e   f   g   h\n\n");
+		puts(NOT_TURN);
 	}
 }
 
@@ -89,5 +119,5 @@ void print_bb_small(struct Bitboards *bb)
 		}
 		printf("\n");
 	}
-	printf("\n      a b c d e f g h\n\n");
+	puts(SMALL_LETTERS);
 }

@@ -9,6 +9,7 @@ Can also get a "yes" or "no" response.
 */
 
 #include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -92,17 +93,17 @@ static int validate_one_char(char c)
 */
 static int validate_promotion(char* command)
 {
-	int sq1 = command[0] >= 'a' && command[0] <= 'h';
-	int sq2 = command[2] >= 'a' && command[2] <= 'h';
+	bool sq1 = command[0] >= 'a' && command[0] <= 'h';
+	bool sq2 = command[2] >= 'a' && command[2] <= 'h';
 
 	// the check for promo_sq WILL approve moves like
 	// h7i8q, but sq1 and sq2 take care of that
-	int promo_sq =  command[0] == command[2]-1 ||
+	bool promo_sq =  command[0] == command[2]-1 ||
 			command[0] == command[2]   ||
 			command[0] == command[2]+1;
 
-	int first_rank = command[1] == '7';
-	int promo_rank = command[3] == '8';
+	bool first_rank = command[1] == '7';
+	bool promo_rank = command[3] == '8';
 
 	if (sq1 && sq2 && first_rank && promo_rank && promo_sq)
 	{
@@ -130,13 +131,13 @@ static int validate_move(char* command)
 	// check each index:
 	// char* "e 2 e 4"
 	// index  0 1 2 3
-	int char0 = command[0] >= 'a' && command[0] <= 'h';
-	int char2 = command[2] >= 'a' && command[2] <= 'h';
+	bool char0 = command[0] >= 'a' && command[0] <= 'h';
+	bool char2 = command[2] >= 'a' && command[2] <= 'h';
 
-	int char1 = command[1] >= '1' && command[1] <= '8';
-	int char3 = command[3] >= '1' && command[3] <= '8';
+	bool char1 = command[1] >= '1' && command[1] <= '8';
+	bool char3 = command[3] >= '1' && command[3] <= '8';
 
-	int same_sq = command[0] == command [2] &&
+	bool same_sq = command[0] == command [2] &&
 		      command[1] == command[3];
 
 	if (char0 && char1 && char2 && char3 && !same_sq)
