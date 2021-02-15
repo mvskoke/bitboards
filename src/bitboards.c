@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "bitboards.h"
@@ -37,7 +38,7 @@ U64 clear_bit(U64 *bb, const int index)
 	return *bb;
 }
 
-int get_bit(const U64 bb, const int index)
+bool get_bit(const U64 bb, const int index)
 {
 	return (bb >> index) & 1ULL;
 }

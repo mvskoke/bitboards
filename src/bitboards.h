@@ -1,11 +1,11 @@
 #ifndef BITBOARDS_H
 #define BITBOARDS_H
 
+#include <stdbool.h>
 #include <stdint.h>
+#define U64 uint64_t
 
 #include "colors.h"
-
-#define U64 uint64_t
 
 // represent empty squares with a period
 // in the bitboard's pretty board
@@ -74,7 +74,7 @@ U64 set_bit(U64 *bb, const int index);
 U64 flip_bit(U64 *bb, const int index);
 U64 clear_bb(U64 *bb);
 U64 clear_bit(U64 *bb, const int index);
-int get_bit(const U64 bb, const int index);
+bool get_bit(const U64 bb, const int index);
 
 void print_bb(U64 bb);
 

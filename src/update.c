@@ -27,13 +27,15 @@ static enum PieceType get_piece_type(struct Bitboards *bb, char *move)
 	for (int i = 0; i < TOTAL_BB; i++)
 	{
 		// bitboard is set at index
-		if (bb->pieces[i] & (1ULL << index))
+		if (get_bit(bb->pieces[i], index))
 		{
 			return i;
 		}
 	}
 	// THIS SHOULD NEVER HAPPEN.
 	// YOU SHOULD VALIDATE PIECE EXISTENCE BEFORE CALLING THIS.
+	// I'M ADDING THIS EXTRANEOUS return STATEMENT TO MAKE
+	// THE COMPILER SHUT UP.
 	return NONEXISTENT;
 }
 

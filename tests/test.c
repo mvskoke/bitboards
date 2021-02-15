@@ -353,9 +353,12 @@ void test_update_board(void)
 	update_board(bb, "f1b5");
 
 	//print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
-	//print_all_bb(bb);
-	print_bb_pretty(bb, BLACK, WHITE, false);
+	print_bb_pretty(bb, BLACK, BLACK, false);
+	print_bb_pretty(bb, WHITE, BLACK, false);
 	print_bb_small(bb);
+	print_bb(bb->pieces[WHITE_ALL]);
+	print_bb(bb->pieces[BLACK_ALL]);
+
 	TEST_ASSERT_EQUAL(0x1000EF00, bb->pieces[WHITE_PAWNS]);
 	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 	free(bb);
@@ -367,7 +370,7 @@ int main(void)
 	RUN_TEST(test_set_bit);
 	RUN_TEST(test_flip_bit);
 	RUN_TEST(test_get_bit);
-	RUN_TEST(test_init_bb);
+	//RUN_TEST(test_init_bb);
 	RUN_TEST(test_clear_bit);
 	RUN_TEST(test_update_board);
 	return UNITY_END();

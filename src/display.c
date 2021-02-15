@@ -5,103 +5,187 @@
 #include "colors.h"
 #include "display.h"
 
-static void print_empty_square(int j, int i, bool ascii)
+static void print_empty_square(int i, int j, bool ascii)
 {
 	if (ascii)
 	{
-		if ((j%2 == 1) ^ (i%2 == 1))
+		if ((i+j) % 2 == 0)
 		{
-			printf(ASCII_EMPTY_LIGHT);
+			printf(ASCII_EMPTY_DARK);
 		}
 		else
 		{
-			printf(ASCII_EMPTY_DARK);
+			printf(ASCII_EMPTY_LIGHT);
 		}
 	}
 	else
 	{
-		if ((j%2 == 1) ^ (i%2 == 1))
+		if ((i+j) % 2 == 0)
 		{
-			printf(UTF8_EMPTY_LIGHT);
+			printf(UTF8_EMPTY_DARK);
 		}
 		else
 		{
-			printf(UTF8_EMPTY_DARK);
+			printf(UTF8_EMPTY_LIGHT);
 		}
 	}
 }
 
-static void print_piece(struct Bitboards *bb, int j, int i, bool ascii)
+static void print_piece(struct Bitboards *bb, int i, int j, bool ascii)
 {
+	// this is solely to make the lines
+	// shorter inside the if-statements
+	char piece = bb->pretty_board[i][j];
+
 	if (ascii)
 	{
-		if ((j%2 == 1) ^ (i%2 == 1))
+		if ((i+j) % 2 == 0)
 		{
-			printf(ASCII_PIECE_LIGHT, bb->pretty_board[j][i]);
+			printf(ASCII_PIECE_DARK, piece);
 		}
 		else
 		{
-			printf(ASCII_PIECE_DARK, bb->pretty_board[j][i]);
+			printf(ASCII_PIECE_LIGHT, piece);
 		}
 	}
 	else
 	{
-		if ((j%2 == 1) ^ (i%2 == 1))
+		if ((i+j) % 2 == 0)
 		{
-			printf(UTF8_PIECE_LIGHT, bb->pretty_board[j][i]);
+			printf(UTF8_PIECE_DARK, piece);
 		}
 		else
 		{
-			printf(UTF8_PIECE_DARK, bb->pretty_board[j][i]);
+			printf(UTF8_PIECE_LIGHT, piece);
+		}
+	}
+}
+
+static void print_black_on_top(struct Bitboards *bb, bool ascii)
+{
+	// we must start at top row (j coordinate),
+	// and go by columns (i coordinate)
+	for (int j = 7; j >= 0; j--)
+	{
+		printf(" %d ", j+1);
+		for (int i = 0; i < FILES; i++)
+		{
+			if (bb->pretty_board[i][j] == EMPTY_SQ)
+			{
+				print_empty_square(i, j, ascii);
+			}
+			else
+			{
+				// pass in entire bb instead of just the
+				// piece, makes the line length shorter
+				print_piece(bb, i, j, ascii);
+			}
+		}
+		// one rank done, close off the squares
+		ascii ? printf(ASCII_END, j+1) : printf(UTF8_END, j+1);
+
+		// and print the row border
+		// (but not if we're at the last rank)
+		// if black is on top, first rank is rank 7
+		// so the last rank is rank 0
+		if (j != 0)
+		{
+			ascii ? puts(ASCII_ROW) : puts(UTF8_ROW);
+		}
+
+	}
+}
+
+static void print_white_on_top(struct Bitboards *bb, bool ascii)
+{
+	for (int j = 0; j < RANKS; j++)
+	{
+		printf(" %d ", j+1);
+		for (int i = 7; i >= 0; i--)
+		{
+			if (bb->pretty_board[i][j] == EMPTY_SQ)
+			{
+				print_empty_square(i, j, ascii);
+			}
+			else
+			{
+				print_piece(bb, i, j, ascii);
+			}
+		}
+		ascii ? printf(ASCII_END, j+1) : printf(UTF8_END, j+1);
+		// if white is on top, first rank is rank 0
+		// so last rank is rank 7
+		if (j != 7)
+		{
+			ascii ? puts(ASCII_ROW) : puts(UTF8_ROW);
 		}
 	}
 }
 
 void print_bb_pretty(struct Bitboards *bb, int orient, int turn, bool ascii)
 {
-	if (orient == turn)
+	// print letters
+	if (orient == BLACK)
 	{
-		puts(CURR_TURN);
+		if (orient == turn)
+		{
+			puts(BLACK_CURR_TURN);
+		}
+		else
+		{
+			puts(BLACK_NOT_TURN);
+		}
 	}
 	else
 	{
-		puts(NOT_TURN);
+		if (orient == turn)
+		{
+			puts(WHITE_CURR_TURN);
+		}
+		else
+		{
+			puts(WHITE_NOT_TURN);
+		}
 	}
+
+	// print top row border
 	ascii ? puts(ASCII_TOP_BOTTOM) : puts(UTF8_TOP);
 
-	for (int i = 7; i >= 0; i--)
+	// print board
+	if (orient == WHITE)
 	{
-		printf(" %d ", i+1);
-		for (int j = 0; j < FILES; j++)
-		{
-			if (bb->pretty_board[j][i] == EMPTY_SQ)
-			{
-				print_empty_square(j, i, ascii);
-			}
-			else
-			{
-				// pass in entire bb instead of just the
-				// piece, makes the line length shorter
-				print_piece(bb, j, i, ascii);
-			}
-		}
-		// one rank done
-		ascii ? printf(ASCII_END, i+1) : printf(UTF8_END, i+1);
-		if (i != 0)
-		{
-			ascii ? puts(ASCII_ROW) : puts(UTF8_ROW);
-		}
-
-	}
-	ascii ? puts(ASCII_TOP_BOTTOM) : puts(UTF8_BOTTOM);
-
-	if (orient != turn)
-	{
-		puts(CURR_TURN);
+		print_white_on_top(bb, ascii);
 	}
 	else
 	{
-		puts(NOT_TURN);
+		print_black_on_top(bb, ascii);
+	}
+
+	// close with bottom row border
+	ascii ? puts(ASCII_TOP_BOTTOM) : puts(UTF8_BOTTOM);
+
+	// print letters again
+	if (orient == BLACK)
+	{
+		if (orient != turn)
+		{
+			puts(BLACK_CURR_TURN);
+		}
+		else
+		{
+			puts(BLACK_NOT_TURN);
+		}
+	}
+	else
+	{
+		if (orient != turn)
+		{
+			puts(WHITE_CURR_TURN);
+		}
+		else
+		{
+			puts(WHITE_NOT_TURN);
+		}
 	}
 }
 
@@ -119,5 +203,5 @@ void print_bb_small(struct Bitboards *bb)
 		}
 		printf("\n");
 	}
-	puts(SMALL_LETTERS);
+	puts(SMALL_BOARD_LETTERS);
 }
