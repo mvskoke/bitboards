@@ -5,6 +5,9 @@
 #include "bitboards.h"
 #include "colors.h"
 
+// user should have malloc'd memory for struct Bitboards PRIOR
+// to calling any of the init functions
+
 static void verify_safe_malloc(void *ptr)
 {
 	if (ptr == NULL)
@@ -20,28 +23,29 @@ void init_bb(struct Bitboards *bb)
 
 	/**** PIECE LOCATIONS ****/
 
-	//                                                                                     7654 3210
-	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 1111 1111 | 0000 0000
+	//             7654 3210
+	// 1111 1111 | 0000 0000
 	bb->pieces[WHITE_PAWNS]      = 0x000000000000FF00;
 
-	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0100 0010
+	// 0000 0000 | 0100 0010
 	bb->pieces[WHITE_KNIGHTS]    = 0x0000000000000042;
 
-	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0010 0100
+	// 0000 0000 | 0010 0100
 	bb->pieces[WHITE_BISHOPS]    = 0x0000000000000024;
 
-	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 1000 0001
+	// 0000 0000 | 1000 0001
 	bb->pieces[WHITE_ROOKS]      = 0x0000000000000081;
 
-	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 1000
+	// 0000 0000 | 0000 1000
 	bb->pieces[WHITE_QUEENS]     = 0x0000000000000008;
 
-	// 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0000 0000 | 0001 0000
+	// 0000 0000 | 0001 0000
 	bb->pieces[WHITE_KING]       = 0x0000000000000010;
 
 	bb->pieces[WHITE_ALL]        = 0x000000000000FFFF;
 
-	// for black pieces, move the pawns right by 5 bytes, other pieces by 7 bytes
+	// for black pieces, move the pawns right by 5 bytes,
+	// and other pieces by 7 bytes
 	bb->pieces[BLACK_PAWNS]      = 0x00FF000000000000;
 	bb->pieces[BLACK_KNIGHTS]    = 0x4200000000000000;
 	bb->pieces[BLACK_BISHOPS]    = 0x2400000000000000;
@@ -55,7 +59,7 @@ void init_bb(struct Bitboards *bb)
 	// we can hardcode these because it's just the setup
 	bb->attacks[WHITE_PAWNS]     = 0x00000000FFFF0000;
 
-	// 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 0000 0000 / 1010 0101 / 0000 0000 / 0000 0000
+	// 1010 0101 / 0000 0000 / 0000 0000
 	bb->attacks[WHITE_KNIGHTS]   = 0x0000000000A50000;
 
 	// you can only move pawns and knights on the first turn
@@ -204,12 +208,12 @@ void init_bb_fen(struct Bitboards *bb, char fen[])
 			fen_updates_bb(bb, *tmp, index);
 			index++;
 		}
-		if (isdigit(*tmp))
+		else if (isdigit(*tmp))
 		{
 			// convert digit char to int
 			index += *tmp - '0';
 		}
-		if (*tmp == '/')
+		else if (*tmp == '/')
 		{
 			rank--;
 			index = rank * 8;

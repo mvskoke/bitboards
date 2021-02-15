@@ -44,18 +44,18 @@ int main(void)
 		case FLIP:   break;
 		case QUIT:   playing = false; break;
 		case HELP:   break;
-		case MOVE:
-			update_board(bb, command);
-			print_bb_pretty(bb, orient, turn, ascii);
-			//print_bb_small(bb);
-			break;
+		case MOVE:   update_board(bb, command); break;
 		}
 
-		// if command was illegal, the next iteration should
-		// not change the current color
-		if (type != ILLEGAL)
+		turn = !turn;
+
+		// print board AFTER updating turn because the next
+		// iteration starts by getting the NEXT player's command
+		// and only reprint board if user entered a move command
+		if (type == MOVE)
 		{
-			turn = !turn;
+			print_bb_pretty(bb, orient, turn, ascii);
+			//print_bb_small(bb);
 		}
 	}
 	free(bb);
