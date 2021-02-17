@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#define U64 uint64_t
 
 #include "colors.h"
 
@@ -11,49 +10,33 @@
 // in the bitboard's pretty board
 #define EMPTY_SQ '.'
 
-// indexing the arrays of bitboards of pieces
+// for convenience
+#define U64 uint64_t
+
+// indexing the arrays of bitboards
 enum PieceType
 {
-	BLACK_PAWN,   // 0 == i
-	BLACK_KNIGHT, // 1
-	BLACK_BISHOP, // 2
-	BLACK_ROOK,   // 3
-	BLACK_QUEEN,  // 4
-	BLACK_KING,   // 5
+	BLACK_PAWNS,   // 0 == i
+	BLACK_KNIGHTS, // 1
+	BLACK_BISHOPS, // 2
+	BLACK_ROOKS,   // 3
+	BLACK_QUEENS,  // 4
+	BLACK_KING,    // 5
 
-	WHITE_PAWN,   // 6 == i+6
-	WHITE_KNIGHT, // 7
-	WHITE_BISHOP, // 8
-	WHITE_ROOK,   // 9
-	WHITE_QUEEN,  // 10
-	WHITE_KING,   // 11
+	WHITE_PAWNS,   // 6 == i+6
+	WHITE_KNIGHTS, // 7
+	WHITE_BISHOPS, // 8
+	WHITE_ROOKS,   // 9
+	WHITE_QUEENS,  // 10
+	WHITE_KING,    // 11
 
 	BLACK_ALL,
 	WHITE_ALL,
 	TOTAL_BB,
+
+	// -2 to ignore WHITE_ALL and BLACK_ALL
+	TOTAL_ATTACKS = TOTAL_BB-2,
 	NONEXISTENT  // no piece
-};
-
-#define TOTAL_ATTACKS (TOTAL_BB-2)
-
-// same as above but plural
-// and used for indexing the arrays of bitboards of attacks
-enum PieceBBIndex
-{
-	BLACK_PAWNS = BLACK_PAWN,
-	BLACK_KNIGHTS = BLACK_KNIGHT,
-	BLACK_BISHOPS = BLACK_BISHOP,
-	BLACK_ROOKS = BLACK_ROOK,
-	BLACK_QUEENS = BLACK_QUEEN,
-	// don't need a BLACK_KINGS
-
-	WHITE_PAWNS = WHITE_PAWN,
-	WHITE_KNIGHTS = WHITE_KNIGHT,
-	WHITE_BISHOPS = WHITE_BISHOP,
-	WHITE_ROOKS = WHITE_ROOK,
-	WHITE_QUEENS = WHITE_QUEEN,
-	// we can end here, no need to
-	// pluralize the rest
 };
 
 struct Bitboards
@@ -67,7 +50,6 @@ struct Bitboards
 	// square is either empty or has enemy piece to capture
 	// but unknown if move would leave you in check
 	U64 attacks[TOTAL_ATTACKS];
-	// -2 to ignore WHITE_ALL and BLACK_ALL
 };
 
 U64 set_bit(U64 *bb, const int index);

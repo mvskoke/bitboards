@@ -7,28 +7,14 @@
 
 static void print_empty_square(int i, int j, bool ascii)
 {
-	if (ascii)
-	{
-		if ((i+j) % 2 == 0)
-		{
-			printf(ASCII_EMPTY_DARK);
-		}
-		else
-		{
-			printf(ASCII_EMPTY_LIGHT);
-		}
-	}
+	if (ascii && (i+j) % 2 == 0)
+		printf(ASCII_EMPTY_DARK);
+	else if (ascii && (i+j) % 2 != 0)
+		printf(ASCII_EMPTY_LIGHT);
+	else if (!ascii && (i+j) % 2 == 0)
+		printf(UTF8_EMPTY_DARK);
 	else
-	{
-		if ((i+j) % 2 == 0)
-		{
-			printf(UTF8_EMPTY_DARK);
-		}
-		else
-		{
-			printf(UTF8_EMPTY_LIGHT);
-		}
-	}
+		printf(UTF8_EMPTY_LIGHT);
 }
 
 static void print_piece(struct Bitboards *bb, int i, int j, bool ascii)
@@ -37,28 +23,14 @@ static void print_piece(struct Bitboards *bb, int i, int j, bool ascii)
 	// shorter inside the if-statements
 	char piece = bb->pretty_board[i][j];
 
-	if (ascii)
-	{
-		if ((i+j) % 2 == 0)
-		{
-			printf(ASCII_PIECE_DARK, piece);
-		}
-		else
-		{
-			printf(ASCII_PIECE_LIGHT, piece);
-		}
-	}
+	if (ascii && (i+j) % 2 == 0)
+		printf(ASCII_PIECE_DARK, piece);
+	else if (ascii && (i+j) % 2 != 0)
+		printf(ASCII_PIECE_LIGHT, piece);
+	else if (!ascii && (i+j) % 2 == 0)
+		printf(UTF8_PIECE_DARK, piece);
 	else
-	{
-		if ((i+j) % 2 == 0)
-		{
-			printf(UTF8_PIECE_DARK, piece);
-		}
-		else
-		{
-			printf(UTF8_PIECE_LIGHT, piece);
-		}
-	}
+		printf(UTF8_PIECE_LIGHT, piece);
 }
 
 static void print_black_on_top(struct Bitboards *bb, bool ascii)
@@ -113,6 +85,7 @@ static void print_white_on_top(struct Bitboards *bb, bool ascii)
 			}
 		}
 		ascii ? printf(ASCII_END, j+1) : printf(UTF8_END, j+1);
+
 		// if white is on top, first rank is rank 0
 		// so last rank is rank 7
 		if (j != 7)
@@ -125,68 +98,37 @@ static void print_white_on_top(struct Bitboards *bb, bool ascii)
 void print_bb_pretty(struct Bitboards *bb, int orient, int turn, bool ascii)
 {
 	// print letters
-	if (orient == BLACK)
-	{
-		if (orient == turn)
-		{
-			puts(BLACK_CURR_TURN);
-		}
-		else
-		{
-			puts(BLACK_NOT_TURN);
-		}
-	}
+	if (orient == BLACK && orient == turn)
+		puts(BLACK_CURR_TURN);
+	else if (orient == BLACK && orient != turn)
+		puts(BLACK_NOT_TURN);
+	else if (orient == WHITE && orient == turn)
+		puts(WHITE_CURR_TURN);
 	else
-	{
-		if (orient == turn)
-		{
-			puts(WHITE_CURR_TURN);
-		}
-		else
-		{
-			puts(WHITE_NOT_TURN);
-		}
-	}
+		puts(WHITE_NOT_TURN);
 
 	// print top row border
 	ascii ? puts(ASCII_TOP_BOTTOM) : puts(UTF8_TOP);
 
 	// print board
 	if (orient == WHITE)
-	{
 		print_white_on_top(bb, ascii);
-	}
 	else
-	{
 		print_black_on_top(bb, ascii);
-	}
 
 	// close with bottom row border
 	ascii ? puts(ASCII_TOP_BOTTOM) : puts(UTF8_BOTTOM);
 
 	// print letters again
-	if (orient == BLACK)
-	{
-		if (orient != turn)
-		{
-			puts(BLACK_CURR_TURN);
-		}
-		else
-		{
-			puts(BLACK_NOT_TURN);
-		}
-	}
+	if (orient == BLACK && orient != turn)
+		puts(BLACK_CURR_TURN);
+	else if (orient == BLACK && orient == turn)
+		puts(BLACK_NOT_TURN);
+	else if (orient == WHITE && orient != turn)
+		puts(WHITE_CURR_TURN);
 	else
-	{
-		if (orient != turn)
-		{
-			puts(WHITE_CURR_TURN);
-		}
-		else
-		{
-			puts(WHITE_NOT_TURN);
-		}
-	}
+		puts(WHITE_NOT_TURN);
+
 }
 
 // special thanks to Oscar Gutierrez Toledo for the

@@ -17,4 +17,4 @@ $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	mv *.o $(OBJ)/
 
 clean:
-	rm -f test
+	rm -f test $(OBJ)/*.o

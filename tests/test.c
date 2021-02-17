@@ -310,7 +310,7 @@ void test_clear_bit(void)
 	bb = UINT64_MAX;
 	// ... 1110 1111 1111
 	TEST_ASSERT_EQUAL(0xFFFFFFFFFFFFFEFF, clear_bit(&bb, 8));
-	
+
 	bb = UINT64_MAX;
 	// 0111 1111 1111 ...
 	TEST_ASSERT_EQUAL(0x7FFFFFFFFFFFFFFF, clear_bit(&bb, 63));
@@ -353,8 +353,14 @@ void test_update_board(void)
 	update_board(bb, "f1b5");
 
 	//print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
-	print_bb_pretty(bb, BLACK, BLACK, false);
-	print_bb_pretty(bb, WHITE, BLACK, false);
+	bool ascii = true;
+	print_bb_pretty(bb, BLACK, BLACK, ascii);
+	print_bb_pretty(bb, WHITE, BLACK, ascii);
+
+	ascii = false;
+	print_bb_pretty(bb, BLACK, BLACK, ascii);
+	print_bb_pretty(bb, WHITE, BLACK, ascii);
+
 	print_bb_small(bb);
 	print_bb(bb->pieces[WHITE_ALL]);
 	print_bb(bb->pieces[BLACK_ALL]);
@@ -370,7 +376,7 @@ int main(void)
 	RUN_TEST(test_set_bit);
 	RUN_TEST(test_flip_bit);
 	RUN_TEST(test_get_bit);
-	//RUN_TEST(test_init_bb);
+	RUN_TEST(test_init_bb);
 	RUN_TEST(test_clear_bit);
 	RUN_TEST(test_update_board);
 	return UNITY_END();

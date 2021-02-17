@@ -1,4 +1,5 @@
 #include "bitboards.h"
+#include "colors.h"
 
 static int get_sq_index(const char* sq)
 {
@@ -29,15 +30,29 @@ static enum PieceType get_piece_type(struct Bitboards *bb, char *move)
 		// bitboard is set at index
 		if (get_bit(bb->pieces[i], index))
 		{
+			// don't need to worry about matching against
+			// BLACK_ALL or WHITE_ALL. if it doesn't
+			// match against the individual pieces, it
+			// won't match against the COLOR_ALL boards
 			return i;
 		}
 	}
-	// THIS SHOULD NEVER HAPPEN.
-	// YOU SHOULD VALIDATE PIECE EXISTENCE BEFORE CALLING THIS.
-	// I'M ADDING THIS EXTRANEOUS return STATEMENT TO MAKE
-	// THE COMPILER SHUT UP.
 	return NONEXISTENT;
 }
+
+// static int get_piece_color(struct Bitboards *bb, char *move)
+// {
+// 	int index = get_sq_index(move);
+// 	if (get_bit(bb->pieces[BLACK_ALL], index))
+// 	{
+// 		return BLACK;
+// 	}
+// 	else if (get_bit(bb->pieces[WHITE_ALL], index))
+// 	{
+// 		return WHITE;
+// 	}
+// 	return NONEXISTENT;
+// }
 
 // update pretty board AFTER A MOVE
 static void update_pretty_board(struct Bitboards *bb, int start, int end)
@@ -61,7 +76,7 @@ void update_board(struct Bitboards *bb, char* move)
 	int color;
 
 	// pieces are sorted black to white, pawn to king
-	if (piece < WHITE_PAWN)
+	if (piece < WHITE_PAWNS)
 	{
 		color = BLACK;
 	}

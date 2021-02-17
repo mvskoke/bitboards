@@ -6,7 +6,8 @@
 #include "colors.h"
 
 // user should have malloc'd memory for struct Bitboards PRIOR
-// to calling any of the init functions
+// to calling any of the init functions, and these functions
+// will check the malloc'd pointer
 
 static void verify_safe_malloc(void *ptr)
 {
@@ -94,6 +95,7 @@ void init_bb(struct Bitboards *bb)
 		bb->pretty_board[i][1] = 'P';
 		bb->pretty_board[i][6] = 'p';
 	}
+
 	bb->pretty_board[0][0] = 'R';
 	bb->pretty_board[0][7] = 'r';
 
@@ -148,18 +150,18 @@ static enum PieceType letter_to_piece_type(char c)
 {
 	switch (c)
 	{
-	case 'p': return BLACK_PAWN;
-	case 'n': return BLACK_KNIGHT;
-	case 'b': return BLACK_BISHOP;
-	case 'r': return BLACK_ROOK;
-	case 'q': return BLACK_QUEEN;
+	case 'p': return BLACK_PAWNS;
+	case 'n': return BLACK_KNIGHTS;
+	case 'b': return BLACK_BISHOPS;
+	case 'r': return BLACK_ROOKS;
+	case 'q': return BLACK_QUEENS;
 	case 'k': return BLACK_KING;
 
-	case 'P': return WHITE_PAWN;
-	case 'N': return WHITE_KNIGHT;
-	case 'B': return WHITE_BISHOP;
-	case 'R': return WHITE_ROOK;
-	case 'Q': return WHITE_QUEEN;
+	case 'P': return WHITE_PAWNS;
+	case 'N': return WHITE_KNIGHTS;
+	case 'B': return WHITE_BISHOPS;
+	case 'R': return WHITE_ROOKS;
+	case 'Q': return WHITE_QUEENS;
 	case 'K': return WHITE_KING;
 	default: return NONEXISTENT;
 	}
