@@ -20,8 +20,8 @@
 #define UTF8_BOTTOM      "   └───┴───┴───┴───┴───┴───┴───┴───┘"
 
 // there's supposed to be an extra newline here
-#define SMALL_BOARD_LETTERS "\n      a b c d e f g h\n"
-
+#define SMALL_BLACK_TOP "\n      a b c d e f g h\n"
+#define SMALL_WHITE_TOP "\n      h g f e d b c a\n"
 
 // use printf with string-formatted macros
 #define ASCII_EMPTY_LIGHT "|   "
@@ -41,6 +41,6 @@
 
 
 void print_bb_pretty(struct Bitboards *bb, int orient, int turn, bool ascii);
-void print_bb_small(struct Bitboards *bb);
+void print_bb_small(struct Bitboards *bb, int orient);
 
 #endif

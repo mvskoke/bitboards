@@ -131,19 +131,45 @@ void print_bb_pretty(struct Bitboards *bb, int orient, int turn, bool ascii)
 
 }
 
-// special thanks to Oscar Gutierrez Toledo for the
-// formatting of this board style
-// "Toledo Chess 1" - https://nanochess.org/chess.html
-void print_bb_small(struct Bitboards *bb)
+static void small_black_top(struct Bitboards *bb)
 {
-	for (int i = 7; i >= 0; i--)
+	for (int j = 7; j >= 0; j--)
 	{
-		printf("   %d ", i+1);
-		for (int j = 0; j < FILES; j++)
+		printf("   %d ", j+1);
+		for (int i = 0; i < FILES; i++)
 		{
-			printf(" %c", bb->pretty_board[j][i]);
+			printf(" %c", bb->pretty_board[i][j]);
 		}
 		printf("\n");
 	}
-	puts(SMALL_BOARD_LETTERS);
+	puts(SMALL_BLACK_TOP);
+}
+
+static void small_white_top(struct Bitboards *bb)
+{
+	for (int j = 0; j < RANKS; j++)
+	{
+		printf("   %d ", j+1);
+		for (int i = 7; i >= 0; i--)
+		{
+			printf(" %c", bb->pretty_board[i][j]);
+		}
+		printf("\n");
+	}
+	puts(SMALL_WHITE_TOP);
+}
+
+// special thanks to Oscar Gutierrez Toledo for the
+// formatting of this board style
+// "Toledo Chess 1" - https://nanochess.org/chess.html
+void print_bb_small(struct Bitboards *bb, int orient)
+{
+	if (orient == WHITE)
+	{
+		small_white_top(bb);
+	}
+	else
+	{
+		small_black_top(bb);
+	}
 }

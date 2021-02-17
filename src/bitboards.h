@@ -30,13 +30,13 @@ enum PieceType
 	WHITE_QUEENS,  // 10
 	WHITE_KING,    // 11
 
-	BLACK_ALL,
-	WHITE_ALL,
-	TOTAL_BB,
+	BLACK_ALL,     // 12
+	WHITE_ALL,     // 13
+	TOTAL_BB,      // 14
 
 	// -2 to ignore WHITE_ALL and BLACK_ALL
 	TOTAL_ATTACKS = TOTAL_BB-2,
-	NONEXISTENT  // no piece
+	NONEXISTENT = 15 // no piece
 };
 
 struct Bitboards

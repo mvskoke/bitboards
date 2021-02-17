@@ -361,7 +361,9 @@ void test_update_board(void)
 	print_bb_pretty(bb, BLACK, BLACK, ascii);
 	print_bb_pretty(bb, WHITE, BLACK, ascii);
 
-	print_bb_small(bb);
+	print_bb_small(bb, BLACK);
+	print_bb_small(bb, WHITE);
+
 	print_bb(bb->pieces[WHITE_ALL]);
 	print_bb(bb->pieces[BLACK_ALL]);
 
