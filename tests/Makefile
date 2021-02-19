@@ -3,7 +3,7 @@ CFLAGS = -Wall -Werror -Wextra -g
 
 OBJ = ../obj
 SRC = ../src
-DEP = $(OBJ)/test.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(OBJ)/update.o
+DEP = $(OBJ)/test.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(OBJ)/move.o
 
 test: $(DEP)
 	$(CC) $(CFLAGS) $^ ../unity/unity.c -o test

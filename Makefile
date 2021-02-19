@@ -3,7 +3,7 @@ CFLAGS = -Wall -Werror -Wextra -g
 
 OBJ = obj
 SRC = src
-DEP = $(OBJ)/main.o $(OBJ)/commands.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(OBJ)/update.o
+DEP = $(OBJ)/main.o $(OBJ)/commands.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(OBJ)/move.o
 
 # before creating main executable, compile all object files
 main: $(DEP)

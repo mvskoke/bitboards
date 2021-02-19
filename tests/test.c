@@ -7,7 +7,7 @@
 #include "../src/colors.h"
 #include "../src/display.h"
 #include "../src/init.h"
-#include "../src/update.h"
+#include "../src/move.h"
 #include "../unity/unity.h"
 
 void setUp(void) {}
@@ -372,6 +372,18 @@ void test_update_board(void)
 	free(bb);
 }
 
+void test_validate_move(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
+	int turn = BLACK;
+
+	TEST_ASSERT_EQUAL(false, validate_move(bb, "d8d7", turn));
+	TEST_ASSERT_EQUAL(true, validate_move(bb, "c8b8", turn));
+
+	free(bb);
+}
+
 int main(void)
 {
 	UNITY_BEGIN();
@@ -381,5 +393,6 @@ int main(void)
 	RUN_TEST(test_init_bb);
 	RUN_TEST(test_clear_bit);
 	RUN_TEST(test_update_board);
+	RUN_TEST(test_validate_move);
 	return UNITY_END();
 }

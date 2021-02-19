@@ -6,7 +6,7 @@
 #include "commands.h"
 #include "display.h"
 #include "init.h"
-#include "update.h"
+#include "move.h"
 
 #define BUFFER_SIZE 1024
 

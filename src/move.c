@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include "bitboards.h"
 #include "colors.h"
 
@@ -40,19 +42,19 @@ static enum PieceType get_piece_type(struct Bitboards *bb, char *move)
 	return NONEXISTENT;
 }
 
-// static int get_piece_color(struct Bitboards *bb, char *move)
-// {
-// 	int index = get_sq_index(move);
-// 	if (get_bit(bb->pieces[BLACK_ALL], index))
-// 	{
-// 		return BLACK;
-// 	}
-// 	else if (get_bit(bb->pieces[WHITE_ALL], index))
-// 	{
-// 		return WHITE;
-// 	}
-// 	return NONEXISTENT;
-// }
+static int get_piece_color(struct Bitboards *bb, char *move)
+{
+	int index = get_sq_index(move);
+	if (get_bit(bb->pieces[BLACK_ALL], index))
+	{
+		return BLACK;
+	}
+	else if (get_bit(bb->pieces[WHITE_ALL], index))
+	{
+		return WHITE;
+	}
+	return NONEXISTENT;
+}
 
 // update pretty board AFTER A MOVE
 static void update_pretty_board(struct Bitboards *bb, int start, int end)
@@ -64,6 +66,15 @@ static void update_pretty_board(struct Bitboards *bb, int start, int end)
 	int end_j = (end - end_i) / 8;
 	bb->pretty_board[end_i][end_j] = bb->pretty_board[start_i][start_j];
 	bb->pretty_board[start_i][start_j] = EMPTY_SQ;
+}
+
+void update_attacks(struct Bitboards *bb)
+{
+	// zero out the old attacks
+	for (int i = 0; i < TOTAL_ATTACKS; i++)
+	{
+		bb->attacks[i] = 0;
+	}
 }
 
 // move a piece
@@ -100,4 +111,27 @@ void update_board(struct Bitboards *bb, char* move)
 		set_bit(&(bb->pieces[piece]), end);
 		set_bit(&(bb->pieces[WHITE_ALL]), end);
 	}
+	update_attacks(bb);
+}
+
+// piece exists and same color as current turn
+static bool valid_piece_exists(struct Bitboards *bb, char *move, int turn)
+{
+	enum PieceType type = get_piece_type(bb, move);
+	int color = get_piece_color(bb, move);
+
+	if (type != NONEXISTENT && color == turn)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool validate_move(struct Bitboards *bb, char *move, int turn)
+{
+	if (!valid_piece_exists(bb, move, turn))
+	{
+		return false;
+	}
+	return true;
 }
