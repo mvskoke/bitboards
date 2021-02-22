@@ -3,3 +3,4 @@ tests/*.o
 tests/test
 tests/output.c
 main
+sample.txt

@@ -18,6 +18,12 @@ static void verify_safe_malloc(void *ptr)
 	}
 }
 
+void init_moves(struct Move *curr_move, struct Move *prev_move)
+{
+	verify_safe_malloc(curr_move);
+	verify_safe_malloc(prev_move);
+}
+
 void init_bb(struct Bitboards *bb)
 {
 	verify_safe_malloc(bb);

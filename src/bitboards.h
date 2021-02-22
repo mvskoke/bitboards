@@ -39,6 +39,14 @@ enum PieceType
 	NONEXISTENT = 15 // no piece
 };
 
+struct Move
+{
+	int start;
+	int end;
+	int color;
+	enum PieceType piece;
+};
+
 struct Bitboards
 {
 	char pretty_board[FILES][RANKS];
@@ -59,5 +67,7 @@ U64 clear_bit(U64 *bb, const int index);
 bool get_bit(const U64 bb, const int index);
 
 void print_bb(U64 bb);
+
+struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command);
 
 #endif

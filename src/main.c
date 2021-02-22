@@ -7,6 +7,7 @@
 #include "display.h"
 #include "init.h"
 #include "move.h"
+#include "update.h"
 
 #define BUFFER_SIZE 1024
 
@@ -14,6 +15,10 @@ int main(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb(bb);
+
+	struct Move *curr_move = malloc(sizeof(struct Move));
+	struct Move *prev_move = malloc(sizeof(struct Move));
+	init_moves(curr_move, prev_move);
 
 	int turn = WHITE;
 	// comment out this orient variable if
@@ -31,6 +36,7 @@ int main(void)
 	bool playing = true;
 	while (playing)
 	{
+		prev_move = curr_move;
 		do
 		{
 			command = get_command(buffer, BUFFER_SIZE, turn);
@@ -44,7 +50,10 @@ int main(void)
 		case FLIP:   break;
 		case QUIT:   playing = false; break;
 		case HELP:   break;
-		case MOVE:   update_board(bb, command); break;
+		case MOVE:
+			if (parse_move(bb, curr_move, command))
+				update_board(bb, curr_move);
+			break;
 		}
 
 		turn = !turn;
@@ -59,5 +68,9 @@ int main(void)
 		}
 	}
 	free(bb);
+	free(curr_move);
+
+	// double free detected in tcache2
+	//free(prev_move);
 	return 0;
 }
