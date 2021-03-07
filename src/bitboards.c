@@ -65,7 +65,7 @@ void print_bb(U64 bb)
 		}
 		else
 		{
-			printf(", ");
+			printf(" ");
 		}
 	}
 	printf("\n\n");
@@ -92,7 +92,7 @@ static int get_sq_index(const char* sq)
 
 // you can pass in a move or a single square. it only checks
 // the first two chars
-static enum PieceType get_piece_type(struct Bitboards *bb, int index)
+static int get_piece_type(struct Bitboards *bb, int index)
 {
 	for (int i = 0; i < TOTAL_BB; i++)
 	{
@@ -124,12 +124,15 @@ static int get_piece_color(struct Bitboards *bb, int index)
 }
 
 // validate_command = legal syntax
-// parse_move = pseudo-legal
+// parse_move = piece exists
 // validate_move = legal
 
-// checks if move is pseudo-legal
+// checks if piece exists
 // if illegal, return NULL
-// if pseudo-legal, return the Move struct ptr
+// if exists, return the Move struct ptr
+
+// destructive: modifies *move
+// encodes a move command into an easy-to-parse form for move validation
 struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command)
 {
 	move->start = get_sq_index(command);
@@ -137,10 +140,56 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command)
 	move->piece = get_piece_type(bb, move->start);
 
 	if (move->piece == NONEXISTENT)
-	{
 		return NULL;
-	}
 
 	move->color = get_piece_color(bb, move->start);
 	return move;
+}
+
+// just for debugging
+void display_move(struct Move *move)
+{
+	int start_i = move->start % 8;
+	int start_j = (move->start - start_i) / 8;
+
+	int end_i = move->end % 8;
+	int end_j = (move->end - end_i) / 8;
+
+	switch (move->piece)
+	{
+	case BLACK_PAWNS: printf("BLACK_PAWN "); break;
+	case BLACK_KNIGHTS: printf("BLACK_KNIGHT "); break;
+	case BLACK_BISHOPS: printf("BLACK_BISHOP "); break;
+	case BLACK_ROOKS: printf("BLACK_ROOK "); break;
+	case BLACK_QUEENS: printf("BLACK_QUEEN "); break;
+	case BLACK_KING: printf("BLACK_KING "); break;
+	case WHITE_PAWNS: printf("WHITE_PAWN "); break;
+	case WHITE_KNIGHTS: printf("WHITE_KNIGHT "); break;
+	case WHITE_BISHOPS: printf("WHITE_BISHOP "); break;
+	case WHITE_ROOKS: printf("WHITE_ROOK "); break;
+	case WHITE_QUEENS: printf("WHITE_QUEEN "); break;
+	case WHITE_KING: printf("WHITE_KING "); break;
+	case NONEXISTENT: printf("STILL INITIALIZED "); break;
+	}
+
+	start_i += 'a';
+	start_j++;
+	end_i += 'a';
+	end_j++;
+	printf(" (%c, %i) > (%c, %i)\n", start_i, start_j, end_i, end_j);
+}
+
+// transfer current move to previous move
+// used after you read a new move. transfer curr to prev, then
+// parse the new move into the curr move
+struct Move *transfer_move(struct Move *curr, struct Move *prev)
+{
+	if (curr == NULL || prev == NULL)
+		return NULL;
+
+	prev->start = curr->start;
+	prev->end = curr->end;
+	prev->color = curr->color;
+	prev->piece = curr->piece;
+	return prev;
 }

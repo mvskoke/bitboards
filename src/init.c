@@ -22,6 +22,17 @@ void init_moves(struct Move *curr_move, struct Move *prev_move)
 {
 	verify_safe_malloc(curr_move);
 	verify_safe_malloc(prev_move);
+
+	// dummy placeholder values
+	curr_move->start = -1;
+	curr_move->end = -1;
+	curr_move->color = WHITE;
+	curr_move->piece = NONEXISTENT;
+
+	prev_move->start = curr_move->start;
+	prev_move->end = curr_move->end;
+	prev_move->color = curr_move->color;
+	prev_move->piece = curr_move->piece;
 }
 
 void init_bb(struct Bitboards *bb)

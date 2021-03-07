@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "bitboards.h"
 #include "colors.h"
@@ -36,7 +37,6 @@ int main(void)
 	bool playing = true;
 	while (playing)
 	{
-		prev_move = curr_move;
 		do
 		{
 			command = get_command(buffer, BUFFER_SIZE, turn);
@@ -45,14 +45,25 @@ int main(void)
 
 		switch (type)
 		{
-		case RESIGN: break;
-		case DRAW:   break;
-		case FLIP:   break;
-		case QUIT:   playing = false; break;
-		case HELP:   break;
+		case RESIGN:
+			printf("RESIGN\n");
+			break;
+		case DRAW:
+			printf("DRAW\n");
+			break;
+		case FLIP:
+			printf("FLIP\n");
+			break;
+		case QUIT:
+			playing = false;
+			break;
+		case HELP:
+			printf("HELP\n");
+			break;
 		case MOVE:
-			if (parse_move(bb, curr_move, command))
+			if (parse_move(bb, curr_move, command)) {
 				update_board(bb, curr_move);
+			}
 			break;
 		}
 
@@ -69,8 +80,6 @@ int main(void)
 	}
 	free(bb);
 	free(curr_move);
-
-	// double free detected in tcache2
-	//free(prev_move);
+	free(prev_move);
 	return 0;
 }

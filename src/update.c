@@ -18,28 +18,24 @@ void update_board(struct Bitboards *bb, struct Move *move)
 {
 	update_pretty_board(bb, move->start, move->end);
 
-	if (move->color == BLACK)
-	{
-		flip_bit(&(bb->pieces[move->piece]), move->start);
-		flip_bit(&(bb->pieces[BLACK_ALL]),   move->start);
-		set_bit( &(bb->pieces[move->piece]), move->end);
-		set_bit( &(bb->pieces[BLACK_ALL]),   move->end);
-	}
-	else
-	{
-		flip_bit(&(bb->pieces[move->piece]), move->start);
-		flip_bit(&(bb->pieces[WHITE_ALL]),   move->start);
-		set_bit( &(bb->pieces[move->piece]), move->end);
-		set_bit( &(bb->pieces[WHITE_ALL]),   move->end);
-	}
+	// remove piece from the start...
+	flip_bit(&(bb->pieces[move->piece]), move->start);
+	flip_bit(&(bb->pieces[move->color]), move->start);
+
+	// ...and set it on the end
+	set_bit(&(bb->pieces[move->piece]), move->end);
+	set_bit(&(bb->pieces[move->color]), move->end);
 }
 
 void update_attacks(struct Bitboards *bb)
 {
-	// zero out the old attacks
 	for (int i = 0; i < TOTAL_ATTACKS; i++)
 	{
+		// zero out the old attacks
 		bb->attacks[i] = 0;
-		// TO DO
+		switch (i)
+		{
+		;
+		}
 	}
 }

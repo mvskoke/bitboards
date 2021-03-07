@@ -19,7 +19,7 @@
 
 #define UTF8_BOTTOM      "   └───┴───┴───┴───┴───┴───┴───┴───┘"
 
-// there's supposed to be an extra newline here
+// don't worry, it's supposed to have an extra newline here
 #define SMALL_BLACK_TOP "\n      a b c d e f g h\n"
 #define SMALL_WHITE_TOP "\n      h g f e d b c a\n"
 

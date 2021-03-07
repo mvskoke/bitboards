@@ -1,8 +1,15 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-#define BLACK 0
-#define WHITE 1
+// this looks really random, but I promise I have a good reason
+#define BLACK 12
+#define WHITE 13
+// WHAT: aligns with the indexes of bitboards (see bitboards.h)
+// WHY: makes board updating shorter and a bit more clean (see update.c)
+// instead of checking move->color and then accessing the index BLACK_ALL
+// or WHITE_ALL, we can just use move->color directly as the index
+
+// the actual value doesn't even matter for anything else, so it's a win-win
 
 #define ROWS 8
 #define COLS 8
