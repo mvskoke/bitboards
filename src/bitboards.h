@@ -81,9 +81,9 @@ struct Bitboards
 // do i need this???
 // struct Board
 // {
-// 	struct Bitboards bb;
-// 	struct Move curr;
-// 	struct Move prev;
+// 	struct Bitboards *bb;
+// 	struct Move *curr;
+// 	struct Move *prev;
 // 	int turn;
 // 	int orient;
 // 	bool ascii;

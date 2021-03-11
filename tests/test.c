@@ -571,7 +571,7 @@ int main(void)
 	RUN_TEST(test_parse_move);
 	RUN_TEST(test_update_board);
 	RUN_TEST(test_transfer_move);
-	//RUN_TEST(test_update_attacks);
+	// RUN_TEST(test_update_attacks);
 	//RUN_TEST(test_validate_move);
 	return UNITY_END();
 }
