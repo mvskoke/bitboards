@@ -18,11 +18,11 @@ Can also get a "yes" or "no" response.
 #include "colors.h"
 
 /* get_command()
-	@buffer 	char array to place user's input
-	@size 		max num of chars to read, including '\0'
-	@turn 		current turn: BLACK or WHITE
+	@buffer         char array to place user's input
+	@size           max num of chars to read, including '\0'
+	@turn           current turn: BLACK or WHITE
 
-	@return 	str containg the command. 
+	@return         str containg the command.
 
 	But really, the return value just points to the contents
 	of *buffer. strtok()'s destructiveness allows the caller
@@ -67,7 +67,7 @@ static void to_lowercase(char *s)
 }
 
 /* validate_one_char()
-	@return 	command enum type
+	@return         command enum type
 
 	Validates a single-character command.
 */
@@ -85,7 +85,7 @@ static int validate_one_char(char c)
 }
 
 /* validate_promotion()
-	@return 	MOVE (it's a legal command) or ILLEGAL.
+	@return         MOVE (it's a legal command) or ILLEGAL.
 
 	Validates a promotion move. Must go from 7th rank to 8th
 	rank. Promotion file must be within 1 char of the starting
@@ -120,7 +120,7 @@ static int validate_promotion(char *command)
 }
 
 /* validate_move()
-	@return 	MOVE (it's a legal command) or ILLEGAL.
+	@return         MOVE (it's a legal command) or ILLEGAL.
 
 	Validates a move command. Must start and end on legal file,
 	i.e. file a through h. Must start and end on legal rank,
@@ -146,9 +146,9 @@ static int validate_move(char *command)
 }
 
 /* validate_command()
-	@command 	str containing user's inputted command
+	@command        str containing user's inputted command
 
-	@return 	enum type of the command
+	@return         enum type of the command
 
 	The way this module is designed, char *command should 
 	point to a location within the buffer used in
@@ -194,9 +194,9 @@ int validate_command(char *command)
 }
 
 /* validate_yn()
-	@str 		any string
+	@str            any string
 
-	@return 	YES, NO, or ILLEGAL
+	@return         YES, NO, or ILLEGAL
 
 	Checks if a string is a yes or no.
 */
@@ -212,11 +212,11 @@ static int validate_yn(char *str)
 }
 
 /* get_yn()
-	@buffer 	char array to place user's input
-	@size 		max num of chars to read, including '\0'
-	@turn 		current turn: BLACK or WHITE
+	@buffer         char array to place user's input
+	@size           max num of chars to read, including '\0'
+	@turn           current turn: BLACK or WHITE
 
-	@return 	user's answer, YES or NO
+	@return         user's answer, YES or NO
 
 	Gets a yes-no response from user input. Asks for input
 	until valid response is given.

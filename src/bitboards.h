@@ -76,15 +76,15 @@ struct Bitboards
 	// unknown if move would leave you in check
 	U64 attacks[TOTAL_ATTACKS];
 
-	// keep pawn attacks and moves (non-captures) separate
+	// separate pawn attacks and pawn pushes (non-captures)
 	// might be easier to calculate and validate moves
-	//U64 wpawn_moves;
-	//U64 bpawn_moves;
+	//U64 wpawn_pushes;
+	//U64 bpawn_pushes;
 };
 
 // everything
 // do i need this???
-// struct Board
+// struct Chess
 // {
 // 	struct Bitboards *bb;
 // 	struct Move *curr;
