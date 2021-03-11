@@ -61,9 +61,7 @@ static void print_black_on_top(struct Bitboards *bb, bool ascii)
 		// if black is on top, first rank is rank 7
 		// so the last rank is rank 0
 		if (j != 0)
-		{
 			ascii ? puts(ASCII_ROW) : puts(UTF8_ROW);
-		}
 
 	}
 }
@@ -76,22 +74,16 @@ static void print_white_on_top(struct Bitboards *bb, bool ascii)
 		for (int i = 7; i >= 0; i--)
 		{
 			if (bb->pretty_board[i][j] == EMPTY_SQ)
-			{
 				print_empty_square(i, j, ascii);
-			}
 			else
-			{
 				print_piece(bb, i, j, ascii);
-			}
 		}
 		ascii ? printf(ASCII_END, j+1) : printf(UTF8_END, j+1);
 
 		// if white is on top, first rank is rank 0
 		// so last rank is rank 7
 		if (j != 7)
-		{
 			ascii ? puts(ASCII_ROW) : puts(UTF8_ROW);
-		}
 	}
 }
 
@@ -136,10 +128,10 @@ static void small_black_top(struct Bitboards *bb)
 	for (int j = 7; j >= 0; j--)
 	{
 		printf("   %d ", j+1);
+
 		for (int i = 0; i < FILES; i++)
-		{
 			printf(" %c", bb->pretty_board[i][j]);
-		}
+
 		printf("\n");
 	}
 	puts(SMALL_BLACK_TOP);
@@ -150,10 +142,10 @@ static void small_white_top(struct Bitboards *bb)
 	for (int j = 0; j < RANKS; j++)
 	{
 		printf("   %d ", j+1);
+
 		for (int i = 7; i >= 0; i--)
-		{
 			printf(" %c", bb->pretty_board[i][j]);
-		}
+
 		printf("\n");
 	}
 	puts(SMALL_WHITE_TOP);
@@ -165,11 +157,7 @@ static void small_white_top(struct Bitboards *bb)
 void print_bb_small(struct Bitboards *bb, int orient)
 {
 	if (orient == WHITE)
-	{
 		small_white_top(bb);
-	}
 	else
-	{
 		small_black_top(bb);
-	}
 }

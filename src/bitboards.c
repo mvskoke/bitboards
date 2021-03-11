@@ -157,19 +157,19 @@ void display_move(struct Move *move)
 
 	switch (move->piece)
 	{
-	case BLACK_PAWNS: printf("BLACK_PAWN "); break;
-	case BLACK_KNIGHTS: printf("BLACK_KNIGHT "); break;
-	case BLACK_BISHOPS: printf("BLACK_BISHOP "); break;
-	case BLACK_ROOKS: printf("BLACK_ROOK "); break;
-	case BLACK_QUEENS: printf("BLACK_QUEEN "); break;
-	case BLACK_KING: printf("BLACK_KING "); break;
-	case WHITE_PAWNS: printf("WHITE_PAWN "); break;
-	case WHITE_KNIGHTS: printf("WHITE_KNIGHT "); break;
-	case WHITE_BISHOPS: printf("WHITE_BISHOP "); break;
-	case WHITE_ROOKS: printf("WHITE_ROOK "); break;
-	case WHITE_QUEENS: printf("WHITE_QUEEN "); break;
-	case WHITE_KING: printf("WHITE_KING "); break;
-	case NONEXISTENT: printf("STILL INITIALIZED "); break;
+	case BLACK_PAWNS: 	printf("BLACK_PAWN "); break;
+	case BLACK_KNIGHTS: 	printf("BLACK_KNIGHT "); break;
+	case BLACK_BISHOPS: 	printf("BLACK_BISHOP "); break;
+	case BLACK_ROOKS: 	printf("BLACK_ROOK "); break;
+	case BLACK_QUEENS: 	printf("BLACK_QUEEN "); break;
+	case BLACK_KING: 	printf("BLACK_KING "); break;
+	case WHITE_PAWNS: 	printf("WHITE_PAWN "); break;
+	case WHITE_KNIGHTS: 	printf("WHITE_KNIGHT "); break;
+	case WHITE_BISHOPS: 	printf("WHITE_BISHOP "); break;
+	case WHITE_ROOKS: 	printf("WHITE_ROOK "); break;
+	case WHITE_QUEENS: 	printf("WHITE_QUEEN "); break;
+	case WHITE_KING: 	printf("WHITE_KING "); break;
+	case NONEXISTENT: 	printf("STILL INITIALIZED "); break;
 	}
 
 	start_i += 'a';

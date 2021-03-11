@@ -26,7 +26,7 @@
 #define SMALL_BLACK_TOP "\n      a b c d e f g h\n"
 #define SMALL_WHITE_TOP "\n      h g f e d b c a\n"
 
-// use printf with string-formatted macros
+// use printf with these macros!!!!
 #define ASCII_EMPTY_LIGHT "|   "
 #define ASCII_EMPTY_DARK  "|***"
 

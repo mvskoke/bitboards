@@ -34,10 +34,10 @@ Can also get a "yes" or "no" response.
 	Treats the first token separated by whitespaces as the 
 	command.
 */
-char* get_command(char* buffer, const int size, const int turn)
+char *get_command(char *buffer, const int size, const int turn)
 {
 	char delims[] = " \r\n\t";
-	char* token = NULL;
+	char *token = NULL;
 
 	turn == BLACK ? printf("Black >>> ") : printf("White >>> ");
 
@@ -56,9 +56,9 @@ char* get_command(char* buffer, const int size, const int turn)
 
 	Converts a null-terminated string to all lowercase.
 */
-static void to_lowercase(char* s)
+static void to_lowercase(char *s)
 {
-	char* tmp = s;
+	char *tmp = s;
 	while (*tmp != '\0')
 	{
 		*tmp = tolower(*tmp);
@@ -91,7 +91,7 @@ static int validate_one_char(char c)
 	rank. Promotion file must be within 1 char of the starting
 	file and on a legal file e.g. e7 > d8,e8,f8 or a7 > a8,b8
 */
-static int validate_promotion(char* command)
+static int validate_promotion(char *command)
 {
 	bool sq1 = command[0] >= 'a' && command[0] <= 'h';
 	bool sq2 = command[2] >= 'a' && command[2] <= 'h';
@@ -126,7 +126,7 @@ static int validate_promotion(char* command)
 	i.e. file a through h. Must start and end on legal rank,
 	i.e. rank 1 through 8.
 */
-static int validate_move(char* command)
+static int validate_move(char *command)
 {
 	// check each index:
 	// char* "e 2 e 4"
@@ -141,9 +141,7 @@ static int validate_move(char* command)
 		      command[1] == command[3];
 
 	if (char0 && char1 && char2 && char3 && !same_sq)
-	{
 		return MOVE;
-	}
 	return ILLEGAL;
 }
 
@@ -152,7 +150,7 @@ static int validate_move(char* command)
 
 	@return 	enum type of the command
 
-	The way this module is designed, char* command should 
+	The way this module is designed, char *command should 
 	point to a location within the buffer used in
 	get_command(), i.e., the paramter *command should be
 	the return value of get_command()
@@ -163,34 +161,34 @@ static int validate_move(char* command)
 
 	Validates the SYNTAX of command retrieved by get_command()
 */
-int validate_command(char* command)
+int validate_command(char *command)
 {
 	int len = strlen(command);
-	//char copy[len+1];
+	char copy[len+1];
 
 	// convert to lowercase for easier checking
 	// commands are case-insensitive anyways
-	//strcpy(copy, command);
+	strcpy(copy, command);
 	/* I have to use a strcpy here because the Unity tests pass
 	in a string literal to this function, and when this func
 	used to call to_lowercase(command), it segfaults because
 	you can't dereference the memory of a literal... I think */
-	//to_lowercase(copy);
+	to_lowercase(copy);
 
 	if (len == 1)
 	{
 		// single-char commands i.e. r d f h q
-		return validate_one_char(command[0]);
+		return validate_one_char(copy[0]);
 	}
 	else if (len == 4)
 	{
 		// normal moves e.g. e2e4
-		return validate_move(command);
+		return validate_move(copy);
 	}
 	else if (len == 5)
 	{
 		// pawn promotion e.g. a7a8q
-		return validate_promotion(command);
+		return validate_promotion(copy);
 	}
 	return ILLEGAL;
 }
@@ -202,18 +200,14 @@ int validate_command(char* command)
 
 	Checks if a string is a yes or no.
 */
-static int validate_yn(char* str)
+static int validate_yn(char *str)
 {
 	to_lowercase(str);
 
 	if (!strcmp(str, "yes") || !strcmp(str, "y"))
-	{
 		return YES;
-	}
 	else if (!strcmp(str, "no") || !strcmp(str, "n"))
-	{
 		return NO;
-	}
 	return ILLEGAL;
 }
 
@@ -227,9 +221,9 @@ static int validate_yn(char* str)
 	Gets a yes-no response from user input. Asks for input
 	until valid response is given.
 */
-int get_yn(char* buffer, const int size, const int turn)
+int get_yn(char *buffer, const int size, const int turn)
 {
-	char* input = NULL;
+	char *input = NULL;
 	int answer;
 	do
 	{

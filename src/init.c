@@ -102,9 +102,7 @@ void init_bb(struct Bitboards *bb)
 	for (int i = 0; i < FILES; i++)
 	{
 		for (int j = 2; j <= 5; j++)
-		{
 			bb->pretty_board[i][j] = EMPTY_SQ;
-		}
 	}
 
 	for (int i = 0; i < 8; i++)
@@ -144,22 +142,16 @@ static void init_bb_blank(struct Bitboards *bb)
 
 	// initialize bitboards: pieces and attacks
 	for (int i = 0; i < TOTAL_BB; i++)
-	{
 		bb->pieces[i] = 0;
-	}
 
 	for (int i = 0; i < TOTAL_ATTACKS; i++)
-	{
 		bb->attacks[i] = 0;
-	}
 
 	// initialize pretty board
 	for (int i = 0; i < FILES; i++)
 	{
 		for (int j = 0; j < RANKS; j++)
-		{
 			bb->pretty_board[i][j] = EMPTY_SQ;
-		}
 	}
 }
 
@@ -204,13 +196,9 @@ static void fen_updates_bb(struct Bitboards *bb, char piece, int index)
 
 	// and the piece's color
 	if (islower(piece))
-	{
 		set_bit(&bb->pieces[BLACK_ALL], index);
-	}
 	else
-	{
 		set_bit(&bb->pieces[WHITE_ALL], index);
-	}
 }
 
 

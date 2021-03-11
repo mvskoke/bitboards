@@ -11,7 +11,7 @@
 #define EMPTY_SQ '.'
 
 // for convenience
-#define U64 uint64_t
+typedef uint64_t U64;
 
 // little endian rank-file mapping
 /*
@@ -75,6 +75,11 @@ struct Bitboards
 	// pseudo-legal attacks
 	// unknown if move would leave you in check
 	U64 attacks[TOTAL_ATTACKS];
+
+	// keep pawn attacks and moves (non-captures) separate
+	// might be easier to calculate and validate moves
+	//U64 wpawn_moves;
+	//U64 bpawn_moves;
 };
 
 // everything
