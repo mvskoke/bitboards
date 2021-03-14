@@ -1,22 +1,22 @@
 #include "bitboards.h"
 #include "colors.h"
 
-static void update_pretty_board(struct Bitboards *bb, int start, int end)
+static void update_pretty_board(struct Bitboards *bb, struct Move *move)
 {
-	int start_i = start % 8;
-	int start_j = (start - start_i) / 8;
+	// I declare this char to make the line shorter
+	char src = bb->pretty_board[move->start_x][move->start_y];
 
-	int end_i = end % 8;
-	int end_j = (end - end_i) / 8;
-	bb->pretty_board[end_i][end_j] = bb->pretty_board[start_i][start_j];
-	bb->pretty_board[start_i][start_j] = EMPTY_SQ;
+	// copy piece to the destination square
+	bb->pretty_board[move->end_x][move->end_y] = src;
+	// and remove the piece from its original square
+	bb->pretty_board[move->start_x][move->start_y] = EMPTY_SQ;
 }
 
 // move a piece
 // move should be validated BEFORE you call this func
 void update_board(struct Bitboards *bb, struct Move *move)
 {
-	update_pretty_board(bb, move->start, move->end);
+	update_pretty_board(bb, move);
 
 	// remove piece from the start...
 	flip_bit(&(bb->pieces[move->piece]), move->start);

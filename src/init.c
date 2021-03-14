@@ -18,23 +18,33 @@ static void verify_safe_malloc(void *ptr)
 	}
 }
 
-void init_moves(struct Move *curr_move, struct Move *prev_move)
+void init_moves(struct Move *curr, struct Move *prev)
 {
-	verify_safe_malloc(curr_move);
-	verify_safe_malloc(prev_move);
+	verify_safe_malloc(curr);
+	verify_safe_malloc(prev);
 
 	// dummy placeholder values
-	curr_move->start = -1;
-	curr_move->end = -1;
-	curr_move->color = WHITE;
-	curr_move->piece = NONEXISTENT;
-	curr_move->promotion = NONEXISTENT;
+	curr->start = -1;
+	curr->end = -1;
+	curr->color = WHITE;
+	curr->piece = NONEXISTENT;
+	curr->promotion = NONEXISTENT;
 
-	prev_move->start = curr_move->start;
-	prev_move->end = curr_move->end;
-	prev_move->color = curr_move->color;
-	prev_move->piece = curr_move->piece;
-	prev_move->promotion = curr_move->promotion;
+	curr->start_x = -1;
+	curr->end_x = -1;
+	curr->start_y = -1;
+	curr->end_y = -1;
+
+	prev->start = curr->start;
+	prev->end = curr->end;
+	prev->color = curr->color;
+	prev->piece = curr->piece;
+	prev->promotion = curr->promotion;
+
+	prev->start_x = curr->start_x;
+	prev->end_x = curr->end_x;
+	prev->start_y = curr->start_y;
+	prev->end_y = curr->end_y;
 }
 
 void init_bb(struct Bitboards *bb)

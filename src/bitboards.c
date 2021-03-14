@@ -132,17 +132,25 @@ static int get_piece_color(struct Bitboards *bb, int index)
 struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command)
 {
 	char *tmp = command;
+	// I use tmp because I need *command to not change
+	// before the switch statement further down
 	move->start = get_sq_index(tmp);
 	move->end = get_sq_index(tmp += 2);
-	// I use tmp because I need to check original *command str
-	// in the switch statement below
 
+	// calculate indexes for pretty_board[][]
+	move->start_x = move->start % 8;
+	move->start_y = (move->start - move->start_x) / 8;
+	move->end_x   = move->end % 8;
+	move->end_y   = (move->end - move->end_x) / 8;
+
+	// start parsing the piece in the move
 	move->piece = get_piece_type(bb, move->start);
 	if (move->piece == NONEXISTENT)
 		return NULL;
 
 	move->color = get_piece_color(bb, move->start);
 
+	// O(1) version of strlen() != 4
 	if (command[4] != '\0')
 	{
 		switch (command[4])
@@ -171,12 +179,6 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command)
 // just for debugging
 void display_move(struct Move *move)
 {
-	int start_i = move->start % 8;
-	int start_j = (move->start - start_i) / 8;
-
-	int end_i = move->end % 8;
-	int end_j = (move->end - end_i) / 8;
-
 	switch (move->piece)
 	{
 	case BLACK_PAWNS:       printf("BLACK_PAWN "); break;
@@ -193,12 +195,7 @@ void display_move(struct Move *move)
 	case WHITE_KING:        printf("WHITE_KING "); break;
 	case NONEXISTENT:       printf("STILL INITIALIZED "); break;
 	}
-
-	start_i += 'a';
-	start_j++;
-	end_i += 'a';
-	end_j++;
-	printf(" (%c, %i) > (%c, %i)\n", start_i, start_j, end_i, end_j);
+	printf(" (%i, %i) > (%i, %i)\n", move->start_x, move->start_y, move->end_x, move->end_y);
 }
 
 // transfer current move to previous move
@@ -214,5 +211,10 @@ struct Move *transfer_move(struct Move *curr, struct Move *prev)
 	prev->color = curr->color;
 	prev->piece = curr->piece;
 	prev->promotion = curr->promotion;
+
+	prev->start_x = curr->start_x;
+	prev->end_x = curr->end_x;
+	prev->start_y = curr->start_y;
+	prev->end_y = curr->end_y;
 	return prev;
 }

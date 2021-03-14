@@ -64,6 +64,10 @@ struct Move
 	int color;
 	int piece;
 	int promotion;
+
+	// indexes for pretty_board[][]
+	int start_x, start_y;
+	int end_x, end_y;
 };
 
 struct Bitboards

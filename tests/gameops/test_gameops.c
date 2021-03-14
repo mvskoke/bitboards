@@ -23,13 +23,13 @@ void tearDown(void) {}
 
 void test_parse_move(void)
 {
-	struct Move *curr_move = malloc(sizeof(struct Move));
-	struct Move *prev_move = malloc(sizeof(struct Move));
-	init_moves(curr_move, prev_move);
-	// I don't actually test prev_move here, I init it because
+	struct Move *curr = malloc(sizeof(struct Move));
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
+	// I don't actually test prev here, I init it because
 	// the init function needs it.
 
-	// it has the exact same implementation as curr_move anyway,
+	// it has the exact same implementation as curr anyway,
 	// so its functionality will be tested when the main program
 	// actually needs it.
 
@@ -38,40 +38,40 @@ void test_parse_move(void)
 	init_bb_fen(bb, "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R");
 
 	// morphy defence
-	TEST_ASSERT_EQUAL(curr_move, parse_move(bb, curr_move, "a7a6"));
-	TEST_ASSERT_EQUAL(A7, curr_move->start);
-	TEST_ASSERT_EQUAL(A6, curr_move->end);
-	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr_move->piece);
-	TEST_ASSERT_EQUAL(BLACK, curr_move->color);
+	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "a7a6"));
+	TEST_ASSERT_EQUAL(A7, curr->start);
+	TEST_ASSERT_EQUAL(A6, curr->end);
+	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
+	TEST_ASSERT_EQUAL(BLACK, curr->color);
 
 	// berlin defence
-	TEST_ASSERT_EQUAL(curr_move, parse_move(bb, curr_move, "g8f6"));
-	TEST_ASSERT_EQUAL(G8, curr_move->start);
-	TEST_ASSERT_EQUAL(F6, curr_move->end);
-	TEST_ASSERT_EQUAL(BLACK_KNIGHTS, curr_move->piece);
-	TEST_ASSERT_EQUAL(BLACK, curr_move->color);
+	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "g8f6"));
+	TEST_ASSERT_EQUAL(G8, curr->start);
+	TEST_ASSERT_EQUAL(F6, curr->end);
+	TEST_ASSERT_EQUAL(BLACK_KNIGHTS, curr->piece);
+	TEST_ASSERT_EQUAL(BLACK, curr->color);
 
 	// nothing
-	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr_move, "a3a4"));
-	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr_move, "c5d6"));
+	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr, "a3a4"));
+	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr, "c5d6"));
 
-	TEST_ASSERT_EQUAL(curr_move, parse_move(bb, curr_move, "d7d6"));
-	TEST_ASSERT_EQUAL(D7, curr_move->start);
-	TEST_ASSERT_EQUAL(D6, curr_move->end);
-	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr_move->piece);
-	TEST_ASSERT_EQUAL(BLACK, curr_move->color);
+	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "d7d6"));
+	TEST_ASSERT_EQUAL(D7, curr->start);
+	TEST_ASSERT_EQUAL(D6, curr->end);
+	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
+	TEST_ASSERT_EQUAL(BLACK, curr->color);
 
 	// promotion (illegal but I have to test it)
-	TEST_ASSERT_EQUAL(NONEXISTENT, curr_move->promotion);
-	TEST_ASSERT_EQUAL(curr_move, parse_move(bb, curr_move, "d7d8q"));
-	TEST_ASSERT_EQUAL(D7, curr_move->start);
-	TEST_ASSERT_EQUAL(D8, curr_move->end);
-	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr_move->piece);
-	TEST_ASSERT_EQUAL(BLACK, curr_move->color);
-	TEST_ASSERT_EQUAL(BLACK_QUEENS, curr_move->promotion);
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
+	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "d7d8q"));
+	TEST_ASSERT_EQUAL(D7, curr->start);
+	TEST_ASSERT_EQUAL(D8, curr->end);
+	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
+	TEST_ASSERT_EQUAL(BLACK, curr->color);
+	TEST_ASSERT_EQUAL(BLACK_QUEENS, curr->promotion);
 
-	free(curr_move);
-	free(prev_move);
+	free(curr);
+	free(prev);
 	free(bb);
 }
 
@@ -80,27 +80,27 @@ void test_update_board(void)
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb(bb);
 
-	struct Move *curr_move = malloc(sizeof(struct Move));
-	struct Move *prev_move = malloc(sizeof(struct Move));
-	init_moves(curr_move, prev_move);
+	struct Move *curr = malloc(sizeof(struct Move));
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
 
 	// setting up the ruy lopez
 	// 0xFDEF04121020EF9F
-	if (parse_move(bb, curr_move, "e2e4")) {
-		update_board(bb, curr_move);
-		display_move(curr_move);
+	if (parse_move(bb, curr, "e2e4")) {
+		update_board(bb, curr);
+		display_move(curr);
 	}
 
-	if (parse_move(bb, curr_move, "e7e5")) {
-		update_board(bb, curr_move);
-		display_move(curr_move);
+	if (parse_move(bb, curr, "e7e5")) {
+		update_board(bb, curr);
+		display_move(curr);
 	}
 
 	// non-existent piece
 	// ADD CALL TO VALIDATION ONCE THAT'S IMPLEMENTED!!!
-	if (parse_move(bb, curr_move, "c5d5")) {
-		update_board(bb, curr_move);
-		display_move(curr_move);
+	if (parse_move(bb, curr, "c5d5")) {
+		update_board(bb, curr);
+		display_move(curr);
 	}
 
 
@@ -110,24 +110,24 @@ void test_update_board(void)
 
 	********************************************************/
 
-	// if (parse_move(bb, curr_move, "e1f1")) {
-	// 	update_board(bb, curr_move);
-	// 	display_move(curr_move);
+	// if (parse_move(bb, curr, "e1f1")) {
+	// 	update_board(bb, curr);
+	// 	display_move(curr);
 	// }
 
-	if (parse_move(bb, curr_move, "g1f3")) {
-		update_board(bb, curr_move);
-		display_move(curr_move);
+	if (parse_move(bb, curr, "g1f3")) {
+		update_board(bb, curr);
+		display_move(curr);
 	}
 
-	if (parse_move(bb, curr_move, "b8c6")) {
-		update_board(bb, curr_move);
-		display_move(curr_move);
+	if (parse_move(bb, curr, "b8c6")) {
+		update_board(bb, curr);
+		display_move(curr);
 	}
 
-	if (parse_move(bb, curr_move, "f1b5")) {
-		update_board(bb, curr_move);
-		display_move(curr_move);
+	if (parse_move(bb, curr, "f1b5")) {
+		update_board(bb, curr);
+		display_move(curr);
 	}
 
 	// print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
@@ -152,8 +152,8 @@ void test_update_board(void)
 	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 
 	free(bb);
-	free(curr_move);
-	free(prev_move);
+	free(curr);
+	free(prev);
 }
 
 static void do_move(struct Move *curr, struct Move *prev, char command[], struct Bitboards *bb)
@@ -179,26 +179,26 @@ static void do_move(struct Move *curr, struct Move *prev, char command[], struct
 
 void test_transfer_move(void)
 {
-	struct Move *curr_move = malloc(sizeof(struct Move));
-	struct Move *prev_move = malloc(sizeof(struct Move));
-	init_moves(curr_move, prev_move);
+	struct Move *curr = malloc(sizeof(struct Move));
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
 
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb(bb);
 
 	char command[] = "e2e4";
-	do_move(curr_move, prev_move, command, bb);
+	do_move(curr, prev, command, bb);
 	strcpy(command, "e7e5");
-	do_move(curr_move, prev_move, command, bb);
+	do_move(curr, prev, command, bb);
 
 	printf("***end of test***\ncurr: ");
-	display_move(curr_move);  // should be e7e5
+	display_move(curr);  // should be e7e5
 	printf("prev: ");
-	display_move(prev_move);  // should be e2e4
+	display_move(prev);  // should be e2e4
 
 	free(bb);
-	free(curr_move);
-	free(prev_move);
+	free(curr);
+	free(prev);
 }
 
 void test_update_attacks(void)
@@ -206,16 +206,16 @@ void test_update_attacks(void)
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb(bb);
 
-	// I don't need prev_move for this test
-	struct Move *curr_move = malloc(sizeof(struct Move));
-	if (curr_move == NULL)
+	// I don't need prev for this test
+	struct Move *curr = malloc(sizeof(struct Move));
+	if (curr == NULL)
 	{
 		fprintf(stderr, "ERROR: could not allocate enough memory\n");
 		exit(EXIT_FAILURE);
 	}
 
-	parse_move(bb, curr_move, "e2e4");
-	update_board(bb, curr_move);
+	parse_move(bb, curr, "e2e4");
+	update_board(bb, curr);
 
 	// update_attacks(bb);
 
@@ -236,7 +236,7 @@ void test_update_attacks(void)
 	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_KING]);
 
 	free(bb);
-	free(curr_move);
+	free(curr);
 }
 
 // void test_validate_move(void)
