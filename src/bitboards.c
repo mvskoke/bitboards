@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "bitboards.h"
 #include "colors.h"
@@ -20,7 +21,7 @@ U64 flip_bit(U64 *bb, const int index)
 	return *bb;
 }
 
-U64 clear_bb(U64 *bb)
+U64 clear_bits(U64 *bb)
 {
 	*bb = 0;
 	return *bb;
@@ -70,6 +71,16 @@ void print_bb(U64 bb)
 		}
 	}
 	printf("\n\n");
+}
+
+struct Bitboards* transfer_bb(struct Bitboards *src, struct Bitboards *dest)
+{
+	memcpy(dest->pieces, src->pieces, sizeof(U64) * TOTAL_BB);
+	memcpy(dest->attacks, src->attacks, sizeof(U64) * TOTAL_ATTACKS);
+	// dest->wpawn_pushes = src->wpawn_pushes;
+	// dest->bpawn_pushes = src->bpawn_pushes;
+	// no need to copy pretty_board[][]
+	return dest;
 }
 
 static enum Square get_sq_index(const char* sq)
@@ -130,7 +141,7 @@ static enum Color get_piece_color(struct Bitboards *bb, int index)
 
 // destructive: modifies *move
 // encodes a move command into an easy-to-parse form for move validation
-struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command)
+struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *const command)
 {
 	char *tmp = command;
 	// I use tmp because I need *command to not change

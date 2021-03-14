@@ -57,21 +57,9 @@ enum Piece
 	NONEXISTENT = 15 // no piece
 };
 
-struct Move
-{
-	enum Square start;
-	enum Square end;
-	enum Color color;
-	enum Piece piece;
-	enum Piece promotion;
-
-	// indexes for pretty_board[][]
-	int start_x, start_y;
-	int end_x, end_y;
-};
-
 struct Bitboards
 {
+	// easier to print the board to screen
 	char pretty_board[FILES][RANKS];
 
 	// locations
@@ -91,6 +79,21 @@ struct Bitboards
 	//U64 bpawn_pushes;
 };
 
+struct Move
+{
+	enum Square start;
+	enum Square end;
+	enum Color color;
+	enum Piece piece;
+	enum Piece promotion;
+
+	// indexes for Bitboards->pretty_board[][]
+	int start_x;
+	int start_y;
+	int end_x;
+	int end_y;
+};
+
 // everything
 // do i need this???
 // struct Chess
@@ -98,18 +101,20 @@ struct Bitboards
 // 	struct Bitboards *bb;
 // 	struct Move *curr;
 // 	struct Move *prev;
-// 	int turn;
-// 	int orient;
+// 	enum Color turn;
+// 	enum Color orient;
 // 	bool ascii;
 // }
 
 U64 set_bit(U64 *bb, const int index);
 U64 flip_bit(U64 *bb, const int index);
-U64 clear_bb(U64 *bb);
+U64 clear_bits(U64 *bb);
 U64 clear_bit(U64 *bb, const int index);
 bool get_bit(const U64 bb, const int index);
 
 void print_bb(U64 bb);
+
+struct Bitboards* transfer_bb(struct Bitboards *src, struct Bitboards *dest);
 
 struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command);
 void display_move(struct Move *move);

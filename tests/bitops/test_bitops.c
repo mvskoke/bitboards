@@ -90,7 +90,7 @@ void test_set_bit(void)
 	// all bits have been set
 	TEST_ASSERT_EQUAL(UINT64_MAX, bb);
 	// now clear every bit
-	TEST_ASSERT_EQUAL(0, clear_bb(&bb));
+	TEST_ASSERT_EQUAL(0, clear_bits(&bb));
 }
 
 void test_flip_bit(void)
@@ -343,7 +343,7 @@ void test_clear_bit(void)
 
 	// ... 1111 1111 1101
 	//TEST_ASSERT_EQUAL(0x1FFFFFFFFFFEFFFD, clear_bit(&bb, 1));
-	TEST_ASSERT_EQUAL(0, clear_bb(&bb));
+	TEST_ASSERT_EQUAL(0, clear_bits(&bb));
 }
 
 int main(void)

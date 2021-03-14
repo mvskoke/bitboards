@@ -220,6 +220,48 @@ void test_transfer_move(void)
 	free(prev);
 }
 
+void test_transfer_bitboards(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb(bb);
+	struct Bitboards *copy = malloc(sizeof(struct Bitboards));
+	init_bb(copy);
+	struct Move *curr = malloc(sizeof(struct Move));
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
+
+	TEST_ASSERT_EQUAL_UINT64_ARRAY(bb->pieces, copy->pieces, TOTAL_BB);
+	TEST_ASSERT_EQUAL_UINT64_ARRAY(bb->attacks, copy->attacks, TOTAL_ATTACKS);
+
+	if (parse_move(bb, curr, "e2e4"))
+		update_board(bb, curr);
+
+	for (int i = 0; i < TOTAL_BB; i++)
+	{
+		// after e2e4, only white pawns and WHITE_ALL will change
+		if (i == WHITE_PAWNS || i == WHITE_ALL)
+			TEST_ASSERT_NOT_EQUAL(bb->pieces[i], copy->pieces[i]);
+		else
+			TEST_ASSERT_EQUAL(bb->pieces[i], copy->pieces[i]);
+	}
+
+	for (int j = 0; j < TOTAL_ATTACKS; j++)
+	{
+		// don't skip WHITE_PAWNS attacks, because I haven'
+		// implemented attack calculation yet.
+		TEST_ASSERT_EQUAL(bb->attacks[j], copy->attacks[j]);
+	}
+
+	transfer_bb(bb, copy);
+	TEST_ASSERT_EQUAL_UINT64_ARRAY(bb->pieces, copy->pieces, TOTAL_BB);
+	TEST_ASSERT_EQUAL_UINT64_ARRAY(bb->attacks, copy->attacks, TOTAL_ATTACKS);
+
+	free(bb);
+	free(copy);
+	free(curr);
+	free(prev);
+}
+
 void test_update_attacks(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
@@ -274,6 +316,7 @@ int main(void)
 	RUN_TEST(test_parse_move);
 	RUN_TEST(test_update_board);
 	RUN_TEST(test_transfer_move);
+	RUN_TEST(test_transfer_bitboards);
 	// RUN_TEST(test_update_attacks);
 	//RUN_TEST(test_validate_move);
 
