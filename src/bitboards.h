@@ -32,7 +32,7 @@ enum Square
 };
 
 // indexing the arrays of bitboards
-enum PieceType
+enum Piece
 {
 	BLACK_PAWNS,   // 0 == i
 	BLACK_KNIGHTS, // 1
@@ -59,11 +59,11 @@ enum PieceType
 
 struct Move
 {
-	int start;
-	int end;
-	int color;
-	int piece;
-	int promotion;
+	enum Square start;
+	enum Square end;
+	enum Color color;
+	enum Piece piece;
+	enum Piece promotion;
 
 	// indexes for pretty_board[][]
 	int start_x, start_y;

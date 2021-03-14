@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "bitboards.h"
+#include "colors.h"
 
 /* THESE BIT FUNCTIONS RETURN THE MODIFIED BITBOARD
    BECAUSE IT MADE UNITY TESTING EASIER */
@@ -71,7 +72,7 @@ void print_bb(U64 bb)
 	printf("\n\n");
 }
 
-static int get_sq_index(const char* sq)
+static enum Square get_sq_index(const char* sq)
 {
 	// example:
 	// index  0 1
@@ -92,7 +93,7 @@ static int get_sq_index(const char* sq)
 
 // you can pass in a move or a single square. it only checks
 // the first two chars
-static int get_piece_type(struct Bitboards *bb, int index)
+static enum Piece get_piece_type(struct Bitboards *bb, int index)
 {
 	for (int i = 0; i < TOTAL_BB; i++)
 	{
@@ -110,7 +111,7 @@ static int get_piece_type(struct Bitboards *bb, int index)
 }
 
 // piece must exist before calling this func
-static int get_piece_color(struct Bitboards *bb, int index)
+static enum Color get_piece_color(struct Bitboards *bb, int index)
 {
 	if (get_bit(bb->pieces[BLACK_ALL], index))
 		return BLACK;
@@ -173,6 +174,10 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command)
 		if (move->color == WHITE)
 			move->promotion += WHITE_PAWNS;
 	}
+	else
+	{
+		move->promotion = NONEXISTENT;
+	}
 	return move;
 }
 
@@ -194,8 +199,10 @@ void display_move(struct Move *move)
 	case WHITE_QUEENS:      printf("WHITE_QUEEN "); break;
 	case WHITE_KING:        printf("WHITE_KING "); break;
 	case NONEXISTENT:       printf("STILL INITIALIZED "); break;
+	default: break;  // shut up compiler
 	}
-	printf(" (%i, %i) > (%i, %i)\n", move->start_x, move->start_y, move->end_x, move->end_y);
+	printf(" (%c, %i) >", move->start_x + 'a', move->start_y + 1);
+	printf(" (%c, %i)\n", move->end_x + 'a', move->end_y + 1);
 }
 
 // transfer current move to previous move

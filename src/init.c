@@ -167,7 +167,7 @@ static void init_bb_blank(struct Bitboards *bb)
 	}
 }
 
-static enum PieceType letter_to_piece_type(char c)
+static enum Piece letter_to_piece_type(char c)
 {
 	switch (c)
 	{
@@ -201,7 +201,7 @@ static void add_to_pretty_board(struct Bitboards *bb, char piece, int index)
 static void fen_updates_bb(struct Bitboards *bb, char piece, int index)
 {
 	add_to_pretty_board(bb, piece, index);
-	enum PieceType type = letter_to_piece_type(piece);
+	enum Piece type = letter_to_piece_type(piece);
 
 	// set specific piece...
 	set_bit(&bb->pieces[type], index);
