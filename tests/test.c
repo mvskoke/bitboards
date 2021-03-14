@@ -361,26 +361,36 @@ void test_parse_move(void)
 
 	// morphy defence
 	TEST_ASSERT_EQUAL(curr_move, parse_move(bb, curr_move, "a7a6"));
-	TEST_ASSERT_EQUAL(48, curr_move->start);
-	TEST_ASSERT_EQUAL(40, curr_move->end);
+	TEST_ASSERT_EQUAL(A7, curr_move->start);
+	TEST_ASSERT_EQUAL(A6, curr_move->end);
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr_move->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr_move->color);
 
 	// berlin defence
 	TEST_ASSERT_EQUAL(curr_move, parse_move(bb, curr_move, "g8f6"));
-	TEST_ASSERT_EQUAL(62, curr_move->start);
-	TEST_ASSERT_EQUAL(45, curr_move->end);
+	TEST_ASSERT_EQUAL(G8, curr_move->start);
+	TEST_ASSERT_EQUAL(F6, curr_move->end);
 	TEST_ASSERT_EQUAL(BLACK_KNIGHTS, curr_move->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr_move->color);
 
 	// nothing
 	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr_move, "a3a4"));
+	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr_move, "c5d6"));
 
 	TEST_ASSERT_EQUAL(curr_move, parse_move(bb, curr_move, "d7d6"));
-	TEST_ASSERT_EQUAL(51, curr_move->start);
-	TEST_ASSERT_EQUAL(43, curr_move->end);
+	TEST_ASSERT_EQUAL(D7, curr_move->start);
+	TEST_ASSERT_EQUAL(D6, curr_move->end);
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr_move->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr_move->color);
+
+	// promotion (illegal but I have to test it)
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr_move->promotion);
+	TEST_ASSERT_EQUAL(curr_move, parse_move(bb, curr_move, "d7d8q"));
+	TEST_ASSERT_EQUAL(D7, curr_move->start);
+	TEST_ASSERT_EQUAL(D8, curr_move->end);
+	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr_move->piece);
+	TEST_ASSERT_EQUAL(BLACK, curr_move->color);
+	TEST_ASSERT_EQUAL(BLACK_QUEENS, curr_move->promotion);
 
 	free(curr_move);
 	free(prev_move);

@@ -131,14 +131,40 @@ static int get_piece_color(struct Bitboards *bb, int index)
 // encodes a move command into an easy-to-parse form for move validation
 struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command)
 {
-	move->start = get_sq_index(command);
-	move->end = get_sq_index(command += 2);
-	move->piece = get_piece_type(bb, move->start);
+	char *tmp = command;
+	move->start = get_sq_index(tmp);
+	move->end = get_sq_index(tmp += 2);
+	// I use tmp because I need to check original *command str
+	// in the switch statement below
 
+	move->piece = get_piece_type(bb, move->start);
 	if (move->piece == NONEXISTENT)
 		return NULL;
 
 	move->color = get_piece_color(bb, move->start);
+
+	if (command[4] != '\0')
+	{
+		switch (command[4])
+		{
+		case 'n':
+			move->promotion = BLACK_KNIGHTS;
+			break;
+		case 'b':
+			move->promotion = BLACK_BISHOPS;
+			break;
+		case 'r':
+			move->promotion = BLACK_ROOKS;
+			break;
+		case 'q':
+			move->promotion = BLACK_QUEENS;
+			break;
+		}
+		// use WHITE_PAWNS as an offset between black pieces'
+		// and white pieces' enums
+		if (move->color == WHITE)
+			move->promotion += WHITE_PAWNS;
+	}
 	return move;
 }
 
@@ -187,5 +213,6 @@ struct Move *transfer_move(struct Move *curr, struct Move *prev)
 	prev->end = curr->end;
 	prev->color = curr->color;
 	prev->piece = curr->piece;
+	prev->promotion = curr->promotion;
 	return prev;
 }

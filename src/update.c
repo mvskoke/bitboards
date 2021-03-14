@@ -38,6 +38,6 @@ void update_attacks(struct Bitboards *bb)
 		;
 		}
 	}
-	//update_pawn_captures(WHITE);
-	//update_pawn_captures(BLACK);
+	//update_pawn_pushes(WHITE);
+	//update_pawn_pushes(BLACK);
 }

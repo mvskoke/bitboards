@@ -28,11 +28,13 @@ void init_moves(struct Move *curr_move, struct Move *prev_move)
 	curr_move->end = -1;
 	curr_move->color = WHITE;
 	curr_move->piece = NONEXISTENT;
+	curr_move->promotion = NONEXISTENT;
 
 	prev_move->start = curr_move->start;
 	prev_move->end = curr_move->end;
 	prev_move->color = curr_move->color;
 	prev_move->piece = curr_move->piece;
+	prev_move->promotion = curr_move->promotion;
 }
 
 void init_bb(struct Bitboards *bb)

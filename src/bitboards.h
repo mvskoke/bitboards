@@ -63,6 +63,7 @@ struct Move
 	int end;
 	int color;
 	int piece;
+	int promotion;
 };
 
 struct Bitboards
@@ -72,11 +73,13 @@ struct Bitboards
 	// locations
 	U64 pieces[TOTAL_BB];
 
-	// pseudo-legal attacks
+	// pseudo-legal attacks/captures
 	// unknown if move would leave you in check
 	U64 attacks[TOTAL_ATTACKS];
 
-	// separate pawn attacks and pawn pushes (non-captures)
+	// all pieces capture on the same squares on which they
+	// move, but the pawn is the only expcetion, so I separate
+	// the pawn attacks and pawn pushes (non-captures)
 	// might be easier to calculate and validate moves
 	//U64 wpawn_pushes;
 	//U64 bpawn_pushes;

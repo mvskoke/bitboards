@@ -31,7 +31,7 @@ Can also get a "yes" or "no" response.
 	parts of it. strtok() just cuts out the garbage for us.
 
 	Read in cmdline input into a buffer to get a command.
-	Treats the first token separated by whitespaces as the 
+	Treats the first token separated by whitespaces as the
 	command.
 */
 char *get_command(char *buffer, const int size, const int turn)
@@ -98,7 +98,7 @@ static int validate_promotion(char *command)
 
 	// the check for promo_sq WILL approve moves like
 	// h7i8q, but sq1 and sq2 take care of that
-	bool promo_sq =  command[0] == command[2]-1 ||
+	bool promo_sq = command[0] == command[2]-1 ||
 			command[0] == command[2]   ||
 			command[0] == command[2]+1;
 
@@ -150,7 +150,7 @@ static int validate_move(char *command)
 
 	@return         enum type of the command
 
-	The way this module is designed, char *command should 
+	The way this module is designed, char *command should
 	point to a location within the buffer used in
 	get_command(), i.e., the paramter *command should be
 	the return value of get_command()
