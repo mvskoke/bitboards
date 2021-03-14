@@ -39,6 +39,7 @@ void test_parse_move(void)
 
 	// morphy defence
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "a7a6"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
 	TEST_ASSERT_EQUAL(A7, curr->start);
 	TEST_ASSERT_EQUAL(A6, curr->end);
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
@@ -46,6 +47,7 @@ void test_parse_move(void)
 
 	// berlin defence
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "g8f6"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
 	TEST_ASSERT_EQUAL(G8, curr->start);
 	TEST_ASSERT_EQUAL(F6, curr->end);
 	TEST_ASSERT_EQUAL(BLACK_KNIGHTS, curr->piece);
@@ -53,15 +55,18 @@ void test_parse_move(void)
 
 	// nothing
 	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr, "a3a4"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
 	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr, "c5d6"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
 
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "d7d6"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
 	TEST_ASSERT_EQUAL(D7, curr->start);
 	TEST_ASSERT_EQUAL(D6, curr->end);
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
 
-	// promotion (illegal but I have to test it)
+	// promotion (an illegal one, but I have to test it)
 	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "d7d8q"));
 	TEST_ASSERT_EQUAL(D7, curr->start);
@@ -69,6 +74,20 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
 	TEST_ASSERT_EQUAL(BLACK_QUEENS, curr->promotion);
+
+	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "f8c5"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
+	TEST_ASSERT_EQUAL(F8, curr->start);
+	TEST_ASSERT_EQUAL(C5, curr->end);
+	TEST_ASSERT_EQUAL(BLACK_BISHOPS, curr->piece);
+	TEST_ASSERT_EQUAL(BLACK, curr->color);
+
+	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "e1e2"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
+	TEST_ASSERT_EQUAL(E1, curr->start);
+	TEST_ASSERT_EQUAL(E2, curr->end);
+	TEST_ASSERT_EQUAL(WHITE_KING, curr->piece);
+	TEST_ASSERT_EQUAL(WHITE, curr->color);
 
 	free(curr);
 	free(prev);

@@ -52,7 +52,7 @@ enum Piece
 	WHITE_ALL,     // 13
 	TOTAL_BB,      // 14
 
-	// -2 to ignore WHITE_ALL and BLACK_ALL
+	// minus 2 to ignore WHITE_ALL and BLACK_ALL
 	TOTAL_ATTACKS = TOTAL_BB-2,
 	NONEXISTENT = 15 // no piece
 };
@@ -76,6 +76,8 @@ struct Bitboards
 
 	// locations
 	U64 pieces[TOTAL_BB];
+	// to access BLACK_ALL or WHITE_ALL, you can also use
+	// the enum Color in colors.h
 
 	// pseudo-legal attacks/captures
 	// unknown if move would leave you in check

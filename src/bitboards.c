@@ -152,6 +152,9 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command)
 	move->color = get_piece_color(bb, move->start);
 
 	// O(1) version of strlen() != 4
+	// I know it looks like a ticking time bomb, and that time
+	// bomb is a segfault, but a move command will always have
+	// an accesable char at index 4.
 	if (command[4] != '\0')
 	{
 		switch (command[4])
