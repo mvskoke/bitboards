@@ -161,12 +161,6 @@ void test_update_board(void)
 	print_bb_small(bb, BLACK);
 	print_bb_small(bb, WHITE);
 
-	printf("********HERE!!!!!!!!!!!!*********\n");
-	print_bb(bb->pieces[WHITE]);
-	print_bb(bb->pieces[BLACK]);
-	print_bb(bb->pieces[WHITE_ALL]);
-	print_bb(bb->pieces[BLACK_ALL]);
-
 	TEST_ASSERT_EQUAL(0x1000EF00, bb->pieces[WHITE_PAWNS]);
 	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
 

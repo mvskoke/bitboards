@@ -106,7 +106,7 @@ static enum Square get_sq_index(const char* sq)
 // the first two chars
 static enum Piece get_piece_type(struct Bitboards *bb, int index)
 {
-	for (int i = 0; i < TOTAL_BB; i++)
+	for (int i = BLACK_PAWNS; i < TOTAL_BB; i++)
 	{
 		// bitboard is set at index
 		if (get_bit(bb->pieces[i], index))

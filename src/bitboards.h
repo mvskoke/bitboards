@@ -34,27 +34,28 @@ enum Square
 // indexing the arrays of bitboards
 enum Piece
 {
-	BLACK_PAWNS,   // 0 == i
-	BLACK_KNIGHTS, // 1
-	BLACK_BISHOPS, // 2
-	BLACK_ROOKS,   // 3
-	BLACK_QUEENS,  // 4
-	BLACK_KING,    // 5
+	BLACK_ALL,     // 0
+	WHITE_ALL,     // 1
 
-	WHITE_PAWNS,   // 6 == i+6
-	WHITE_KNIGHTS, // 7
-	WHITE_BISHOPS, // 8
-	WHITE_ROOKS,   // 9
-	WHITE_QUEENS,  // 10
-	WHITE_KING,    // 11
+	BLACK_PAWNS,   // 2 = i
+	BLACK_KNIGHTS, // 3
+	BLACK_BISHOPS, // 4
+	BLACK_ROOKS,   // 5
+	BLACK_QUEENS,  // 6
+	BLACK_KING,    // 7
 
-	BLACK_ALL,     // 12
-	WHITE_ALL,     // 13
+	WHITE_PAWNS,   // 8 = i+6
+	WHITE_KNIGHTS, // 9
+	WHITE_BISHOPS, // 10
+	WHITE_ROOKS,   // 11
+	WHITE_QUEENS,  // 12
+	WHITE_KING,    // 13
+
 	TOTAL_BB,      // 14
 
 	// minus 2 to ignore WHITE_ALL and BLACK_ALL
 	TOTAL_ATTACKS = TOTAL_BB-2,
-	NONEXISTENT = 15 // no piece
+	NONEXISTENT = 15  // no piece
 };
 
 struct Bitboards
