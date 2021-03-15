@@ -163,34 +163,37 @@ static int validate_move(char *command)
 */
 int validate_command(char *command)
 {
-	int len = strlen(command);
-	char copy[len+1];
+	// max command length is 5 chars, +1 for null char
+	char *copy = calloc(6, 1);
 
 	// convert to lowercase for easier checking
 	// commands are case-insensitive anyways
-	strcpy(copy, command);
+	strncpy(copy, command, 5);
 	/* I have to use a strcpy here because the Unity tests pass
 	in a string literal to this function, and when this func
 	used to call to_lowercase(command), it segfaults because
 	you can't dereference the memory of a literal... I think */
 	to_lowercase(copy);
 
+	int len = strlen(copy);
+	enum Command type = ILLEGAL;
 	if (len == 1)
 	{
 		// single-char commands i.e. r d f h q
-		return validate_one_char(copy[0]);
+		type = validate_one_char(copy[0]);
 	}
 	else if (len == 4)
 	{
 		// normal moves e.g. e2e4
-		return validate_move(copy);
+		type = validate_move(copy);
 	}
 	else if (len == 5)
 	{
 		// pawn promotion e.g. a7a8q
-		return validate_promotion(copy);
+		type = validate_promotion(copy);
 	}
-	return ILLEGAL;
+	free(copy);
+	return type;
 }
 
 /* validate_yn()

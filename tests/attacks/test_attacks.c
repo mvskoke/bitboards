@@ -7,6 +7,7 @@ Test suite for attack calculation and move validation
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../../src/attacks.h"
 #include "../../src/bitboards.h"
 #include "../../src/colors.h"
 #include "../../src/init.h"
@@ -35,16 +36,20 @@ void test_update_attacks(void)
 
 	// update_attacks(bb);
 
-	// after 1. e4, the only attacks which should be updated are
+	// e2e4 moves the pawn, and opens up the king, queen, bishop,
+	// and knight, so the only attacks which should be updated are
 	// white's king, queen, f1 bishop, g1 knight, and pawns.
 	// TEST_ASSERT_EQUAL(0x0000000000001010, bb->attacks[WHITE_KING]);
 	// TEST_ASSERT_EQUAL(0x0000008040201000, bb->attacks[WHITE_QUEENS]);
 	// TEST_ASSERT_EQUAL(0x0000010204081000, bb->attacks[WHITE_BISHOPS]);
 	// TEST_ASSERT_EQUAL(0x0000000000A51000, bb->attacks[WHITE_KNIGHTS]);
-	// TEST_ASSERT_EQUAL(0x00000038EFFF0000, bb->attacks[WHITE_PAWNS]);
+	// TEST_ASSERT_EQUAL(0x0000002800FF0000, bb->attacks[WHITE_PAWNS]);
+
+	// TEST_ASSERT_EQUAL(0x00000010EFEF0000, bb->wpawn_pushes);
+	// TEST_ASSERT_EQUAL(0x0000FFFF00000000, bb->bpawn_pushes);
 
 	// black pieces should remain unchanged
-	// TEST_ASSERT_EQUAL(0x0000FFFF00000000, bb->attacks[BLACK_PAWNS]);
+	// TEST_ASSERT_EQUAL(0x0000FF0000000000, bb->attacks[BLACK_PAWNS]);
 	// TEST_ASSERT_EQUAL(0x0000A50000000000, bb->attacks[BLACK_KNIGHTS]);
 	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_BISHOPS]);
 	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_ROOKS]);
@@ -55,21 +60,23 @@ void test_update_attacks(void)
 	free(curr);
 }
 
-// void test_validate_move(void)
-// {
-// 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
-// 	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
-// 	int turn = BLACK;
+void test_knight_attack(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb(bb);
 
-// 	free(bb);
-// }
+	TEST_ASSERT_EQUAL(0x0000000000A51842, knight_attack(bb->pieces[WHITE_KNIGHTS]));
+	TEST_ASSERT_EQUAL(0x0028441044280000, knight_attack(0x0000001000000000));
+
+	free(bb);
+}
 
 int main(void)
 {
 	UNITY_BEGIN();
 
-	RUN_TEST(test_update_attacks);
-	// RUN_TEST(test_validate_move);
+	// RUN_TEST(test_update_attacks);
+	RUN_TEST(test_knight_attack);
 
 	return UNITY_END();
 }

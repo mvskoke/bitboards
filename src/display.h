@@ -1,6 +1,8 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#include "bitboards.h"
+
 // no newlines in these macros
 // you're supposed to use puts() !!!!!
 #define BLACK_CURR_TURN  " =>  a   b   c   d   e   f   g   h"

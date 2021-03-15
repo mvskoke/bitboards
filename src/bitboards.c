@@ -77,11 +77,14 @@ struct Bitboards* transfer_bb(struct Bitboards *src, struct Bitboards *dest)
 {
 	memcpy(dest->pieces, src->pieces, sizeof(U64) * TOTAL_BB);
 	memcpy(dest->attacks, src->attacks, sizeof(U64) * TOTAL_ATTACKS);
+
 	dest->white_all = src->white_all;
 	dest->black_all = src->black_all;
+
 	// dest->wpawn_pushes = src->wpawn_pushes;
 	// dest->bpawn_pushes = src->bpawn_pushes;
-	// no need to copy pretty_board[][]
+
+	// there's no need to copy pretty_board[][]
 	return dest;
 }
 

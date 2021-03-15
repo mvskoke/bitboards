@@ -4,8 +4,11 @@ tests/*.o
 tests/attacks/test_attacks
 tests/bitops/test_bitops
 tests/gameops/test_gameops
+tests/validate/test_validate
 
 tests/output.c
+
+tests/scratchpad/*
 
 main
 sample.txt
