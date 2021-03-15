@@ -34,28 +34,24 @@ enum Square
 // indexing the arrays of bitboards
 enum Piece
 {
-	BLACK_ALL,     // 0
-	WHITE_ALL,     // 1
+	BLACK_PAWNS,   // 1 = i
+	BLACK_KNIGHTS, // 2
+	BLACK_BISHOPS, // 3
+	BLACK_ROOKS,   // 4
+	BLACK_QUEENS,  // 5
+	BLACK_KING,    // 6
 
-	BLACK_PAWNS,   // 2 = i
-	BLACK_KNIGHTS, // 3
-	BLACK_BISHOPS, // 4
-	BLACK_ROOKS,   // 5
-	BLACK_QUEENS,  // 6
-	BLACK_KING,    // 7
+	WHITE_PAWNS,   // 7 = i+6
+	WHITE_KNIGHTS, // 8
+	WHITE_BISHOPS, // 9
+	WHITE_ROOKS,   // 10
+	WHITE_QUEENS,  // 11
+	WHITE_KING,    // 12
 
-	WHITE_PAWNS,   // 8 = i+6
-	WHITE_KNIGHTS, // 9
-	WHITE_BISHOPS, // 10
-	WHITE_ROOKS,   // 11
-	WHITE_QUEENS,  // 12
-	WHITE_KING,    // 13
+	TOTAL_BB,      // 13
 
-	TOTAL_BB,      // 14
-
-	// minus 2 to ignore WHITE_ALL and BLACK_ALL
-	TOTAL_ATTACKS = TOTAL_BB-2,
-	NONEXISTENT = 15  // no piece
+	TOTAL_ATTACKS = TOTAL_BB,
+	NONEXISTENT  // no piece
 };
 
 struct Bitboards
@@ -65,8 +61,8 @@ struct Bitboards
 
 	// locations
 	U64 pieces[TOTAL_BB];
-	// to access BLACK_ALL or WHITE_ALL, you can also use
-	// the enum Color in colors.h
+	U64 black_all;
+	U64 white_all;
 
 	// pseudo-legal attacks/captures
 	// unknown if move would leave you in check

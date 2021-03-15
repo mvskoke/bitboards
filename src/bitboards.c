@@ -77,6 +77,8 @@ struct Bitboards* transfer_bb(struct Bitboards *src, struct Bitboards *dest)
 {
 	memcpy(dest->pieces, src->pieces, sizeof(U64) * TOTAL_BB);
 	memcpy(dest->attacks, src->attacks, sizeof(U64) * TOTAL_ATTACKS);
+	dest->white_all = src->white_all;
+	dest->black_all = src->black_all;
 	// dest->wpawn_pushes = src->wpawn_pushes;
 	// dest->bpawn_pushes = src->bpawn_pushes;
 	// no need to copy pretty_board[][]
@@ -106,17 +108,11 @@ static enum Square get_sq_index(const char* sq)
 // the first two chars
 static enum Piece get_piece_type(struct Bitboards *bb, int index)
 {
-	for (int i = BLACK_PAWNS; i < TOTAL_BB; i++)
+	for (int i = 0; i < TOTAL_BB; i++)
 	{
 		// bitboard is set at index
 		if (get_bit(bb->pieces[i], index))
-		{
-			// don't need to worry about matching against
-			// BLACK_ALL or WHITE_ALL. if it doesn't
-			// match against the individual pieces, it
-			// won't match against the COLOR_ALL boards
 			return i;
-		}
 	}
 	return NONEXISTENT;
 }
@@ -124,9 +120,9 @@ static enum Piece get_piece_type(struct Bitboards *bb, int index)
 // piece must exist before calling this func
 static enum Color get_piece_color(struct Bitboards *bb, int index)
 {
-	if (get_bit(bb->pieces[BLACK_ALL], index))
+	if (get_bit(bb->black_all, index))
 		return BLACK;
-	else if (get_bit(bb->pieces[WHITE_ALL], index))
+	else if (get_bit(bb->white_all, index))
 		return WHITE;
 	return NONEXISTENT;
 }

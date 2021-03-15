@@ -255,7 +255,7 @@ void test_init_bb(void)
 	printf("WHITE KING:\n");
 	print_bb(bb->pieces[WHITE_KING]);
 	printf("WHITE ALL:\n");
-	print_bb(bb->pieces[WHITE_ALL]);
+	print_bb(bb->white_all);
 
 	printf("BLACK PAWNS:\n");
 	print_bb(bb->pieces[BLACK_PAWNS]);
@@ -270,36 +270,36 @@ void test_init_bb(void)
 	printf("BLACK KING:\n");
 	print_bb(bb->pieces[BLACK_KING]);
 	printf("BLACK ALL:\n");
-	print_bb(bb->pieces[BLACK_ALL]);
+	print_bb(bb->black_all);
 
 	printf("THE ENTIRE BOARD:\n");
-	print_bb(bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
-	TEST_ASSERT_EQUAL(0xFFFF00000000FFFF, bb->pieces[WHITE_ALL] | bb->pieces[BLACK_ALL]);
+	print_bb(bb->white_all | bb->black_all);
+	TEST_ASSERT_EQUAL(0xFFFF00000000FFFF, bb->white_all | bb->black_all);
 
-	printf("WHITE PAWN MOVES:\n");
+	printf("WHITE PAWN ATTACKS:\n");
 	print_bb(bb->attacks[WHITE_PAWNS]);
-	printf("WHITE KNIGHT MOVES:\n");
+	printf("WHITE KNIGHT ATTACKS:\n");
 	print_bb(bb->attacks[WHITE_KNIGHTS]);
-	printf("WHITE BISHOP MOVES:\n");
+	printf("WHITE BISHOP ATTACKS:\n");
 	print_bb(bb->attacks[WHITE_BISHOPS]);
-	printf("WHITE ROOK MOVES:\n");
+	printf("WHITE ROOK ATTACKS:\n");
 	print_bb(bb->attacks[WHITE_ROOKS]);
-	printf("WHITE QUEEN MOVES:\n");
+	printf("WHITE QUEEN ATTACKS:\n");
 	print_bb(bb->attacks[WHITE_QUEENS]);
-	printf("WHITE KING MOVES:\n");
+	printf("WHITE KING ATTACKS:\n");
 	print_bb(bb->attacks[WHITE_KING]);
 
-	printf("BLACK PAWN MOVES:\n");
+	printf("BLACK PAWN ATTACKS:\n");
 	print_bb(bb->attacks[BLACK_PAWNS]);
-	printf("BLACK KNIGHT MOVES:\n");
+	printf("BLACK KNIGHT ATTACKS:\n");
 	print_bb(bb->attacks[BLACK_KNIGHTS]);
-	printf("BLACK BISHOP MOVES:\n");
+	printf("BLACK BISHOP ATTACKS:\n");
 	print_bb(bb->attacks[BLACK_BISHOPS]);
-	printf("BLACK ROOK MOVES:\n");
+	printf("BLACK ROOK ATTACKS:\n");
 	print_bb(bb->attacks[BLACK_ROOKS]);
-	printf("BLACK QUEEN MOVES:\n");
+	printf("BLACK QUEEN ATTACKS:\n");
 	print_bb(bb->attacks[BLACK_QUEENS]);
-	printf("BLACK KING MOVES:\n");
+	printf("BLACK KING ATTACKS:\n");
 	print_bb(bb->attacks[BLACK_KING]);
 
 	free(bb);

@@ -1,8 +1,12 @@
 obj/*.o
 tests/*.o
+
+tests/attacks/test_attacks
 tests/bitops/test_bitops
 tests/gameops/test_gameops
+
 tests/output.c
+
 main
 sample.txt
 TODO.txt

@@ -72,7 +72,7 @@ void init_bb(struct Bitboards *bb)
 	// 0000 0000 | 0001 0000
 	bb->pieces[WHITE_KING]       = 0x0000000000000010;
 
-	bb->pieces[WHITE_ALL]        = 0x000000000000FFFF;
+	bb->white_all                = 0x000000000000FFFF;
 
 	// for black pieces, move the pawns right by 5 bytes,
 	// and other pieces by 7 bytes
@@ -82,12 +82,12 @@ void init_bb(struct Bitboards *bb)
 	bb->pieces[BLACK_ROOKS]      = 0x8100000000000000;
 	bb->pieces[BLACK_QUEENS]     = 0x0800000000000000;
 	bb->pieces[BLACK_KING]       = 0x1000000000000000;
-	bb->pieces[BLACK_ALL]        = 0xFFFF000000000000;
+	bb->black_all                = 0xFFFF000000000000;
 
 	/**** PSEUDO-LEGAL ATTACKS ****/
 
 	// we can hardcode these because it's just the setup
-	bb->attacks[WHITE_PAWNS]     = 0x00000000FFFF0000;
+	bb->attacks[WHITE_PAWNS]     = 0x0000000000FF0000;
 
 	// 1010 0101 / 0000 0000 / 0000 0000
 	bb->attacks[WHITE_KNIGHTS]   = 0x0000000000A50000;
@@ -98,7 +98,7 @@ void init_bb(struct Bitboards *bb)
 	bb->attacks[WHITE_QUEENS]    = 0x0000000000000000;
 	bb->attacks[WHITE_KING]      = 0x0000000000000000;
 
-	bb->attacks[BLACK_PAWNS]     = 0x0000FFFF00000000;
+	bb->attacks[BLACK_PAWNS]     = 0x0000FF0000000000;
 	bb->attacks[BLACK_KNIGHTS]   = 0x0000A50000000000;
 	bb->attacks[BLACK_BISHOPS]   = 0x0000000000000000;
 	bb->attacks[BLACK_ROOKS]     = 0x0000000000000000;
@@ -159,6 +159,10 @@ static void init_bb_blank(struct Bitboards *bb)
 	for (int i = 0; i < TOTAL_ATTACKS; i++)
 		bb->attacks[i] = 0;
 
+	// initialize bitboards of COLOR_all
+	bb->white_all = 0;
+	bb->black_all = 0;
+
 	// initialize pretty board
 	for (int i = 0; i < FILES; i++)
 	{
@@ -208,9 +212,9 @@ static void fen_updates_bb(struct Bitboards *bb, char piece, int index)
 
 	// and the piece's color
 	if (islower(piece))
-		set_bit(&bb->pieces[BLACK_ALL], index);
+		set_bit(&bb->black_all, index);
 	else
-		set_bit(&bb->pieces[WHITE_ALL], index);
+		set_bit(&bb->white_all, index);
 }
 
 

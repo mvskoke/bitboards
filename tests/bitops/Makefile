@@ -3,7 +3,7 @@ CFLAGS = -Wall -Werror -Wextra -g
 
 OBJ = ../../obj
 SRC = ../../src
-DEP = $(OBJ)/test_bitops.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o
+DEP = $(OBJ)/test_bitops.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(SRC)/colors.h
 
 test_bitops: $(DEP)
 	$(CC) $(CFLAGS) $^ ../../unity/unity.c -o test_bitops
