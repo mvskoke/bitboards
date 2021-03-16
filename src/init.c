@@ -218,7 +218,7 @@ static void fen_updates_bb(struct Bitboards *bb, char piece, int index)
 }
 
 
-void init_bb_fen(struct Bitboards *bb, char fen[])
+void init_bb_fen(struct Bitboards *bb, char *fen)
 {
 	init_bb_blank(bb);
 	int index = 56; // MUST BE ZERO-INDEXED TO ALLOW EASY BIT-SETTING

@@ -2,9 +2,11 @@
 # given the bit indexes to set
 
 total = 0
-n = int(input(">>> ").strip())
-while n != -1:
-    total += 2 ** n
+while True:
     n = int(input(">>> ").strip())
+    while n != -1:
+        total += 2 ** n
+        n = int(input(">>> ").strip())
+    print(f"0x{total:016x}")
+    total = 0
 
-print(f"0x{total:x}")
