@@ -17,6 +17,8 @@ Can also get a "yes" or "no" response.
 #include "commands.h"
 #include "colors.h"
 
+#define MAX_COMMAND_LEN 6
+
 /* get_command()
 	@buffer         char array to place user's input
 	@size           max num of chars to read, including '\0'
@@ -164,11 +166,11 @@ static int validate_move(char *command)
 int validate_command(char *command)
 {
 	// max command length is 5 chars, +1 for null char
-	char *copy = calloc(6, 1);
+	char *copy = calloc(MAX_COMMAND_LEN, 1);
 
 	// convert to lowercase for easier checking
 	// commands are case-insensitive anyways
-	strncpy(copy, command, 5);
+	strncpy(copy, command, MAX_COMMAND_LEN-1);
 	/* I have to use a strcpy here because the Unity tests pass
 	in a string literal to this function, and when this func
 	used to call to_lowercase(command), it segfaults because

@@ -148,9 +148,34 @@ void test_king_attack(void)
 	free(bb);
 }
 
-/*********** TO DO ***********/
+void test_pawn_attack(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
 
-// void test_pawn_attack(void)
+	/* from FEN position */
+	TEST_ASSERT_EQUAL(0x000000176AF00000, pawn_attack(bb->pieces[WHITE_PAWNS], WHITE));
+	TEST_ASSERT_EQUAL(0X00000F0000280000, pawn_attack(bb->pieces[BLACK_PAWNS], BLACK));
+
+	/* from hard-coded positions */
+	// after 1. e4 e5
+	TEST_ASSERT_EQUAL(0x0000002800FF0000, pawn_attack(0x000000001000EF00, WHITE));
+	TEST_ASSERT_EQUAL(0x0000FF0028000000, pawn_attack(0x00EF001000000000, BLACK));
+
+	// two connected juicers on the 6th
+	// or if it's black, two pawns still on the 2nd
+	TEST_ASSERT_EQUAL(0x0700000000000000, pawn_attack(0x0003000000000000, WHITE));
+	TEST_ASSERT_EQUAL(0x0000070000000000, pawn_attack(0x0003000000000000, BLACK));
+
+	// a7 h7
+	TEST_ASSERT_EQUAL(0x4200000000000000, pawn_attack(0x0081000000000000, WHITE));
+	// a6 h6
+	TEST_ASSERT_EQUAL(0x0042000000000000, pawn_attack(0x0000810000000000, WHITE));
+
+	free(bb);
+}
+
+// void test_pawn_push(void)
 // {
 // 	;
 // }
@@ -170,11 +195,6 @@ void test_king_attack(void)
 // 	;
 // }
 
-// void test_pawn_push(void)
-// {
-// 	;
-// }
-
 int main(void)
 {
 	UNITY_BEGIN();
@@ -182,11 +202,11 @@ int main(void)
 	// RUN_TEST(test_update_attacks);
 	RUN_TEST(test_knight_attack);
 	RUN_TEST(test_king_attack);
-	// RUN_TEST(test_pawn_attack);
+	RUN_TEST(test_pawn_attack);
+	// RUN_TEST(test_pawn_push);
 	// RUN_TEST(test_bishop_attack);
 	// RUN_TEST(test_rook_attack);
 	// RUN_TEST(test_queen_attack);
-	// RUN_TEST(test_pawn_push);
 
 	return UNITY_END();
 }

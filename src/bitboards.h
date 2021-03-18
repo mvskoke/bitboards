@@ -72,8 +72,8 @@ struct Bitboards
 	// move, but the pawn is the only expcetion, so I separate
 	// the pawn attacks and pawn pushes (non-captures)
 	// might be easier to calculate and validate moves
-	//U64 wpawn_pushes;
-	//U64 bpawn_pushes;
+	//U64 w_pawn_pushes;
+	//U64 b_pawn_pushes;
 };
 
 struct Move
@@ -101,6 +101,11 @@ struct Move
 // 	enum Color turn;
 // 	enum Color orient;
 // 	bool ascii;
+//
+// 	bool w_queenside_castle;
+// 	bool w_kingside_castle;
+// 	bool b_queenside_castle;
+// 	bool b_kingside_castle;
 // }
 
 U64 set_bit(U64 *bb, const int index);
