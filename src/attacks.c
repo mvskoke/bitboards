@@ -2,12 +2,15 @@
 #include "colors.h"
 
 // bit masks
-#define NOT_A_FILE  0xFEFEFEFEFEFEFEFE
-#define NOT_AB_FILE 0xFCFCFCFCFCFCFCFC
-#define NOT_H_FILE  0x7F7F7F7F7F7F7F7F
-#define NOT_HG_FILE 0x3F3F3F3F3F3F3F3F
+#define SECOND_RANK  0x000000000000FF00
+#define SEVENTH_RANK 0x00FF000000000000
 
-// one-step bit shift + bitmask
+#define NOT_A_FILE   0xFEFEFEFEFEFEFEFE
+#define NOT_AB_FILE  0xFCFCFCFCFCFCFCFC
+#define NOT_H_FILE   0x7F7F7F7F7F7F7F7F
+#define NOT_HG_FILE  0x3F3F3F3F3F3F3F3F
+
+// one-step bit shift with bitmask
 #define NORTHWEST(bb) ((bb << 7) & NOT_H_FILE)
 #define NORTH(bb)      (bb << 8)
 #define NORTHEAST(bb) ((bb << 9) & NOT_A_FILE)
@@ -35,12 +38,22 @@ U64 pawn_attack(U64 piece, enum Color color)
 	return attack;
 }
 
-// U64 pawn_push(U64 pawns)
-// {
-// 	U64 attack = 0;
-// 	;
-// 	return attack;
-// }
+U64 pawn_push(U64 pawns, enum Color color)
+{
+	U64 bb = 0;
+	if (color == WHITE)
+	{
+		// up twice if on the starting rank
+		bb |= NORTH(NORTH((pawns & SECOND_RANK)));
+		bb |= NORTH(pawns);
+	}
+	else
+	{
+		bb |= SOUTH(SOUTH((pawns & SEVENTH_RANK)));
+		bb |= SOUTH(pawns);
+	}
+	return bb;
+}
 
 // U64 bishop_attack(U64 piece)
 // {
@@ -73,11 +86,11 @@ U64 knight_attack(U64 piece)
 	attack |= (piece >> 15) & NOT_A_FILE;
 	attack |= (piece >> 17) & NOT_H_FILE;
 
-	// remove the piece from its own attack bitboard
-	attack &= ~piece;
-	// ~piece will set every bit EXCEPT the piece locations
-	// so AND'ing that with attack will remove the piece's
-	// location from the attacks
+	// do not remove piece from its own attack bitboard!!!
+	// if two pieces defend each other, and we did attack &= ~piece,
+	// the attack bb would say they DO NOT defend each other.
+	// a piece will never capture itself or its own color anyway
+	// we'll verify that long before checking the bitboards
 	return attack;
 }
 
@@ -94,8 +107,6 @@ U64 king_attack(U64 piece)
 	attack |= SOUTHWEST(piece);
 	attack |= SOUTH(piece);
 	attack |= SOUTHEAST(piece);
-
-	attack &= ~piece;
 	return attack;
 }
 
@@ -113,25 +124,31 @@ void update_attacks(struct Bitboards *bb)
 		case BLACK_PAWNS:
 			bb->attacks[i] = pawn_attack(bb->pieces[i], BLACK);
 			break;
+
 		case WHITE_PAWNS:
 			bb->attacks[i] = pawn_attack(bb->pieces[i], WHITE);
 			break;
+
 		case BLACK_KNIGHTS:
 		case WHITE_KNIGHTS:
 			bb->attacks[i] = knight_attack(bb->pieces[i]);
 			break;
+
 		case BLACK_BISHOPS:
 		case WHITE_BISHOPS:
 			// bb->attacks[i] = bishop_attack(bb->pieces[i]);
 			break;
+
 		case BLACK_ROOKS:
 		case WHITE_ROOKS:
 			// bb->attacks[i] = rook_attack(bb->pieces[i]);
 			break;
+
 		case BLACK_QUEENS:
 		case WHITE_QUEENS:
 			// bb->attacks[i] = queen_attack(bb->pieces[i]);
 			break;
+
 		case BLACK_KING:
 		case WHITE_KING:
 			bb->attacks[i] = king_attack(bb->pieces[i]);
@@ -139,6 +156,6 @@ void update_attacks(struct Bitboards *bb)
 		}
 	}
 	// pawn attacks and pawn pushes are separate
-	//pawn_push(bb->w_pawn_pushes, WHITE);
-	//pawn_push(bb->b_pawn_pushes, BLACK);
+	bb->w_pawn_pushes = pawn_push(bb->pieces[WHITE_PAWNS], WHITE);
+	bb->b_pawn_pushes = pawn_push(bb->pieces[BLACK_PAWNS], BLACK);
 }

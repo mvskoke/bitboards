@@ -278,6 +278,8 @@ void test_init_bb(void)
 
 	printf("WHITE PAWN ATTACKS:\n");
 	print_bb(bb->attacks[WHITE_PAWNS]);
+	printf("WHITE PAWN PUSHES:\n");
+	print_bb(bb->w_pawn_pushes);
 	printf("WHITE KNIGHT ATTACKS:\n");
 	print_bb(bb->attacks[WHITE_KNIGHTS]);
 	printf("WHITE BISHOP ATTACKS:\n");
@@ -291,6 +293,8 @@ void test_init_bb(void)
 
 	printf("BLACK PAWN ATTACKS:\n");
 	print_bb(bb->attacks[BLACK_PAWNS]);
+	printf("BLACK PAWN PUSHES:\n");
+	print_bb(bb->b_pawn_pushes);
 	printf("BLACK KNIGHT ATTACKS:\n");
 	print_bb(bb->attacks[BLACK_KNIGHTS]);
 	printf("BLACK BISHOP ATTACKS:\n");

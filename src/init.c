@@ -105,8 +105,8 @@ void init_bb(struct Bitboards *bb)
 	bb->attacks[BLACK_QUEENS]    = 0x0000000000000000;
 	bb->attacks[BLACK_KING]      = 0x0000000000000000;
 
-	// bb->w_pawn_pushes            = 0x00000000FFFF0000;
-	// bb->b_pawn_pushes            = 0x0000FFFF00000000;
+	bb->w_pawn_pushes            = 0x00000000FFFF0000;
+	bb->b_pawn_pushes            = 0x0000FFFF00000000;
 
 	/**** PRETTY BOARD ****/
 	// pretty_board[i][j]

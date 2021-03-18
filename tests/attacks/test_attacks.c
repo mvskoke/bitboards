@@ -89,6 +89,8 @@ void test_knight_attack(void)
 	TEST_ASSERT_EQUAL(0x0002040004020000 | 0x0005080008050000, knight_attack(0x0000000300000000));
 	// e5 g1
 	TEST_ASSERT_EQUAL(0x0028440044A81000, knight_attack(0x0000001000000040));
+	// e5 d3
+	TEST_ASSERT_EQUAL(0x0028441466282214, knight_attack(0x0000001000080000));
 
 	/* lone knights */
 
@@ -172,13 +174,39 @@ void test_pawn_attack(void)
 	// a6 h6
 	TEST_ASSERT_EQUAL(0x0042000000000000, pawn_attack(0x0000810000000000, WHITE));
 
+	// insane chess puzzle (for engines)
+	// (48:48) https://www.youtube.com/watch?v=15nuJdAUW0s
+	TEST_ASSERT_EQUAL(0x000040AA55000000, pawn_attack(0x00000080542A0000, WHITE));
+	TEST_ASSERT_EQUAL(0x00000040AA550000, pawn_attack(0x000080542A000000, BLACK));
+
 	free(bb);
 }
 
-// void test_pawn_push(void)
-// {
-// 	;
-// }
+void test_pawn_push(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
+
+	/* from FEN position */
+	TEST_ASSERT_EQUAL(0x0000000BF4600000, pawn_push(bb->pieces[WHITE_PAWNS], WHITE));
+	TEST_ASSERT_EQUAL(0x0000070700100000, pawn_push(bb->pieces[BLACK_PAWNS], BLACK));
+
+	/* from hard-coded positions */
+	// starting position
+	TEST_ASSERT_EQUAL(0x00000000FFFF0000, pawn_push(0x000000000000FF00, WHITE));
+	TEST_ASSERT_EQUAL(0x0000FFFF00000000, pawn_push(0x00FF000000000000, BLACK));
+
+	// swap black and white pawns' starting ranks -----------> BELOW -> !!!!!
+	TEST_ASSERT_EQUAL(0x00000000000000FF, pawn_push(0x000000000000FF00, BLACK));
+	TEST_ASSERT_EQUAL(0xFF00000000000000, pawn_push(0x00FF000000000000, WHITE));
+
+	// insane chess puzzle (for engines)
+	// (48:48) https://www.youtube.com/watch?v=15nuJdAUW0s
+	TEST_ASSERT_EQUAL(0x000080542A000000, pawn_push(0x00000080542A0000, WHITE));
+	TEST_ASSERT_EQUAL(0x00000080542A0000, pawn_push(0x000080542A000000, BLACK));
+
+	free(bb);
+}
 
 // void test_bishop_attack(void)
 // {
@@ -203,7 +231,7 @@ int main(void)
 	RUN_TEST(test_knight_attack);
 	RUN_TEST(test_king_attack);
 	RUN_TEST(test_pawn_attack);
-	// RUN_TEST(test_pawn_push);
+	RUN_TEST(test_pawn_push);
 	// RUN_TEST(test_bishop_attack);
 	// RUN_TEST(test_rook_attack);
 	// RUN_TEST(test_queen_attack);
