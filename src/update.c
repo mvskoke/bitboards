@@ -1,5 +1,6 @@
 #include "bitboards.h"
 #include "colors.h"
+#include "move.h"
 
 static void update_pretty_board(struct Bitboards *bb, struct Move *move)
 {

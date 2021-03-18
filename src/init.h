@@ -2,6 +2,7 @@
 #define INIT_H
 
 #include "bitboards.h"
+#include "move.h"
 
 void init_bb(struct Bitboards *bb);
 void init_moves(struct Move *curr_move, struct Move *prev_move);

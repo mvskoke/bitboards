@@ -11,6 +11,7 @@ Test suite for attack calculation and move validation
 #include "../../src/bitboards.h"
 #include "../../src/colors.h"
 #include "../../src/init.h"
+#include "../../src/move.h"
 #include "../../src/update.h"
 
 #include "../../unity/unity.h"

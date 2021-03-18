@@ -2,6 +2,7 @@
 #define UPDATE_H
 
 #include "bitboards.h"
+#include "move.h"
 
 void update_board(struct Bitboards *bb, struct Move *move);
 

@@ -4,6 +4,7 @@
 
 #include "bitboards.h"
 #include "colors.h"
+#include "move.h"
 
 // user should have malloc'd memory for struct Bitboards PRIOR
 // to calling any of the init functions, and these functions

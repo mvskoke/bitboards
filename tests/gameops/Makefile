@@ -3,7 +3,7 @@ CFLAGS = -Wall -Werror -Wextra -g
 
 OBJ = ../../obj
 SRC = ../../src
-DEP = $(OBJ)/test_gameops.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(OBJ)/update.o $(SRC)/colors.h
+DEP = $(OBJ)/test_gameops.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(OBJ)/move.o $(OBJ)/update.o $(SRC)/colors.h
 
 test_gameops: $(DEP)
 	$(CC) $(CFLAGS) $^ ../../unity/unity.c -o test_gameops

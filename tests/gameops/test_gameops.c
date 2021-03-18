@@ -14,6 +14,7 @@ move parsing, handling data structures, and printing the board.
 #include "../../src/colors.h"
 #include "../../src/display.h"
 #include "../../src/init.h"
+#include "../../src/move.h"
 #include "../../src/update.h"
 
 #include "../../unity/unity.h"
@@ -216,6 +217,8 @@ void test_transfer_bitboards(void)
 	TEST_ASSERT_EQUAL_UINT64_ARRAY(bb->attacks, copy->attacks, TOTAL_ATTACKS);
 	TEST_ASSERT_EQUAL(bb->white_all, copy->white_all);
 	TEST_ASSERT_EQUAL(bb->black_all, copy->black_all);
+	TEST_ASSERT_EQUAL(bb->w_pawn_pushes, copy->w_pawn_pushes);
+	TEST_ASSERT_EQUAL(bb->b_pawn_pushes, copy->b_pawn_pushes);
 
 	if (parse_move(bb, curr, "e2e4"))
 		update_board(bb, curr);
@@ -237,6 +240,12 @@ void test_transfer_bitboards(void)
 	}
 	TEST_ASSERT_NOT_EQUAL(bb->white_all, copy->white_all);
 	TEST_ASSERT_EQUAL(bb->black_all, copy->black_all);
+
+	// not really a need to check w_pawn_pushes bitboards in this
+	// stage of this test. we'll need to update_attacks() to check,
+	// which we will test in another module
+	// TEST_ASSERT_NOT_EQUAL(bb->w_pawn_pushes, copy->w_pawn_pushes);
+	TEST_ASSERT_EQUAL(bb->b_pawn_pushes, copy->b_pawn_pushes);
 
 	transfer_bb(bb, copy);
 
