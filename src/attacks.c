@@ -3,6 +3,8 @@
 
 // bit masks
 #define SECOND_RANK  0x000000000000FF00
+#define THIRD_RANK   0x0000000000FF0000
+#define SIXTH_RANK   0x0000FF0000000000
 #define SEVENTH_RANK 0x00FF000000000000
 
 #define NOT_A_FILE   0xFEFEFEFEFEFEFEFE
@@ -22,7 +24,7 @@
 #define SOUTH(bb)      (bb >> 8)
 #define SOUTHEAST(bb) ((bb >> 7) & NOT_A_FILE)
 
-U64 pawn_attack(U64 piece, enum Color color)
+U64 pawn_attack(U64 piece, U64 all, enum Color color)
 {
 	U64 attack = 0;
 	if (color == WHITE)
@@ -35,45 +37,58 @@ U64 pawn_attack(U64 piece, enum Color color)
 		attack |= SOUTHWEST(piece);
 		attack |= SOUTHEAST(piece);
 	}
+
+	attack &= ~all;
 	return attack;
 }
 
-U64 pawn_push(U64 pawns, enum Color color)
+U64 pawn_push(U64 pawns, U64 all, enum Color color)
 {
-	U64 bb = 0;
+	U64 push = 0;
+
+	// find pieces on third/sixth rank which block pawns
+	U64 white_blocked = (all & THIRD_RANK) >> 8;
+	U64 black_blocked = (all & SIXTH_RANK) << 8;
+
+	// find UNBLOCKED pawns on the starting rank
+	U64 white_twice = pawns & SECOND_RANK & ~white_blocked;
+	U64 black_twice = pawns & SEVENTH_RANK & ~black_blocked;
+
 	if (color == WHITE)
 	{
 		// up twice if on the starting rank
-		bb |= NORTH(NORTH((pawns & SECOND_RANK)));
-		bb |= NORTH(pawns);
+		push |= NORTH(NORTH(white_twice));
+		push |= NORTH(pawns);
 	}
 	else
 	{
-		bb |= SOUTH(SOUTH((pawns & SEVENTH_RANK)));
-		bb |= SOUTH(pawns);
+		push |= SOUTH(SOUTH(black_twice));
+		push |= SOUTH(pawns);
 	}
-	return bb;
+
+	push &= ~all;
+	return push;
 }
 
-// U64 bishop_attack(U64 piece)
+// U64 bishop_attack(U64 piece, U64 all)
 // {
 // 	U64 attack = 0;
 // 	return attack;
 // }
 
-// U64 rook_attack(U64 piece)
+// U64 rook_attack(U64 piece, U64 all)
 // {
 // 	U64 attack = 0;
 // 	return attack;
 // }
 
-// U64 queen_attack(U64 piece)
+// U64 queen_attack(U64 piece, U64 all)
 // {
 // 	U64 attack = 0;
 // 	return attack;
 // }
 
-U64 knight_attack(U64 piece)
+U64 knight_attack(U64 piece, U64 all)
 {
 	U64 attack = 0;
 	attack |= (piece << 17) & NOT_A_FILE;
@@ -86,15 +101,11 @@ U64 knight_attack(U64 piece)
 	attack |= (piece >> 15) & NOT_A_FILE;
 	attack |= (piece >> 17) & NOT_H_FILE;
 
-	// do not remove piece from its own attack bitboard!!!
-	// if two pieces defend each other, and we did attack &= ~piece,
-	// the attack bb would say they DO NOT defend each other.
-	// a piece will never capture itself or its own color anyway
-	// we'll verify that long before checking the bitboards
+	attack &= ~all;
 	return attack;
 }
 
-U64 king_attack(U64 piece)
+U64 king_attack(U64 piece, U64 all)
 {
 	U64 attack = 0;
 	attack |= NORTHWEST(piece);
@@ -107,6 +118,8 @@ U64 king_attack(U64 piece)
 	attack |= SOUTHWEST(piece);
 	attack |= SOUTH(piece);
 	attack |= SOUTHEAST(piece);
+
+	attack &= ~all;
 	return attack;
 }
 
@@ -115,47 +128,64 @@ U64 king_attack(U64 piece)
 // up-to-date info on piece locations
 void update_attacks(struct Bitboards *bb)
 {
+	U64 piece;
 	for (int i = 0; i < TOTAL_ATTACKS; i++)
 	{
-		// zero out the old attacks
-		// bb->attacks[i] = 0;
+		// make the line length shorter
+		piece = bb->pieces[i];
 		switch (i)
 		{
 		case BLACK_PAWNS:
-			bb->attacks[i] = pawn_attack(bb->pieces[i], BLACK);
+			bb->attacks[i] = pawn_attack(piece, bb->black_all, BLACK);
 			break;
 
 		case WHITE_PAWNS:
-			bb->attacks[i] = pawn_attack(bb->pieces[i], WHITE);
+			bb->attacks[i] = pawn_attack(piece, bb->white_all, WHITE);
 			break;
 
 		case BLACK_KNIGHTS:
+			bb->attacks[i] = knight_attack(piece, bb->black_all);
+			break;
+
 		case WHITE_KNIGHTS:
-			bb->attacks[i] = knight_attack(bb->pieces[i]);
+			bb->attacks[i] = knight_attack(piece, bb->white_all);
 			break;
 
 		case BLACK_BISHOPS:
+			// bb->attacks[i] = bishop_attack(piece, bb->black_all);
+			break;
+
 		case WHITE_BISHOPS:
-			// bb->attacks[i] = bishop_attack(bb->pieces[i]);
+			// bb->attacks[i] = bishop_attack(piece, bb->white_all);
 			break;
 
 		case BLACK_ROOKS:
+			// bb->attacks[i] = rook_attack(piece, bb->black_all);
+			break;
+
 		case WHITE_ROOKS:
-			// bb->attacks[i] = rook_attack(bb->pieces[i]);
+			// bb->attacks[i] = rook_attack(piece, bb->white_all);
 			break;
 
 		case BLACK_QUEENS:
+			// bb->attacks[i] = queen_attack(piece, bb->black_all);
+			break;
+
 		case WHITE_QUEENS:
-			// bb->attacks[i] = queen_attack(bb->pieces[i]);
+			// bb->attacks[i] = queen_attack(piece, bb->white_all);
 			break;
 
 		case BLACK_KING:
+			bb->attacks[i] = king_attack(piece, bb->black_all);
+			break;
+
 		case WHITE_KING:
-			bb->attacks[i] = king_attack(bb->pieces[i]);
+			bb->attacks[i] = king_attack(piece, bb->white_all);
 			break;
 		}
 	}
 	// pawn attacks and pawn pushes are separate
-	bb->w_pawn_pushes = pawn_push(bb->pieces[WHITE_PAWNS], WHITE);
-	bb->b_pawn_pushes = pawn_push(bb->pieces[BLACK_PAWNS], BLACK);
+	U64 all = bb->white_all | bb->black_all;
+	bb->w_pawn_pushes = pawn_push(bb->pieces[WHITE_PAWNS], all, WHITE);
+	bb->b_pawn_pushes = pawn_push(bb->pieces[BLACK_PAWNS], all, BLACK);
 }

@@ -67,9 +67,9 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *const com
 
 	// calculate indexes for pretty_board[][]
 	move->start_x = move->start % 8;
-	move->start_y = (move->start - move->start_x) / 8;
+	move->start_y = move->start >> 3;  // integer division by 8
 	move->end_x   = move->end % 8;
-	move->end_y   = (move->end - move->end_x) / 8;
+	move->end_y   = move->end >> 3;
 
 	// start parsing the piece in the move
 	move->piece = get_piece_type(bb, move->start);

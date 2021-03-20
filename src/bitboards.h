@@ -46,7 +46,7 @@ struct Bitboards
 	U64 black_all;
 	U64 white_all;
 
-	// pseudo-legal attacks/captures
+	// pseudo-legal moves/captures
 	// unknown if move would leave you in check
 	U64 attacks[TOTAL_ATTACKS];
 

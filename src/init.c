@@ -200,7 +200,7 @@ static void add_to_pretty_board(struct Bitboards *bb, char piece, int index)
 {
 	// convert bit index to (i,j) index
 	int i = index % 8;
-	int j = ((index - i) / 8);
+	int j = index >> 3;  // integer division by 8
 	bb->pretty_board[i][j] = piece;
 }
 

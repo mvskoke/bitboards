@@ -10,8 +10,9 @@ Test suite for testing move validation
 #include "../../src/bitboards.h"
 #include "../../src/colors.h"
 #include "../../src/init.h"
-#include "../../src/update.h"
 #include "../../src/move.h"
+#include "../../src/update.h"
+#include "../../src/validate.h"
 
 #include "../../unity/unity.h"
 

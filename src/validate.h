@@ -1,6 +1,8 @@
 #ifndef VALIDATE_H
 #define VALIDATE_H
 
+#include <stdbool.h>
+
 #include "bitboards.h"
 #include "move.h"
 
