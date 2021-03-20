@@ -91,7 +91,7 @@ void init_bb(struct Bitboards *bb)
 	bb->attacks[WHITE_PAWNS]     = 0x0000000000FF0000;
 
 	// 1010 0101 / 0000 0000 / 0000 0000
-	bb->attacks[WHITE_KNIGHTS]   = 0x0000000000A51800;
+	bb->attacks[WHITE_KNIGHTS]   = 0x0000000000A50000;
 
 	// you can only move pawns and knights on the first turn
 	bb->attacks[WHITE_BISHOPS]   = 0x0000000000000000;
@@ -100,7 +100,7 @@ void init_bb(struct Bitboards *bb)
 	bb->attacks[WHITE_KING]      = 0x0000000000000000;
 
 	bb->attacks[BLACK_PAWNS]     = 0x0000FF0000000000;
-	bb->attacks[BLACK_KNIGHTS]   = 0x0018A50000000000;
+	bb->attacks[BLACK_KNIGHTS]   = 0x0000A50000000000;
 	bb->attacks[BLACK_BISHOPS]   = 0x0000000000000000;
 	bb->attacks[BLACK_ROOKS]     = 0x0000000000000000;
 	bb->attacks[BLACK_QUEENS]    = 0x0000000000000000;

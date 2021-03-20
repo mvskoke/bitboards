@@ -24,6 +24,9 @@
 #define SOUTH(bb)      (bb >> 8)
 #define SOUTHEAST(bb) ((bb >> 7) & NOT_A_FILE)
 
+// squares attacked by pawn(s) (diagonal captures)
+// exclude your own pieces
+// U64 all = all pieces of enum Color color
 U64 pawn_attack(U64 piece, U64 all, enum Color color)
 {
 	U64 attack = 0;
@@ -42,6 +45,9 @@ U64 pawn_attack(U64 piece, U64 all, enum Color color)
 	return attack;
 }
 
+// squares to which a pawn(s) can push itself
+// exclude your pieces AND enemies' pieces because these aren't captures
+// U64 all = ALL pieces on the board
 U64 pawn_push(U64 pawns, U64 all, enum Color color)
 {
 	U64 push = 0;
@@ -70,6 +76,26 @@ U64 pawn_push(U64 pawns, U64 all, enum Color color)
 	return push;
 }
 
+// squares to which a knight(s) can jump
+// exclude your own pieces
+// U64 all = all pieces of knights' same color
+U64 knight_attack(U64 piece, U64 all)
+{
+	U64 attack = 0;
+	attack |= (piece << 17) & NOT_A_FILE;
+	attack |= (piece << 15) & NOT_H_FILE;
+	attack |= (piece << 10) & NOT_AB_FILE;
+	attack |= (piece << 6)  & NOT_HG_FILE;
+
+	attack |= (piece >> 6)  & NOT_AB_FILE;
+	attack |= (piece >> 10) & NOT_HG_FILE;
+	attack |= (piece >> 15) & NOT_A_FILE;
+	attack |= (piece >> 17) & NOT_H_FILE;
+
+	attack &= ~all;
+	return attack;
+}
+
 // U64 bishop_attack(U64 piece, U64 all)
 // {
 // 	U64 attack = 0;
@@ -88,23 +114,9 @@ U64 pawn_push(U64 pawns, U64 all, enum Color color)
 // 	return attack;
 // }
 
-U64 knight_attack(U64 piece, U64 all)
-{
-	U64 attack = 0;
-	attack |= (piece << 17) & NOT_A_FILE;
-	attack |= (piece << 15) & NOT_H_FILE;
-	attack |= (piece << 10) & NOT_AB_FILE;
-	attack |= (piece << 6)  & NOT_HG_FILE;
-
-	attack |= (piece >> 6)  & NOT_AB_FILE;
-	attack |= (piece >> 10) & NOT_HG_FILE;
-	attack |= (piece >> 15) & NOT_A_FILE;
-	attack |= (piece >> 17) & NOT_H_FILE;
-
-	attack &= ~all;
-	return attack;
-}
-
+// squares to which a king(s) can jump
+// exclude your own pieces
+// U64 all = all pieces of king's same color
 U64 king_attack(U64 piece, U64 all)
 {
 	U64 attack = 0;

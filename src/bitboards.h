@@ -53,7 +53,6 @@ struct Bitboards
 	// all pieces capture on the same squares on which they
 	// move, but the pawn is the only expcetion, so I separate
 	// the pawn attacks and pawn pushes (non-captures)
-	// might be easier to calculate and validate moves
 	U64 w_pawn_pushes;
 	U64 b_pawn_pushes;
 };

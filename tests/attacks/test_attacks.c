@@ -138,11 +138,11 @@ void test_king_attack(void)
 
 	/* from empty bitboards */
 	TEST_ASSERT_EQUAL(0x0000030203000000, king_attack(0x0000000100000000, 0));  //a5
-	TEST_ASSERT_EQUAL(0x0000c040c0000000, king_attack(0x0000008000000000, 0));  //h5
+	TEST_ASSERT_EQUAL(0x0000C040C0000000, king_attack(0x0000008000000000, 0));  //h5
 	TEST_ASSERT_EQUAL(0x0000000000000302, king_attack(0x0000000000000001, 0));  //a1
-	TEST_ASSERT_EQUAL(0x000000000000c040, king_attack(0x0000000000000080, 0));  //h1
+	TEST_ASSERT_EQUAL(0x000000000000C040, king_attack(0x0000000000000080, 0));  //h1
 	TEST_ASSERT_EQUAL(0x0203000000000000, king_attack(0x0100000000000000, 0));  //a8
-	TEST_ASSERT_EQUAL(0x40c0000000000000, king_attack(0x8000000000000000, 0));  //h8
+	TEST_ASSERT_EQUAL(0x40C0000000000000, king_attack(0x8000000000000000, 0));  //h8
 
 	// starting positions
 	TEST_ASSERT_EQUAL(0x0000000000003828, king_attack(0x0000000000000010, 0));  // e1
@@ -190,7 +190,7 @@ void test_pawn_push(void)
 
 	/* from FEN position */
 	U64 all = bb->black_all | bb->white_all;
-	TEST_ASSERT_EQUAL(0x00000003a4600000, pawn_push(bb->pieces[WHITE_PAWNS], all, WHITE));
+	TEST_ASSERT_EQUAL(0x00000003A4600000, pawn_push(bb->pieces[WHITE_PAWNS], all, WHITE));
 	TEST_ASSERT_EQUAL(0x0000050500000000, pawn_push(bb->pieces[BLACK_PAWNS], all, BLACK));
 
 	/* from empty bitboards */
