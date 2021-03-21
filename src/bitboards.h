@@ -45,6 +45,7 @@ struct Bitboards
 	U64 pieces[TOTAL_BB];
 	U64 black_all;
 	U64 white_all;
+	U64 all;
 
 	// pseudo-legal moves/captures
 	// unknown if move would leave you in check

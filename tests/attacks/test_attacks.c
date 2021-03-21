@@ -189,9 +189,8 @@ void test_pawn_push(void)
 	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
 
 	/* from FEN position */
-	U64 all = bb->black_all | bb->white_all;
-	TEST_ASSERT_EQUAL(0x00000003A4600000, pawn_push(bb->pieces[WHITE_PAWNS], all, WHITE));
-	TEST_ASSERT_EQUAL(0x0000050500000000, pawn_push(bb->pieces[BLACK_PAWNS], all, BLACK));
+	TEST_ASSERT_EQUAL(0x00000003A4600000, pawn_push(bb->pieces[WHITE_PAWNS], bb->all, WHITE));
+	TEST_ASSERT_EQUAL(0x0000050500000000, pawn_push(bb->pieces[BLACK_PAWNS], bb->all, BLACK));
 
 	/* from empty bitboards */
 	// starting position
@@ -207,6 +206,9 @@ void test_pawn_push(void)
 	TEST_ASSERT_EQUAL(0x000080542A000000, pawn_push(0x00000080542A0000, 0, WHITE));
 	TEST_ASSERT_EQUAL(0x00000080542A0000, pawn_push(0x000080542A000000, 0, BLACK));
 
+	init_bb_fen(bb, "rn1qk1nr/pbppppbp/1p4p1/8/8/1P4P1/PBPPPPBP/RN1QK1NR");
+	TEST_ASSERT_EQUAL(0x00000000FFBD0000, pawn_push(bb->pieces[WHITE_PAWNS], bb->all, WHITE));
+	TEST_ASSERT_EQUAL(0x0000BDFF00000000, pawn_push(bb->pieces[BLACK_PAWNS], bb->all, BLACK));
 	free(bb);
 }
 

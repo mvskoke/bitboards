@@ -37,4 +37,5 @@ void update_board(struct Bitboards *bb, struct Move *move)
 		flip_bit(&(bb->black_all), move->start);
 		set_bit(&(bb->black_all), move->end);
 	}
+	bb->all = bb->white_all | bb->black_all;
 }

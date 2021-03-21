@@ -230,6 +230,8 @@ the attack ray.
 			// calculate and the loop ends.
 		}
 	} while (shift != 0);
+	// stop after there are no bits remaining to shift
+
 	return result;
 }
 

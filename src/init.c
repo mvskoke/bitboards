@@ -86,6 +86,8 @@ void init_bb(struct Bitboards *bb)
 	bb->pieces[BLACK_KING]       = 0x1000000000000000;
 	bb->black_all                = 0xFFFF000000000000;
 
+	bb->all = bb->white_all | bb->black_all;
+
 	/**** PSEUDO-LEGAL ATTACKS ****/
 
 	// we can hardcode these because it's just the setup
@@ -168,6 +170,7 @@ static void init_bb_blank(struct Bitboards *bb)
 	// initialize bitboards of COLOR_all
 	bb->white_all = 0;
 	bb->black_all = 0;
+	bb->all = 0;
 
 	// initialize pawn pushes
 	bb->w_pawn_pushes = 0;
@@ -225,6 +228,7 @@ static void fen_updates_bb(struct Bitboards *bb, char piece, int index)
 		set_bit(&bb->black_all, index);
 	else
 		set_bit(&bb->white_all, index);
+	set_bit(&bb->all, index);
 }
 
 
