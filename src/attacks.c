@@ -27,14 +27,14 @@
 
 enum Ray
 {
-	E_NORTHWEST,
-	E_NORTHEAST,
-	E_SOUTHWEST,
-	E_SOUTHEAST,
-	E_NORTH,
-	E_EAST,
-	E_SOUTH,
-	E_WEST
+	RAY_NORTHWEST,
+	RAY_NORTHEAST,
+	RAY_SOUTHWEST,
+	RAY_SOUTHEAST,
+	RAY_NORTH,
+	RAY_EAST,
+	RAY_SOUTH,
+	RAY_WEST
 };
 
 // squares attacked by pawn(s) (diagonal captures)
@@ -144,11 +144,23 @@ static U64 calc_ray(U64 enemy, U64 mask, U64 piece, enum Ray direction)
 	// the next bit in the sliding piece's attack scope
 	U64 shift = piece;
 
-	for (int i = 0; i < 7; i++)
+	U64 save = shift;
+	// previously, I would stop calculation if we shifted onto an
+	// enemy piece. attack bitboards will be set on empty squares and
+	// enemy's pieces, so I would set the bit on the enemy piece and
+	// stop the loop.
+
+	// HOWEVER, if there were 2+ rays to calculate, and one ray stopped
+	// because it encountered an enemy piece, the other ray was also
+	// forced to stop prematurely. therefore I keep an extra U64 save
+	// If I have to stop one ray, I mask off that ray's bits from the
+	// shifted bits, and load that back into shift.
+
+	do
 	{
 		switch (direction)
 		{
-		case E_NORTHWEST:
+		case RAY_NORTHWEST:
 			// use (=) instead of (|=)
 			// ONLY save the shifted bit(s)
 			shift = NORTHWEST(shift) & mask;
@@ -178,57 +190,46 @@ it past, and since every shift is by one square, we NEVER risk overshooting
 the attack ray.
 */
 
-		case E_NORTHEAST:
+		case RAY_NORTHEAST:
 			shift = NORTHEAST(shift) & mask;
 			break;
-		case E_SOUTHWEST:
+		case RAY_SOUTHWEST:
 			shift = SOUTHWEST(shift) & mask;
 			break;
-		case E_SOUTHEAST:
+		case RAY_SOUTHEAST:
 			shift = SOUTHEAST(shift) & mask;
 			break;
-		case E_NORTH:
+		case RAY_NORTH:
 			shift = NORTH(shift) & mask;
 			break;
-		case E_EAST:
+		case RAY_EAST:
 			shift = EAST(shift) & mask;
 			break;
-		case E_SOUTH:
+		case RAY_SOUTH:
 			shift = SOUTH(shift) & mask;
 			break;
-		case E_WEST:
+		case RAY_WEST:
 			shift = WEST(shift) & mask;
 			break;
 		}
-		// since we applied a bitmask, shift might be 0, ie no
-		// new attacked bits were found
-		// if not, then there's no point in continuing
-		if (shift == 0)
-			break;
-
 		result |= shift;
 
-/*
-BUG: THE NEXT IF-STATEMENT ONLY DETECTS IF ONE RAY MUST STOP.
-HOWEVER, if there are TWO pieces to shift, if ONE ray fails,
-then the other ray is forced to stop.
-
-	EXAMPLE: test_attacks.c:293:test_rook_attacks
-	init_bb_fen(bb, "kr5r/p7/8/8/4q3/8/1R3Q2/KR6");
-	TEST_ASSERT_EQUAL(0x0202020202021DFC, rook_attack(bb->pieces[WHITE_ROOKS], bb->black_all, bb->white_all));
-
-	// buggy:
-	TEST_ASSERT_EQUAL(0x7C82828282828280, rook_attack(bb->pieces[BLACK_ROOKS], bb->white_all, bb->black_all));
-
-maybe split up U64 piece into 2+ separate bitboards, with
-one piece in each?
-*/
-
 		// we might have set a bit on attacked and non-empty square
-		// if so, we must not go further!
+		// if so, we must not go further, BUT on that ONE ray ONLY!
+		// we can stop the bit from shifting further by masking it off
+		// also prevents one ray from prematurely stopping a 2nd ray
 		if (shift & enemy)
-			break;
-	}
+		{
+			save = shift;
+
+			// mask off the attacked bit ONLY
+			save &= ~(shift & enemy);
+
+			shift = save;
+			// if shift becomes 0, then there are no more rays to
+			// calculate and the loop ends.
+		}
+	} while (shift != 0);
 	return result;
 }
 
@@ -238,10 +239,10 @@ U64 bishop_attack(U64 piece, U64 self, U64 enemy)
 	U64 mask = ~(enemy | self) | enemy;
 	U64 attack = 0;
 
-	attack |= calc_ray(enemy, mask, piece, E_NORTHEAST);
-	attack |= calc_ray(enemy, mask, piece, E_NORTHWEST);
-	attack |= calc_ray(enemy, mask, piece, E_SOUTHEAST);
-	attack |= calc_ray(enemy, mask, piece, E_SOUTHWEST);
+	attack |= calc_ray(enemy, mask, piece, RAY_NORTHEAST);
+	attack |= calc_ray(enemy, mask, piece, RAY_NORTHWEST);
+	attack |= calc_ray(enemy, mask, piece, RAY_SOUTHEAST);
+	attack |= calc_ray(enemy, mask, piece, RAY_SOUTHWEST);
 	return attack;
 }
 
@@ -250,16 +251,19 @@ U64 rook_attack(U64 piece, U64 self, U64 enemy)
 	U64 mask = ~(enemy | self) | enemy;
 	U64 attack = 0;
 
-	attack |= calc_ray(enemy, mask, piece, E_NORTH);
-	attack |= calc_ray(enemy, mask, piece, E_EAST);
-	attack |= calc_ray(enemy, mask, piece, E_SOUTH);
-	attack |= calc_ray(enemy, mask, piece, E_WEST);
+	attack |= calc_ray(enemy, mask, piece, RAY_NORTH);
+	attack |= calc_ray(enemy, mask, piece, RAY_EAST);
+	attack |= calc_ray(enemy, mask, piece, RAY_SOUTH);
+	attack |= calc_ray(enemy, mask, piece, RAY_WEST);
 	return attack;
 }
 
-// U64 queen_attack(U64 piece, U64 enemy, U64 self)
+// U64 queen_attack(U64 piece, U64 self, U64 enemy)
 // {
+// 	// combine the rook and bishop attack
 // 	U64 attack = 0;
+// 	attack |= bishop_attack(piece, self, enemy);
+// 	attack |= rook_attack(piece, self, enemy);
 // 	return attack;
 // }
 

@@ -294,10 +294,7 @@ void test_rook_attack(void)
 
 	init_bb_fen(bb, "kr5r/p7/8/8/4q3/8/1R3Q2/KR6");
 	TEST_ASSERT_EQUAL(0x0202020202021DFC, rook_attack(bb->pieces[WHITE_ROOKS], bb->white_all, bb->black_all));
-
-	// BUGGY LINE:
-	// TEST_ASSERT_EQUAL(0x7C82828282828280, rook_attack(bb->pieces[BLACK_ROOKS], bb->black_all, bb->white_all));
-	// more info, see attacks.c:212:calc_ray
+	TEST_ASSERT_EQUAL(0x7C82828282828280, rook_attack(bb->pieces[BLACK_ROOKS], bb->black_all, bb->white_all));
 
 	free(bb);
 }
