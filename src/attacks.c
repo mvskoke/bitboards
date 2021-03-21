@@ -1,3 +1,4 @@
+#include "attacks.h"
 #include "bitboards.h"
 #include "colors.h"
 
@@ -23,6 +24,18 @@
 #define SOUTHWEST(bb) ((bb >> 9) & NOT_H_FILE)
 #define SOUTH(bb)      (bb >> 8)
 #define SOUTHEAST(bb) ((bb >> 7) & NOT_A_FILE)
+
+enum Ray
+{
+	E_NORTHWEST,
+	E_NORTHEAST,
+	E_SOUTHWEST,
+	E_SOUTHEAST,
+	E_NORTH,
+	E_EAST,
+	E_SOUTH,
+	E_WEST
+};
 
 // squares attacked by pawn(s) (diagonal captures)
 // exclude your own pieces
@@ -96,19 +109,155 @@ U64 knight_attack(U64 piece, U64 all)
 	return attack;
 }
 
-// U64 bishop_attack(U64 piece, U64 all)
-// {
-// 	U64 attack = 0;
-// 	return attack;
-// }
+/*
+calcualte a sliding piece attack, in ONE direction/ray
 
-// U64 rook_attack(U64 piece, U64 all)
-// {
-// 	U64 attack = 0;
-// 	return attack;
-// }
+algorithm summary:
+	enemy = enemy pieces' locations
+	mask = empty squares and enemy pieces (places which we can attack!)
+	piece = bitboard with the piece's or pieces' location(s)
+	direction = well, the direction. one of the 9 one-step shifts
 
-// U64 queen_attack(U64 piece, U64 all)
+	START: load piece into shift
+	the maximum number of one-step shifts is 7 (ie you are in the corner)
+	for i in range(7)
+		what value is direction?
+			do corresponding one-step bitshift on shift
+
+		save the shifted bit(s) into shift
+
+		do logical AND between shift and mask, that determines if
+		the newly shifted bit is an actual attack. ALSO LOAD THE
+		NEW VALUE OF MASKED shift INTO shift
+
+		if shift & mask equals 0, then this ray is now blocked.
+			return;
+		else, do logical OR between the newly shifted bit and attack
+
+	return attack
+*/
+static U64 calc_ray(U64 enemy, U64 mask, U64 piece, enum Ray direction)
+{
+	// holds bitboard of ONE ray
+	U64 result = 0;
+
+	// the next bit in the sliding piece's attack scope
+	U64 shift = piece;
+
+	for (int i = 0; i < 7; i++)
+	{
+		switch (direction)
+		{
+		case E_NORTHWEST:
+			// use (=) instead of (|=)
+			// ONLY save the shifted bit(s)
+			shift = NORTHWEST(shift) & mask;
+			break;
+
+/* Mask off after EVERY shift!!!
+
+consider this position: 5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R
+there are two white rooks on h1 and d1. U64 piece and U64 shift would be 0x88
+
+let's assume we are doing BITSHIFT(shift) without the mask
+FIRST ITERATION:
+	after one NORTH shift, shift = 0x8800
+	since there's a white pawn on h2, that bit is masked off. shift & mask = 0x0800
+	thus result shifts the d1 rook up 1 bit. result = 0x0800
+SECOND ITERATION:
+	we have to NORTH shift the variable "shift"!!!
+	HOWEVER, it still saved the bad bit because we didn't mask it off!
+	shift is still 0x8800, after another NORTH it equals 0x880000
+
+	now h3 is set, and since it's an empty square, it's NOT masked off
+	when loaded into result
+
+if we DO mask off the bad bits, then the next iteration will set the bad bit
+BUT this time it will mask it off. bad bits never get an opportunity to make
+it past, and since every shift is by one square, we NEVER risk overshooting
+the attack ray.
+*/
+
+		case E_NORTHEAST:
+			shift = NORTHEAST(shift) & mask;
+			break;
+		case E_SOUTHWEST:
+			shift = SOUTHWEST(shift) & mask;
+			break;
+		case E_SOUTHEAST:
+			shift = SOUTHEAST(shift) & mask;
+			break;
+		case E_NORTH:
+			shift = NORTH(shift) & mask;
+			break;
+		case E_EAST:
+			shift = EAST(shift) & mask;
+			break;
+		case E_SOUTH:
+			shift = SOUTH(shift) & mask;
+			break;
+		case E_WEST:
+			shift = WEST(shift) & mask;
+			break;
+		}
+		// since we applied a bitmask, shift might be 0, ie no
+		// new attacked bits were found
+		// if not, then there's no point in continuing
+		if (shift == 0)
+			break;
+
+		result |= shift;
+
+/*
+BUG: THE NEXT IF-STATEMENT ONLY DETECTS IF ONE RAY MUST STOP.
+HOWEVER, if there are TWO pieces to shift, if ONE ray fails,
+then the other ray is forced to stop.
+
+	EXAMPLE: test_attacks.c:293:test_rook_attacks
+	init_bb_fen(bb, "kr5r/p7/8/8/4q3/8/1R3Q2/KR6");
+	TEST_ASSERT_EQUAL(0x0202020202021DFC, rook_attack(bb->pieces[WHITE_ROOKS], bb->black_all, bb->white_all));
+
+	// buggy:
+	TEST_ASSERT_EQUAL(0x7C82828282828280, rook_attack(bb->pieces[BLACK_ROOKS], bb->white_all, bb->black_all));
+
+maybe split up U64 piece into 2+ separate bitboards, with
+one piece in each?
+*/
+
+		// we might have set a bit on attacked and non-empty square
+		// if so, we must not go further!
+		if (shift & enemy)
+			break;
+	}
+	return result;
+}
+
+U64 bishop_attack(U64 piece, U64 enemy, U64 self)
+{
+	// mask = empty squares and enemy pieces
+	U64 mask = ~(enemy | self) | enemy;
+	U64 attack = 0;
+
+	attack |= calc_ray(enemy, mask, piece, E_NORTHEAST);
+	attack |= calc_ray(enemy, mask, piece, E_NORTHWEST);
+	attack |= calc_ray(enemy, mask, piece, E_SOUTHEAST);
+	attack |= calc_ray(enemy, mask, piece, E_SOUTHWEST);
+	return attack;
+}
+
+U64 rook_attack(U64 piece, U64 enemy, U64 self)
+{
+	U64 mask = ~(enemy | self) | enemy;
+	U64 attack = 0;
+
+	attack |= calc_ray(enemy, mask, piece, E_NORTH);
+	attack |= calc_ray(enemy, mask, piece, E_EAST);
+	attack |= calc_ray(enemy, mask, piece, E_SOUTH);
+	attack |= calc_ray(enemy, mask, piece, E_WEST);
+	return attack;
+}
+
+// U64 queen_attack(U64 piece, U64 enemy, U64 self)
 // {
 // 	U64 attack = 0;
 // 	return attack;
@@ -140,59 +289,61 @@ U64 king_attack(U64 piece, U64 all)
 // up-to-date info on piece locations
 void update_attacks(struct Bitboards *bb)
 {
-	U64 piece;
+	// these variables are just to make the lines shorter
+	U64 piece, blacks, whites;
 	for (int i = 0; i < TOTAL_ATTACKS; i++)
 	{
-		// make the line length shorter
 		piece = bb->pieces[i];
+		blacks = bb->black_all;
+		whites = bb->white_all;
 		switch (i)
 		{
 		case BLACK_PAWNS:
-			bb->attacks[i] = pawn_attack(piece, bb->black_all, BLACK);
+			bb->attacks[i] = pawn_attack(piece, blacks, BLACK);
 			break;
 
 		case WHITE_PAWNS:
-			bb->attacks[i] = pawn_attack(piece, bb->white_all, WHITE);
+			bb->attacks[i] = pawn_attack(piece, whites, WHITE);
 			break;
 
 		case BLACK_KNIGHTS:
-			bb->attacks[i] = knight_attack(piece, bb->black_all);
+			bb->attacks[i] = knight_attack(piece, blacks);
 			break;
 
 		case WHITE_KNIGHTS:
-			bb->attacks[i] = knight_attack(piece, bb->white_all);
+			bb->attacks[i] = knight_attack(piece, whites);
 			break;
 
 		case BLACK_BISHOPS:
-			// bb->attacks[i] = bishop_attack(piece, bb->black_all);
+			bb->attacks[i] = bishop_attack(piece, blacks, whites);
 			break;
 
 		case WHITE_BISHOPS:
-			// bb->attacks[i] = bishop_attack(piece, bb->white_all);
+			bb->attacks[i] = bishop_attack(piece, whites, blacks);
 			break;
 
 		case BLACK_ROOKS:
-			// bb->attacks[i] = rook_attack(piece, bb->black_all);
+			bb->attacks[i] = rook_attack(piece, blacks, whites);
 			break;
 
 		case WHITE_ROOKS:
-			// bb->attacks[i] = rook_attack(piece, bb->white_all);
+			bb->attacks[i] = rook_attack(piece, whites, blacks);
 			break;
 
 		case BLACK_QUEENS:
-			// bb->attacks[i] = queen_attack(piece, bb->black_all);
+			// bb->attacks[i] = queen_attack(piece, blacks, whites);
 			break;
 
 		case WHITE_QUEENS:
-			// bb->attacks[i] = queen_attack(piece, bb->white_all);
+			// bb->attacks[i] = queen_attack(piece, whites, blacks);
 			break;
 
 		case BLACK_KING:
-			bb->attacks[i] = king_attack(piece, bb->black_all);
+			bb->attacks[i] = king_attack(piece, blacks);
 			break;
 
 		case WHITE_KING:
-			bb->attacks[i] = king_attack(piece, bb->white_all);
+			bb->attacks[i] = king_attack(piece, whites);
 			break;
 		}
 	}

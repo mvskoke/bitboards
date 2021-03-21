@@ -4,6 +4,7 @@
 
 #include "bitboards.h"
 #include "colors.h"
+#include "init.h"
 #include "move.h"
 
 // user should have malloc'd memory for struct Bitboards PRIOR
@@ -106,6 +107,7 @@ void init_bb(struct Bitboards *bb)
 	bb->attacks[BLACK_QUEENS]    = 0x0000000000000000;
 	bb->attacks[BLACK_KING]      = 0x0000000000000000;
 
+	/**** PAWN PUSHES ****/
 	bb->w_pawn_pushes            = 0x00000000FFFF0000;
 	bb->b_pawn_pushes            = 0x0000FFFF00000000;
 
@@ -166,6 +168,10 @@ static void init_bb_blank(struct Bitboards *bb)
 	// initialize bitboards of COLOR_all
 	bb->white_all = 0;
 	bb->black_all = 0;
+
+	// initialize pawn pushes
+	bb->w_pawn_pushes = 0;
+	bb->b_pawn_pushes = 0;
 
 	// initialize pretty board
 	for (int i = 0; i < FILES; i++)

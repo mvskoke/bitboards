@@ -1,6 +1,6 @@
 /** test_attacks.c
 
-Test suite for attack calculation and move validation
+Test suite for attack calculation
 
 */
 
@@ -210,21 +210,98 @@ void test_pawn_push(void)
 	free(bb);
 }
 
-// void test_bishop_attack(void)
-// {
-// 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
-// 	free(bb);
-// }
+void test_bishop_attack(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
 
-// void test_rook_attack(void)
-// {
-// 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
-// 	free(bb);
-// }
+	/* from FEN position */
+	TEST_ASSERT_EQUAL(0x2040004020100804, bishop_attack(bb->pieces[WHITE_BISHOPS], bb->black_all, bb->white_all));
+	TEST_ASSERT_EQUAL(0x000102000A112000, bishop_attack(bb->pieces[BLACK_BISHOPS], bb->white_all, bb->black_all));
+
+	/* from starting position */
+	TEST_ASSERT_EQUAL(0x0, bishop_attack(0x0000000000000024, 0xFFFF000000000000, 0x000000000000FFFF));
+	TEST_ASSERT_EQUAL(0x0, bishop_attack(0x2400000000000000, 0x000000000000FFFF, 0xFFFF000000000000));
+
+	/* from empty bitboards */
+	// 1 bishop
+	TEST_ASSERT_EQUAL(0x8041221400142241, bishop_attack(0x0000000008000000, 0, 0));
+
+	// 4 corners
+	// h8
+	TEST_ASSERT_EQUAL(0x0040201008040201, bishop_attack(0x8000000000000000, 0, 0x8000000000000000));
+
+	// a8
+	TEST_ASSERT_EQUAL(0x0002040810204080, bishop_attack(0x0100000000000000, 0, 0x0100000000000000));
+
+	// a1
+	TEST_ASSERT_EQUAL(0x8040201008040200, bishop_attack(0x0000000000000001, 0, 0x0000000000000001));
+
+	// h1
+	TEST_ASSERT_EQUAL(0x0102040810204000, bishop_attack(0x0000000000000080, 0, 0x0000000000000080));
+
+	// 2 bishops
+	// same color square
+	TEST_ASSERT_EQUAL(0x50A011AA100A1522, bishop_attack(0x0000400004000000, 0, 0x0000400004000000));
+
+	// diff color squares
+	TEST_ASSERT_EQUAL(0x4000C061321C0416, bishop_attack(0x0080000000000800, 0, 0x0080000000000800));
+
+	// after 1. g3 g6 2. Bg2 Bg7 3. b3 b6 4. Bb2 Bb7
+	init_bb_fen(bb, "rn1qk1nr/pbppppbp/1p4p1/8/8/1P4P1/PBPPPPBP/RN1QK1NR");
+	TEST_ASSERT_EQUAL(0x0042241818A50024, bishop_attack(bb->pieces[WHITE_BISHOPS], bb->black_all, bb->white_all));
+	TEST_ASSERT_EQUAL(0x2400A51818244200, bishop_attack(bb->pieces[BLACK_BISHOPS], bb->white_all, bb->black_all));
+
+	free(bb);
+}
+
+void test_rook_attack(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
+
+	/* from FEN position */
+	TEST_ASSERT_EQUAL(0x0000080808080877, rook_attack(bb->pieces[WHITE_ROOKS], bb->black_all, bb->white_all));
+	TEST_ASSERT_EQUAL(0x1F00000004041A04, rook_attack(bb->pieces[BLACK_ROOKS], bb->white_all, bb->black_all));
+
+	/* from starting position */
+	TEST_ASSERT_EQUAL(0x0, rook_attack(0x0000000000000081, 0xFFFF000000000000, 0x000000000000FFFF));
+	TEST_ASSERT_EQUAL(0x0, rook_attack(0x8100000000000000, 0x000000000000FFFF, 0xFFFF000000000000));
+
+	/* from empty bitboards */
+	// 1 rook
+	TEST_ASSERT_EQUAL(0x08080808F7080808, rook_attack(0x0000000008000000, 0, 0x0000000008000000));
+
+	// 4 corners
+	// h8
+	TEST_ASSERT_EQUAL(0x7F80808080808080, rook_attack(0x8000000000000000, 0, 0x8000000000000000));
+
+	// a8
+	TEST_ASSERT_EQUAL(0xFE01010101010101, rook_attack(0x0100000000000000, 0, 0x0100000000000000));
+
+	// a1
+	TEST_ASSERT_EQUAL(0x01010101010101FE, rook_attack(0x0000000000000001, 0, 0x0000000000000001));
+
+	// h1
+	TEST_ASSERT_EQUAL(0x808080808080807F, rook_attack(0x0000000000000080, 0, 0x0000000000000080));
+
+	// 2 rooks
+	TEST_ASSERT_EQUAL(0x4444BF44FB444444, rook_attack(0x0000400004000000, 0, 0x0000400004000000));
+
+	init_bb_fen(bb, "kr5r/p7/8/8/4q3/8/1R3Q2/KR6");
+	TEST_ASSERT_EQUAL(0x0202020202021DFC, rook_attack(bb->pieces[WHITE_ROOKS], bb->black_all, bb->white_all));
+
+	// BUGGY LINE:
+	// TEST_ASSERT_EQUAL(0x7C82828282828280, rook_attack(bb->pieces[BLACK_ROOKS], bb->white_all, bb->black_all));
+	// more info, see attacks.c:212:calc_ray
+
+	free(bb);
+}
 
 // void test_queen_attack(void)
 // {
 // 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+// 	init_bb(bb);
 // 	free(bb);
 // }
 
@@ -237,8 +314,8 @@ int main(void)
 	RUN_TEST(test_king_attack);
 	RUN_TEST(test_pawn_attack);
 	RUN_TEST(test_pawn_push);
-	// RUN_TEST(test_bishop_attack);
-	// RUN_TEST(test_rook_attack);
+	RUN_TEST(test_bishop_attack);
+	RUN_TEST(test_rook_attack);
 	// RUN_TEST(test_queen_attack);
 
 	return UNITY_END();

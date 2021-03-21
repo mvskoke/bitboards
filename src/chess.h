@@ -28,6 +28,6 @@ struct Chess
 	bool w_kingside_castle;
 	bool b_queenside_castle;
 	bool b_kingside_castle;
-}
+};
 
 #endif
