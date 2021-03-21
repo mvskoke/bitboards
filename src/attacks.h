@@ -10,8 +10,8 @@ void update_attacks(struct Bitboards *bb);
 U64 pawn_attack(U64 piece, U64 all, enum Color color);
 U64 pawn_push(U64 pawns, U64 all, enum Color color);
 U64 knight_attack(U64 piece, U64 all);
-U64 bishop_attack(U64 piece, U64 enemy, U64 self);
-U64 rook_attack(U64 piece, U64 enemy, U64 self);
+U64 bishop_attack(U64 piece, U64 self, U64 enemy);
+U64 rook_attack(U64 piece, U64 self, U64 enemy);
 U64 king_attack(U64 piece, U64 all);
 
 #endif

@@ -232,7 +232,7 @@ one piece in each?
 	return result;
 }
 
-U64 bishop_attack(U64 piece, U64 enemy, U64 self)
+U64 bishop_attack(U64 piece, U64 self, U64 enemy)
 {
 	// mask = empty squares and enemy pieces
 	U64 mask = ~(enemy | self) | enemy;
@@ -245,7 +245,7 @@ U64 bishop_attack(U64 piece, U64 enemy, U64 self)
 	return attack;
 }
 
-U64 rook_attack(U64 piece, U64 enemy, U64 self)
+U64 rook_attack(U64 piece, U64 self, U64 enemy)
 {
 	U64 mask = ~(enemy | self) | enemy;
 	U64 attack = 0;
