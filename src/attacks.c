@@ -39,8 +39,8 @@ enum Ray
 
 // squares attacked by pawn(s) (diagonal captures)
 // exclude your own pieces
-// U64 all = all pieces of enum Color color
-U64 pawn_attack(U64 piece, U64 all, enum Color color)
+// U64 self = all pieces of enum Color color
+U64 pawn_attack(U64 piece, U64 self, enum Color color)
 {
 	U64 attack = 0;
 	if (color == WHITE)
@@ -54,7 +54,7 @@ U64 pawn_attack(U64 piece, U64 all, enum Color color)
 		attack |= SOUTHEAST(piece);
 	}
 
-	attack &= ~all;
+	attack &= ~self;
 	return attack;
 }
 
@@ -91,8 +91,8 @@ U64 pawn_push(U64 pawns, U64 all, enum Color color)
 
 // squares to which a knight(s) can jump
 // exclude your own pieces
-// U64 all = all pieces of knights' same color
-U64 knight_attack(U64 piece, U64 all)
+// U64 self = all pieces of knights' same color
+U64 knight_attack(U64 piece, U64 self)
 {
 	U64 attack = 0;
 	attack |= (piece << 17) & NOT_A_FILE;
@@ -105,7 +105,7 @@ U64 knight_attack(U64 piece, U64 all)
 	attack |= (piece >> 15) & NOT_A_FILE;
 	attack |= (piece >> 17) & NOT_H_FILE;
 
-	attack &= ~all;
+	attack &= ~self;
 	return attack;
 }
 
@@ -271,8 +271,8 @@ U64 rook_attack(U64 piece, U64 self, U64 enemy)
 
 // squares to which a king(s) can jump
 // exclude your own pieces
-// U64 all = all pieces of king's same color
-U64 king_attack(U64 piece, U64 all)
+// U64 self = all pieces of king's same color
+U64 king_attack(U64 piece, U64 self)
 {
 	U64 attack = 0;
 	attack |= NORTHWEST(piece);
@@ -286,7 +286,7 @@ U64 king_attack(U64 piece, U64 all)
 	attack |= SOUTH(piece);
 	attack |= SOUTHEAST(piece);
 
-	attack &= ~all;
+	attack &= ~self;
 	return attack;
 }
 

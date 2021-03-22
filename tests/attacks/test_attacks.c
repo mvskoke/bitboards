@@ -206,6 +206,7 @@ void test_pawn_push(void)
 	TEST_ASSERT_EQUAL(0x000080542A000000, pawn_push(0x00000080542A0000, 0, WHITE));
 	TEST_ASSERT_EQUAL(0x00000080542A0000, pawn_push(0x000080542A000000, 0, BLACK));
 
+	// after 1. g3 g6 2. Bg2 Bg7 3. b3 b6 4. Bb2 Bb7
 	init_bb_fen(bb, "rn1qk1nr/pbppppbp/1p4p1/8/8/1P4P1/PBPPPPBP/RN1QK1NR");
 	TEST_ASSERT_EQUAL(0x00000000FFBD0000, pawn_push(bb->pieces[WHITE_PAWNS], bb->all, WHITE));
 	TEST_ASSERT_EQUAL(0x0000BDFF00000000, pawn_push(bb->pieces[BLACK_PAWNS], bb->all, BLACK));
