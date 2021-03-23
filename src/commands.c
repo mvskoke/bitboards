@@ -17,6 +17,7 @@ Can also get a "yes" or "no" response.
 #include "commands.h"
 #include "colors.h"
 
+// max command length is 5 chars, +1 for null char
 #define MAX_COMMAND_LEN 6
 
 /* get_command()
