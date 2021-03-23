@@ -3,8 +3,10 @@ CFLAGS = -Wall -Werror -Wextra -g -std=c11
 
 OBJ = ../../obj
 SRC = ../../src
-DEP = $(OBJ)/test_validate.o $(OBJ)/bitboards.o $(OBJ)/init.o $(OBJ)/move.o $(OBJ)/update.o $(OBJ)/validate.h $(SRC)/colors.h
-UNITY = ../../obj/unity.o
+UNITY = ../../unity/unity.o
+
+DEP = $(OBJ)/test_validate.o $(OBJ)/bitboards.o $(OBJ)/init.o \
+	$(OBJ)/move.o $(OBJ)/update.o $(OBJ)/validate.h $(SRC)/colors.h
 
 test_validate: $(DEP)
 	$(CC) $(CFLAGS) $^ $(UNITY) -o test_validate

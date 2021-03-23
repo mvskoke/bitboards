@@ -64,6 +64,7 @@ void test_update_attacks(void)
 void test_knight_attack(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	// triple fork position
 	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
 	struct Move *curr = malloc(sizeof(struct Move));
 	struct Move *prev = malloc(sizeof(struct Move));
@@ -130,6 +131,7 @@ void test_knight_attack(void)
 void test_king_attack(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	// cool mate position
 	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
 
 	/* from FEN position */
@@ -148,12 +150,18 @@ void test_king_attack(void)
 	TEST_ASSERT_EQUAL(0x0000000000003828, king_attack(0x0000000000000010, 0));  // e1
 	TEST_ASSERT_EQUAL(0x2838000000000000, king_attack(0x1000000000000000, 0));  // e8
 
+	// deep blue vs kasparov, 1997 game 2 after 36 ... axb5
+	init_bb_fen(bb, "r1r1q1k1/6p1/3b1p1p/1p1PpP2/1Pp5/2P4P/R1B2QP1/R5K1");
+	TEST_ASSERT_EQUAL(0x00000000000080A0, king_attack(bb->pieces[WHITE_KING], bb->white_all));
+	TEST_ASSERT_EQUAL(0xA0A0000000000000, king_attack(bb->pieces[BLACK_KING], bb->black_all));
+
 	free(bb);
 }
 
 void test_pawn_attack(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	// triple fork position
 	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
 
 	/* from FEN position */
@@ -180,12 +188,28 @@ void test_pawn_attack(void)
 	TEST_ASSERT_EQUAL(0x000040AA55000000, pawn_attack(0x00000080542A0000, 0, WHITE));
 	TEST_ASSERT_EQUAL(0x00000040AA550000, pawn_attack(0x000080542A000000, 0, BLACK));
 
+	// cool mate position
+	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
+	TEST_ASSERT_EQUAL(0x0000000050500000, pawn_attack(bb->pieces[WHITE_PAWNS], bb->white_all, WHITE));
+	TEST_ASSERT_EQUAL(0x000034B200000000, pawn_attack(bb->pieces[BLACK_PAWNS], bb->black_all, BLACK));
+
+	// after 1. g3 g6 2. Bg2 Bg7 3. b3 b6 4. Bb2 Bb7
+	init_bb_fen(bb, "rn1qk1nr/pbppppbp/1p4p1/8/8/1P4P1/PBPPPPBP/RN1QK1NR");
+	TEST_ASSERT_EQUAL(0x00000000A53C0000, pawn_attack(bb->pieces[WHITE_PAWNS], bb->white_all, WHITE));
+	TEST_ASSERT_EQUAL(0x00003CA500000000, pawn_attack(bb->pieces[BLACK_PAWNS], bb->black_all, BLACK));
+
+	// deep blue vs kasparov, 1997 game 2 after 36 ... axb5
+	init_bb_fen(bb, "r1r1q1k1/6p1/3b1p1p/1p1PpP2/1Pp5/2P4P/R1B2QP1/R5K1");
+	TEST_ASSERT_EQUAL(0x0000540548200000, pawn_attack(bb->pieces[WHITE_PAWNS], bb->white_all, WHITE));
+	TEST_ASSERT_EQUAL(0x00000040290A0000, pawn_attack(bb->pieces[BLACK_PAWNS], bb->black_all, BLACK));
+
 	free(bb);
 }
 
 void test_pawn_push(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	// triple fork position
 	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
 
 	/* from FEN position */
@@ -210,12 +234,24 @@ void test_pawn_push(void)
 	init_bb_fen(bb, "rn1qk1nr/pbppppbp/1p4p1/8/8/1P4P1/PBPPPPBP/RN1QK1NR");
 	TEST_ASSERT_EQUAL(0x00000000FFBD0000, pawn_push(bb->pieces[WHITE_PAWNS], bb->all, WHITE));
 	TEST_ASSERT_EQUAL(0x0000BDFF00000000, pawn_push(bb->pieces[BLACK_PAWNS], bb->all, BLACK));
+
+	// cool mate position
+	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
+	TEST_ASSERT_EQUAL(0x00000000A0800000, pawn_push(bb->pieces[WHITE_PAWNS], bb->all, WHITE));
+	TEST_ASSERT_EQUAL(0x0000327900000000, pawn_push(bb->pieces[BLACK_PAWNS], bb->all, BLACK));
+
+	// deep blue vs kasparov, 1997 game 2 after 36 ... axb5
+	init_bb_fen(bb, "r1r1q1k1/6p1/3b1p1p/1p1PpP2/1Pp5/2P4P/R1B2QP1/R5K1");
+	TEST_ASSERT_EQUAL(0x00000000C0400000, pawn_push(bb->pieces[WHITE_PAWNS], bb->all, WHITE));
+	TEST_ASSERT_EQUAL(0x000040C010000000, pawn_push(bb->pieces[BLACK_PAWNS], bb->all, BLACK));
+
 	free(bb);
 }
 
 void test_bishop_attack(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	// cool mate position
 	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
 
 	/* from FEN position */
@@ -259,12 +295,18 @@ void test_bishop_attack(void)
 	TEST_ASSERT_EQUAL(0x0042241818A50024, bishop_attack(bb->pieces[WHITE_BISHOPS], bb->white_all, bb->black_all));
 	TEST_ASSERT_EQUAL(0x2400A51818244200, bishop_attack(bb->pieces[BLACK_BISHOPS], bb->black_all, bb->white_all));
 
+	// deep blue vs kasparov, 1997 game 2 after 36 ... axb5
+	init_bb_fen(bb, "r1r1q1k1/6p1/3b1p1p/1p1PpP2/1Pp5/2P4P/R1B2QP1/R5K1");
+	TEST_ASSERT_EQUAL(0x00000000110A000A, bishop_attack(bb->pieces[WHITE_BISHOPS], bb->white_all, bb->black_all));
+	TEST_ASSERT_EQUAL(0x2214000402000000, bishop_attack(bb->pieces[BLACK_BISHOPS], bb->black_all, bb->white_all));
+
 	free(bb);
 }
 
 void test_rook_attack(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	// cool mate position
 	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
 
 	/* from FEN position */
@@ -280,24 +322,23 @@ void test_rook_attack(void)
 	TEST_ASSERT_EQUAL(0x08080808F7080808, rook_attack(0x0000000008000000, 0x0000000008000000, 0));
 
 	// 4 corners
-	// h8
-	TEST_ASSERT_EQUAL(0x7F80808080808080, rook_attack(0x8000000000000000, 0x8000000000000000, 0));
-
-	// a8
-	TEST_ASSERT_EQUAL(0xFE01010101010101, rook_attack(0x0100000000000000, 0x0100000000000000, 0));
-
-	// a1
-	TEST_ASSERT_EQUAL(0x01010101010101FE, rook_attack(0x0000000000000001, 0x0000000000000001, 0));
-
-	// h1
-	TEST_ASSERT_EQUAL(0x808080808080807F, rook_attack(0x0000000000000080, 0x0000000000000080, 0));
+	TEST_ASSERT_EQUAL(0x7F80808080808080, rook_attack(0x8000000000000000, 0x8000000000000000, 0));  // h8
+	TEST_ASSERT_EQUAL(0xFE01010101010101, rook_attack(0x0100000000000000, 0x0100000000000000, 0));  // a8
+	TEST_ASSERT_EQUAL(0x01010101010101FE, rook_attack(0x0000000000000001, 0x0000000000000001, 0));  // a1
+	TEST_ASSERT_EQUAL(0x808080808080807F, rook_attack(0x0000000000000080, 0x0000000000000080, 0));  // h1
 
 	// 2 rooks
 	TEST_ASSERT_EQUAL(0x4444BF44FB444444, rook_attack(0x0000400004000000, 0x0000400004000000, 0));
 
+	// pedro damiano's mate-in-3 puzzle from wikipedia
 	init_bb_fen(bb, "kr5r/p7/8/8/4q3/8/1R3Q2/KR6");
 	TEST_ASSERT_EQUAL(0x0202020202021DFC, rook_attack(bb->pieces[WHITE_ROOKS], bb->white_all, bb->black_all));
 	TEST_ASSERT_EQUAL(0x7C82828282828280, rook_attack(bb->pieces[BLACK_ROOKS], bb->black_all, bb->white_all));
+
+	// deep blue vs kasparov, 1997 game 2 after 36 ... axb5
+	init_bb_fen(bb, "r1r1q1k1/6p1/3b1p1p/1p1PpP2/1Pp5/2P4P/R1B2QP1/R5K1");
+	TEST_ASSERT_EQUAL(0x010101010101023E, rook_attack(bb->pieces[WHITE_ROOKS], bb->white_all, bb->black_all));
+	TEST_ASSERT_EQUAL(0x0A05050501010100, rook_attack(bb->pieces[BLACK_ROOKS], bb->black_all, bb->white_all));
 
 	free(bb);
 }

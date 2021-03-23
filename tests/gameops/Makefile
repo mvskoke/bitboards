@@ -3,8 +3,10 @@ CFLAGS = -Wall -Werror -Wextra -g -std=c11
 
 OBJ = ../../obj
 SRC = ../../src
-DEP = $(OBJ)/test_gameops.o $(OBJ)/bitboards.o $(OBJ)/display.o $(OBJ)/init.o $(OBJ)/move.o $(OBJ)/update.o $(SRC)/colors.h
-UNITY = ../../obj/unity.o
+UNITY = ../../unity/unity.o
+
+DEP = $(OBJ)/test_gameops.o $(OBJ)/bitboards.o $(OBJ)/display.o \
+	$(OBJ)/init.o $(OBJ)/move.o $(OBJ)/update.o $(SRC)/colors.h
 
 test_gameops: $(DEP)
 	$(CC) $(CFLAGS) $^ $(UNITY) -o test_gameops
