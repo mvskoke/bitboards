@@ -42,6 +42,9 @@ enum Ray
 // U64 self = all pieces of enum Color color
 U64 pawn_attack(U64 piece, U64 self, enum Color color)
 {
+	if (piece == 0)
+		return 0;
+
 	U64 attack = 0;
 	if (color == WHITE)
 	{
@@ -63,6 +66,9 @@ U64 pawn_attack(U64 piece, U64 self, enum Color color)
 // U64 all = ALL pieces on the board
 U64 pawn_push(U64 pawns, U64 all, enum Color color)
 {
+	if (pawns == 0)
+		return 0;
+
 	U64 push = 0;
 
 	// find pieces on third/sixth rank which block pawns
@@ -94,6 +100,9 @@ U64 pawn_push(U64 pawns, U64 all, enum Color color)
 // U64 self = all pieces of knights' same color
 U64 knight_attack(U64 piece, U64 self)
 {
+	if (piece == 0)
+		return 0;
+
 	U64 attack = 0;
 	attack |= (piece << 17) & NOT_A_FILE;
 	attack |= (piece << 15) & NOT_H_FILE;
@@ -237,6 +246,9 @@ the attack ray.
 
 U64 bishop_attack(U64 piece, U64 self, U64 enemy)
 {
+	if (piece == 0)
+		return 0;
+
 	// mask = empty squares and enemy pieces
 	U64 mask = ~(enemy | self) | enemy;
 	U64 attack = 0;
@@ -250,6 +262,9 @@ U64 bishop_attack(U64 piece, U64 self, U64 enemy)
 
 U64 rook_attack(U64 piece, U64 self, U64 enemy)
 {
+	if (piece == 0)
+		return 0;
+
 	U64 mask = ~(enemy | self) | enemy;
 	U64 attack = 0;
 
@@ -274,6 +289,9 @@ U64 rook_attack(U64 piece, U64 self, U64 enemy)
 // U64 self = all pieces of king's same color
 U64 king_attack(U64 piece, U64 self)
 {
+	if (piece == 0)
+		return 0;
+
 	U64 attack = 0;
 	attack |= NORTHWEST(piece);
 	attack |= NORTH(piece);
@@ -354,7 +372,6 @@ void update_attacks(struct Bitboards *bb)
 		}
 	}
 	// pawn attacks and pawn pushes are separate
-	U64 all = bb->white_all | bb->black_all;
-	bb->w_pawn_pushes = pawn_push(bb->pieces[WHITE_PAWNS], all, WHITE);
-	bb->b_pawn_pushes = pawn_push(bb->pieces[BLACK_PAWNS], all, BLACK);
+	bb->w_pawn_pushes = pawn_push(bb->pieces[WHITE_PAWNS], bb->all, WHITE);
+	bb->b_pawn_pushes = pawn_push(bb->pieces[BLACK_PAWNS], bb->all, BLACK);
 }
