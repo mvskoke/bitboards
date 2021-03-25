@@ -321,11 +321,13 @@ void update_attacks(struct Bitboards *bb)
 {
 	// these variables are just to make the lines shorter
 	U64 piece, blacks, whites;
+
+	blacks = bb->black_all;
+	whites = bb->white_all;
+
 	for (int i = 0; i < TOTAL_ATTACKS; i++)
 	{
 		piece = bb->pieces[i];
-		blacks = bb->black_all;
-		whites = bb->white_all;
 		switch (i)
 		{
 		case BLACK_PAWNS:
@@ -361,11 +363,11 @@ void update_attacks(struct Bitboards *bb)
 			break;
 
 		case BLACK_QUEENS:
-			// bb->attacks[i] = queen_attack(piece, blacks, whites);
+			bb->attacks[i] = queen_attack(piece, blacks, whites);
 			break;
 
 		case WHITE_QUEENS:
-			// bb->attacks[i] = queen_attack(piece, whites, blacks);
+			bb->attacks[i] = queen_attack(piece, whites, blacks);
 			break;
 
 		case BLACK_KING:

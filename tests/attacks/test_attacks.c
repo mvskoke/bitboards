@@ -459,42 +459,60 @@ void test_update_attacks(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb(bb);
-
-	// I don't need a *prev for this test
 	struct Move *curr = malloc(sizeof(struct Move));
-	if (curr == NULL)
-	{
-		fprintf(stderr, "ERROR: could not allocate enough memory\n");
-		exit(EXIT_FAILURE);
-	}
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
 
 	if (parse_move(bb, curr, "e2e4"))
 		update_board(bb, curr);
 
-	// update_attacks(bb);
+	update_attacks(bb);
+	TEST_ASSERT_EQUAL(0x0000002800FF0000, bb->attacks[WHITE_PAWNS]);
+	TEST_ASSERT_EQUAL(0x00000010EFEF0000, bb->w_pawn_pushes);
+	TEST_ASSERT_EQUAL(0x0000000000A51000, bb->attacks[WHITE_KNIGHTS]);
+	TEST_ASSERT_EQUAL(0x0000010204081000, bb->attacks[WHITE_BISHOPS]);
+	TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[WHITE_ROOKS]);
+	TEST_ASSERT_EQUAL(0x0000008040201000, bb->attacks[WHITE_QUEENS]);
+	TEST_ASSERT_EQUAL(0x0000000000001000, bb->attacks[WHITE_KING]);
 
-	// e2e4 moves the pawn, and opens up the king, queen, bishop,
-	// and knight, so the only attacks which should be updated are
-	// white's king, queen, f1 bishop, g1 knight, and pawns.
-	// TEST_ASSERT_EQUAL(0x0000000000001010, bb->attacks[WHITE_KING]);
-	// TEST_ASSERT_EQUAL(0x0000008040201000, bb->attacks[WHITE_QUEENS]);
-	// TEST_ASSERT_EQUAL(0x0000010204081000, bb->attacks[WHITE_BISHOPS]);
-	// TEST_ASSERT_EQUAL(0x0000000000A51000, bb->attacks[WHITE_KNIGHTS]);
-	// TEST_ASSERT_EQUAL(0x0000002800FF0000, bb->attacks[WHITE_PAWNS]);
+	TEST_ASSERT_EQUAL(0x0000FF0000000000, bb->attacks[BLACK_PAWNS]);
+	TEST_ASSERT_EQUAL(0x0000FFFF00000000, bb->b_pawn_pushes);
+	TEST_ASSERT_EQUAL(0x0000A50000000000, bb->attacks[BLACK_KNIGHTS]);
+	TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_BISHOPS]);
+	TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_ROOKS]);
+	TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_QUEENS]);
+	TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_KING]);
 
-	// TEST_ASSERT_EQUAL(0x00000010EFEF0000, bb->wpawn_pushes);
-	// TEST_ASSERT_EQUAL(0x0000FFFF00000000, bb->bpawn_pushes);
+	// do ruy lopez
+	parse_move(bb, curr, "e7e5");
+	update_board(bb, curr);
+	parse_move(bb, curr, "g1f3");
+	update_board(bb, curr);
+	parse_move(bb, curr, "b8c6");
+	update_board(bb, curr);
+	parse_move(bb, curr, "f1b5");
+	update_board(bb, curr);
 
-	// black pieces should remain unchanged
-	// TEST_ASSERT_EQUAL(0x0000FF0000000000, bb->attacks[BLACK_PAWNS]);
-	// TEST_ASSERT_EQUAL(0x0000A50000000000, bb->attacks[BLACK_KNIGHTS]);
-	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_BISHOPS]);
-	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_ROOKS]);
-	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_QUEENS]);
-	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_KING]);
+	update_attacks(bb);
+	TEST_ASSERT_EQUAL(0x0000002800DF0000, bb->attacks[WHITE_PAWNS]);
+	TEST_ASSERT_EQUAL(0x00000000CFCF0000, bb->w_pawn_pushes);
+	TEST_ASSERT_EQUAL(0x0000005088050040, bb->attacks[WHITE_KNIGHTS]);
+	TEST_ASSERT_EQUAL(0x0000050005081020, bb->attacks[WHITE_BISHOPS]);
+	TEST_ASSERT_EQUAL(0x0000000000000060, bb->attacks[WHITE_ROOKS]);
+	TEST_ASSERT_EQUAL(0x0000000000001000, bb->attacks[WHITE_QUEENS]);
+	TEST_ASSERT_EQUAL(0x0000000000001020, bb->attacks[WHITE_KING]);
+
+	TEST_ASSERT_EQUAL(0x0000FB0028000000, bb->attacks[BLACK_PAWNS]);
+	TEST_ASSERT_EQUAL(0x0000EBE900000000, bb->b_pawn_pushes);
+	TEST_ASSERT_EQUAL(0x0210A0010A000000, bb->attacks[BLACK_KNIGHTS]);
+	TEST_ASSERT_EQUAL(0x0010080402010000, bb->attacks[BLACK_BISHOPS]);
+	TEST_ASSERT_EQUAL(0x0200000000000000, bb->attacks[BLACK_ROOKS]);
+	TEST_ASSERT_EQUAL(0x0010204080000000, bb->attacks[BLACK_QUEENS]);
+	TEST_ASSERT_EQUAL(0x0010000000000000, bb->attacks[BLACK_KING]);
 
 	free(bb);
 	free(curr);
+	free(prev);
 }
 
 int main(void)
@@ -508,7 +526,7 @@ int main(void)
 	RUN_TEST(test_bishop_attack);
 	RUN_TEST(test_rook_attack);
 	RUN_TEST(test_queen_attack);
-	// RUN_TEST(test_update_attacks);
+	RUN_TEST(test_update_attacks);
 
 	return UNITY_END();
 }
