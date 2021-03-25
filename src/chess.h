@@ -19,9 +19,9 @@ struct Chess
 	struct Bitboards *bb;
 	struct Move *curr;
 	struct Move *prev;
-	enum Color turn;
 
 	enum Color orient;
+	enum Color turn;
 	bool ascii;
 
 	bool w_queenside_castle;

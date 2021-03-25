@@ -467,6 +467,7 @@ void test_update_attacks(void)
 		update_board(bb, curr);
 
 	update_attacks(bb);
+
 	TEST_ASSERT_EQUAL(0x0000002800FF0000, bb->attacks[WHITE_PAWNS]);
 	TEST_ASSERT_EQUAL(0x00000010EFEF0000, bb->w_pawn_pushes);
 	TEST_ASSERT_EQUAL(0x0000000000A51000, bb->attacks[WHITE_KNIGHTS]);
@@ -494,6 +495,7 @@ void test_update_attacks(void)
 	update_board(bb, curr);
 
 	update_attacks(bb);
+
 	TEST_ASSERT_EQUAL(0x0000002800DF0000, bb->attacks[WHITE_PAWNS]);
 	TEST_ASSERT_EQUAL(0x00000000CFCF0000, bb->w_pawn_pushes);
 	TEST_ASSERT_EQUAL(0x0000005088050040, bb->attacks[WHITE_KNIGHTS]);
