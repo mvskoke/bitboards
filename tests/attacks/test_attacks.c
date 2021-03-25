@@ -19,48 +19,6 @@ Test suite for attack calculation
 void setUp(void) {}
 void tearDown(void) {}
 
-void test_update_attacks(void)
-{
-	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
-	init_bb(bb);
-
-	// I don't need a *prev for this test
-	struct Move *curr = malloc(sizeof(struct Move));
-	if (curr == NULL)
-	{
-		fprintf(stderr, "ERROR: could not allocate enough memory\n");
-		exit(EXIT_FAILURE);
-	}
-
-	if (parse_move(bb, curr, "e2e4"))
-		update_board(bb, curr);
-
-	// update_attacks(bb);
-
-	// e2e4 moves the pawn, and opens up the king, queen, bishop,
-	// and knight, so the only attacks which should be updated are
-	// white's king, queen, f1 bishop, g1 knight, and pawns.
-	// TEST_ASSERT_EQUAL(0x0000000000001010, bb->attacks[WHITE_KING]);
-	// TEST_ASSERT_EQUAL(0x0000008040201000, bb->attacks[WHITE_QUEENS]);
-	// TEST_ASSERT_EQUAL(0x0000010204081000, bb->attacks[WHITE_BISHOPS]);
-	// TEST_ASSERT_EQUAL(0x0000000000A51000, bb->attacks[WHITE_KNIGHTS]);
-	// TEST_ASSERT_EQUAL(0x0000002800FF0000, bb->attacks[WHITE_PAWNS]);
-
-	// TEST_ASSERT_EQUAL(0x00000010EFEF0000, bb->wpawn_pushes);
-	// TEST_ASSERT_EQUAL(0x0000FFFF00000000, bb->bpawn_pushes);
-
-	// black pieces should remain unchanged
-	// TEST_ASSERT_EQUAL(0x0000FF0000000000, bb->attacks[BLACK_PAWNS]);
-	// TEST_ASSERT_EQUAL(0x0000A50000000000, bb->attacks[BLACK_KNIGHTS]);
-	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_BISHOPS]);
-	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_ROOKS]);
-	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_QUEENS]);
-	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_KING]);
-
-	free(bb);
-	free(curr);
-}
-
 void test_knight_attack(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
@@ -105,7 +63,6 @@ void test_knight_attack(void)
 	TEST_ASSERT_EQUAL(0x0028441466282214, knight_attack(0x0000001000080000, 0));
 
 	/* lone knights */
-
 	TEST_ASSERT_EQUAL(0x0028440044280000, knight_attack(0x0000001000000000, 0));  //e5
 	TEST_ASSERT_EQUAL(0x00000A1100110A00, knight_attack(0x0000000004000000, 0));  //c4
 
@@ -317,10 +274,10 @@ void test_bishop_attack(void)
 	TEST_ASSERT_EQUAL(0x8041221400142241, bishop_attack(0x0000000008000000, 0, 0));
 
 	// 4 corners
-	// h8
-	TEST_ASSERT_EQUAL(0x0040201008040201, bishop_attack(0x8000000000000000, 0x8000000000000000, 0));
 	// a8
 	TEST_ASSERT_EQUAL(0x0002040810204080, bishop_attack(0x0100000000000000, 0x0100000000000000, 0));
+	// h8
+	TEST_ASSERT_EQUAL(0x0040201008040201, bishop_attack(0x8000000000000000, 0x8000000000000000, 0));
 	// a1
 	TEST_ASSERT_EQUAL(0x8040201008040200, bishop_attack(0x0000000000000001, 0x0000000000000001, 0));
 	// h1
@@ -376,39 +333,182 @@ void test_rook_attack(void)
 
 	/* from empty bitboards */
 	// 1 rook
+	// d4
 	TEST_ASSERT_EQUAL(0x08080808F7080808, rook_attack(0x0000000008000000, 0x0000000008000000, 0));
+	// e8
+	TEST_ASSERT_EQUAL(0xEF10101010101010, rook_attack(0x1000000000000000, 0x1000000000000000, 0));
+	// f1
+	TEST_ASSERT_EQUAL(0x20202020202020DF, rook_attack(0x0000000000000020, 0x0000000000000020, 0));
 
 	// 4 corners
-	TEST_ASSERT_EQUAL(0x7F80808080808080, rook_attack(0x8000000000000000, 0x8000000000000000, 0));  // h8
-	TEST_ASSERT_EQUAL(0xFE01010101010101, rook_attack(0x0100000000000000, 0x0100000000000000, 0));  // a8
-	TEST_ASSERT_EQUAL(0x01010101010101FE, rook_attack(0x0000000000000001, 0x0000000000000001, 0));  // a1
-	TEST_ASSERT_EQUAL(0x808080808080807F, rook_attack(0x0000000000000080, 0x0000000000000080, 0));  // h1
+	// a8
+	TEST_ASSERT_EQUAL(0xFE01010101010101, rook_attack(0x0100000000000000, 0x0100000000000000, 0));
+	// h8
+	TEST_ASSERT_EQUAL(0x7F80808080808080, rook_attack(0x8000000000000000, 0x8000000000000000, 0));
+	// a1
+	TEST_ASSERT_EQUAL(0x01010101010101FE, rook_attack(0x0000000000000001, 0x0000000000000001, 0));
+	// h1
+	TEST_ASSERT_EQUAL(0x808080808080807F, rook_attack(0x0000000000000080, 0x0000000000000080, 0));
 
 	// 2 rooks
+	// c4 g6
 	TEST_ASSERT_EQUAL(0x4444BF44FB444444, rook_attack(0x0000400004000000, 0x0000400004000000, 0));
+
+	// a1 h8
+	TEST_ASSERT_EQUAL(0x7F818181818181FE, rook_attack(0x8000000000000001, 0x8000000000000001, 0));
+	// a8 h1
+	TEST_ASSERT_EQUAL(0xFE8181818181817F, rook_attack(0x0100000000000080, 0x0100000000000080, 0));
+
+	// corner on same rank
+	// a1 h1
+	TEST_ASSERT_EQUAL(0x818181818181817E, rook_attack(0x0000000000000081, 0x0000000000000081, 0));
+	// a8 h8
+	TEST_ASSERT_EQUAL(0x7E81818181818181, rook_attack(0x8100000000000000, 0x8100000000000000, 0));
 
 	free(bb);
 }
-/*
+
 void test_queen_attack(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
-	init_bb_fen(bb, );
+
+	/* from FEN positions */
+	// triple fork position
+	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
+	TEST_ASSERT_EQUAL(0x444850E0B0601008, queen_attack(bb->pieces[WHITE_QUEENS], bb->white_all, bb->black_all));
+	TEST_ASSERT_EQUAL(0x8870DC70A0202000, queen_attack(bb->pieces[BLACK_QUEENS], bb->black_all, bb->white_all));
+
+	// cool mate position
+	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
+	TEST_ASSERT_EQUAL(0x0010101014180C30, queen_attack(bb->pieces[WHITE_QUEENS], bb->white_all, bb->black_all));
+	TEST_ASSERT_EQUAL(0x0000100905030203, queen_attack(bb->pieces[BLACK_QUEENS], bb->black_all, bb->white_all));
+
+	// deep blue vs kasparov, 1997 game 2 after 36 ... axb5
+	init_bb_fen(bb, "r1r1q1k1/6p1/3b1p1p/1p1PpP2/1Pp5/2P4P/R1B2QP1/R5K1");
+	TEST_ASSERT_EQUAL(0x00010204A8701830, queen_attack(bb->pieces[WHITE_QUEENS], bb->white_all, bb->black_all));
+	TEST_ASSERT_EQUAL(0x2838548000000000, queen_attack(bb->pieces[BLACK_QUEENS], bb->black_all, bb->white_all));
+
+	// ruy lopez
+	init_bb_fen(bb, "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R");
+	TEST_ASSERT_EQUAL(0x0000000000001000, queen_attack(bb->pieces[WHITE_QUEENS], bb->white_all, bb->black_all));
+	TEST_ASSERT_EQUAL(0x0010204080000000, queen_attack(bb->pieces[BLACK_QUEENS], bb->black_all, bb->white_all));
+
+	// no queens
+	TEST_ASSERT_EQUAL(0, queen_attack(0, 23482234895, 903285329058));
+
+	/* from empty bitboards */
+	// 1 queen
+
+	// d4
+	TEST_ASSERT_EQUAL(0x88492A1CF71C2A49, queen_attack(0x0000000008000000, 0x0000000008000000, 0));
+
+	// 4 corners
+	// a8
+	TEST_ASSERT_EQUAL(0xFE03050911214181, queen_attack(0x0100000000000000, 0x0100000000000000, 0));
+	// h8
+	TEST_ASSERT_EQUAL(0x7FC0A09088848281, queen_attack(0x8000000000000000, 0x8000000000000000, 0));
+	// a1
+	TEST_ASSERT_EQUAL(0x81412111090503FE, queen_attack(0x0000000000000001, 0x0000000000000001, 0));
+	// h1
+	TEST_ASSERT_EQUAL(0x8182848890A0C07F, queen_attack(0x0000000000000080, 0x0000000000000080, 0));
+
+	// 2 queens
+
+	// opposite corners
+	// a1 h8
+	TEST_ASSERT_EQUAL(0x7FC1A191898583FE, queen_attack(0x8000000000000001, 0x8000000000000001, 0));
+	// a8 h1
+	TEST_ASSERT_EQUAL(0xFE83858991A1C17F, queen_attack(0x0100000000000080, 0x0100000000000080, 0));
+
+	// corner on same rank
+	// a1 h1
+	TEST_ASSERT_EQUAL(0x81C3A59999A5C37E, queen_attack(0x0000000000000081, 0x0000000000000081, 0));
+	// a8 h8
+	TEST_ASSERT_EQUAL(0x7EC3A59999A5C381, queen_attack(0x8100000000000000, 0x8100000000000000, 0));
+
+	// corner on same file
+	// a1 a8
+	TEST_ASSERT_EQUAL(0xFE432519192543FE, queen_attack(0x0100000000000001, 0x0100000000000001, 0));
+
+	// same rank
+	// a6 h6
+	TEST_ASSERT_EQUAL(0xA5C37EC3A59999A5, queen_attack(0x0000810000000000, 0x0000810000000000, 0));
+	// c4 f4
+	TEST_ASSERT_EQUAL(0x6624BD7EDB7EBD24, queen_attack(0x0000000024000000, 0x0000000024000000, 0));
+
+	// same file
+	// e8 e1
+	TEST_ASSERT_EQUAL(0xEF385493935438EF, queen_attack(0x1000000000000010, 0x1000000000000010, 0));
+	// b6 b3
+	TEST_ASSERT_EQUAL(0x4A27FD0F0FFD274A, queen_attack(0x0000020000020000, 0x0000020000020000, 0));
+
+	// other
+	// c5 f4
+	TEST_ASSERT_EQUAL(0x2635AEFBDF75AC64, queen_attack(0x0000000420000000, 0x0000000420000000, 0));
+	// f3 h5
+	TEST_ASSERT_EQUAL(0xB1A2E47FF0DFF0A8, queen_attack(0x0000008000200000, 0x0000008000200000, 0));
+
+	// 3 queens
+	// a8 c3 e4
+	TEST_ASSERT_EQUAL(0xFED7753DEFFB5F97, queen_attack(0x0100000010040000, 0x0100000010040000, 0));
+
 	free(bb);
 }
-*/
+
+void test_update_attacks(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb(bb);
+
+	// I don't need a *prev for this test
+	struct Move *curr = malloc(sizeof(struct Move));
+	if (curr == NULL)
+	{
+		fprintf(stderr, "ERROR: could not allocate enough memory\n");
+		exit(EXIT_FAILURE);
+	}
+
+	if (parse_move(bb, curr, "e2e4"))
+		update_board(bb, curr);
+
+	// update_attacks(bb);
+
+	// e2e4 moves the pawn, and opens up the king, queen, bishop,
+	// and knight, so the only attacks which should be updated are
+	// white's king, queen, f1 bishop, g1 knight, and pawns.
+	// TEST_ASSERT_EQUAL(0x0000000000001010, bb->attacks[WHITE_KING]);
+	// TEST_ASSERT_EQUAL(0x0000008040201000, bb->attacks[WHITE_QUEENS]);
+	// TEST_ASSERT_EQUAL(0x0000010204081000, bb->attacks[WHITE_BISHOPS]);
+	// TEST_ASSERT_EQUAL(0x0000000000A51000, bb->attacks[WHITE_KNIGHTS]);
+	// TEST_ASSERT_EQUAL(0x0000002800FF0000, bb->attacks[WHITE_PAWNS]);
+
+	// TEST_ASSERT_EQUAL(0x00000010EFEF0000, bb->wpawn_pushes);
+	// TEST_ASSERT_EQUAL(0x0000FFFF00000000, bb->bpawn_pushes);
+
+	// black pieces should remain unchanged
+	// TEST_ASSERT_EQUAL(0x0000FF0000000000, bb->attacks[BLACK_PAWNS]);
+	// TEST_ASSERT_EQUAL(0x0000A50000000000, bb->attacks[BLACK_KNIGHTS]);
+	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_BISHOPS]);
+	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_ROOKS]);
+	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_QUEENS]);
+	// TEST_ASSERT_EQUAL(0x0000000000000000, bb->attacks[BLACK_KING]);
+
+	free(bb);
+	free(curr);
+}
+
 int main(void)
 {
 	UNITY_BEGIN();
 
-	// RUN_TEST(test_update_attacks);
 	RUN_TEST(test_knight_attack);
 	RUN_TEST(test_king_attack);
 	RUN_TEST(test_pawn_attack);
 	RUN_TEST(test_pawn_push);
 	RUN_TEST(test_bishop_attack);
 	RUN_TEST(test_rook_attack);
-	// RUN_TEST(test_queen_attack);
+	RUN_TEST(test_queen_attack);
+	// RUN_TEST(test_update_attacks);
 
 	return UNITY_END();
 }

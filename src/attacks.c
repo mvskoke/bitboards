@@ -121,6 +121,9 @@ U64 knight_attack(U64 piece, U64 self)
 /*
 calcualte a sliding piece attack, in ONE direction/ray
 
+I know a loop isn't exactly in the bitboard spirit, but I want most of
+this code to be original. I'll change it one day
+
 algorithm summary:
 	enemy = enemy pieces' locations
 	mask = empty squares and enemy pieces (places which we can attack!)
@@ -129,7 +132,7 @@ algorithm summary:
 
 	START: load piece into shift
 	the maximum number of one-step shifts is 7 (ie you are in the corner)
-	for i in range(7)
+	while there are still bits to shift
 		what value is direction?
 			do corresponding one-step bitshift on shift
 
@@ -275,14 +278,17 @@ U64 rook_attack(U64 piece, U64 self, U64 enemy)
 	return attack;
 }
 
-// U64 queen_attack(U64 piece, U64 self, U64 enemy)
-// {
-// 	// combine the rook and bishop attack
-// 	U64 attack = 0;
-// 	attack |= bishop_attack(piece, self, enemy);
-// 	attack |= rook_attack(piece, self, enemy);
-// 	return attack;
-// }
+U64 queen_attack(U64 piece, U64 self, U64 enemy)
+{
+	if (piece == 0)
+		return 0;
+
+	// combine the rook and bishop attack pattern
+	U64 attack = 0;
+	attack |= bishop_attack(piece, self, enemy);
+	attack |= rook_attack(piece, self, enemy);
+	return attack;
+}
 
 // squares to which a king(s) can jump
 // exclude your own pieces
