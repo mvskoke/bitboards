@@ -30,5 +30,12 @@ def gen_squares():
             print(f"TEST_ASSERT_EQUAL({i}, get_sq_index(\"{f}{r}\"));")
             i+=1
 
+def gen_pawn_pushes():
+    files = "abcdefgh"
+    ranks = "34"
+    for r in ranks:
+        for f in files:
+            print(f"parse_move(bb, curr, \"{f}2{f}{r}\");\nTEST_ASSERT_EQUAL(true, validate_pawn_move(bb, curr));")
+
 if __name__ == "__main__":
-    gen_squares()
+    gen_pawn_pushes()
