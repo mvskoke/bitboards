@@ -104,8 +104,13 @@ void test_validate_pawn_move(void)
 	parse_move(bb, curr, "h2g3");
 	TEST_ASSERT_EQUAL(false, validate_pawn_move(bb, curr));
 
+	/* ridiculous captures */
+	parse_move(bb, curr, "e2e8");
+	TEST_ASSERT_EQUAL(false, validate_pawn_move(bb, curr));
+	parse_move(bb, curr, "d2e7");
+	TEST_ASSERT_EQUAL(false, validate_pawn_move(bb, curr));
 
-
+	/* test a FEN position */
 	init_bb_fen(bb, "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R");
 	update_attacks(bb);
 
@@ -115,6 +120,8 @@ void test_validate_pawn_move(void)
 	parse_move(bb, curr, "d7d6");
 	TEST_ASSERT_EQUAL(true, validate_pawn_move(bb, curr));
 	parse_move(bb, curr, "d7d5");
+	TEST_ASSERT_EQUAL(true, validate_pawn_move(bb, curr));
+	parse_move(bb, curr, "h7h5");
 	TEST_ASSERT_EQUAL(true, validate_pawn_move(bb, curr));
 
 	parse_move(bb, curr, "c7c6");

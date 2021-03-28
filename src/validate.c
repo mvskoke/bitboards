@@ -104,7 +104,7 @@ bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn)
 	// pawns and king are special
 	case WHITE_PAWNS:
 	case BLACK_PAWNS:
-		break;
+		return validate_pawn_move(bb, move);
 	case WHITE_KING:
 	case BLACK_KING:
 		break;

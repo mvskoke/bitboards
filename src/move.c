@@ -111,30 +111,6 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *const com
 	return move;
 }
 
-// just for debugging
-void display_move(struct Move *move)
-{
-	switch (move->piece)
-	{
-	case BLACK_PAWNS:       printf("BLACK_PAWN "); break;
-	case BLACK_KNIGHTS:     printf("BLACK_KNIGHT "); break;
-	case BLACK_BISHOPS:     printf("BLACK_BISHOP "); break;
-	case BLACK_ROOKS:       printf("BLACK_ROOK "); break;
-	case BLACK_QUEENS:      printf("BLACK_QUEEN "); break;
-	case BLACK_KING:        printf("BLACK_KING "); break;
-	case WHITE_PAWNS:       printf("WHITE_PAWN "); break;
-	case WHITE_KNIGHTS:     printf("WHITE_KNIGHT "); break;
-	case WHITE_BISHOPS:     printf("WHITE_BISHOP "); break;
-	case WHITE_ROOKS:       printf("WHITE_ROOK "); break;
-	case WHITE_QUEENS:      printf("WHITE_QUEEN "); break;
-	case WHITE_KING:        printf("WHITE_KING "); break;
-	case NONEXISTENT:       printf("STILL INITIALIZED "); break;
-	default: break;  // shut up compiler
-	}
-	printf(" (%c, %i) >", move->start_x + 'a', move->start_y + 1);
-	printf(" (%c, %i)\n", move->end_x + 'a', move->end_y + 1);
-}
-
 // transfer current move to previous move
 // used after you read a new move. transfer curr to prev, then
 // parse the new move into the curr move

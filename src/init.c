@@ -26,8 +26,8 @@ void init_moves(struct Move *curr, struct Move *prev)
 	verify_safe_malloc(prev);
 
 	// dummy placeholder values
-	curr->start     = -1;
-	curr->end       = -1;
+	curr->start     = BAD_SQUARE;
+	curr->end       = BAD_SQUARE;
 	curr->color     = WHITE;
 	curr->piece     = NONEXISTENT;
 	curr->promotion = NONEXISTENT;

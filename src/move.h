@@ -14,7 +14,8 @@ enum Square
 	A5, B5, C5, D5, E5, F5, G5, H5,
 	A6, B6, C6, D6, E6, F6, G6, H6,
 	A7, B7, C7, D7, E7, F7, G7, H7,
-	A8, B8, C8, D8, E8, F8, G8, H8
+	A8, B8, C8, D8, E8, F8, G8, H8,
+	BAD_SQUARE
 };
 
 struct Move
@@ -33,7 +34,6 @@ struct Move
 };
 
 struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command);
-void display_move(struct Move *move);
 struct Move *transfer_move(struct Move *curr, struct Move *prev);
 
 #endif

@@ -101,82 +101,76 @@ void test_update_board(void)
 	struct Move *prev = malloc(sizeof(struct Move));
 	init_moves(curr, prev);
 
-	// setting up the ruy lopez
-	// 0xFDEF04121020EF9F
-	if (parse_move(bb, curr, "e2e4")) {
-		update_board(bb, curr);
-		display_move(curr);
-	}
-
-	if (parse_move(bb, curr, "e7e5")) {
-		update_board(bb, curr);
-		display_move(curr);
-	}
-
-	// non-existent piece
-	if (parse_move(bb, curr, "c5d5")) {
-		update_board(bb, curr);
-		display_move(curr);
-	}
 	// no move validation yet, don't try parsing other illegal
 	// moves where the piece DOES exist, because parse_move()
 	// only verifies the piece's existence!!!
 	//validate_move() will be tested SEPARATELY.
 
-	if (parse_move(bb, curr, "g1f3")) {
+	// setting up the ruy lopez
+	// 0xFDEF04121020EF9F
+	if (parse_move(bb, curr, "e2e4"))
+	{
 		update_board(bb, curr);
-		display_move(curr);
+		TEST_ASSERT_EQUAL(E2, curr->start);
+		TEST_ASSERT_EQUAL(E4, curr->end);
+		TEST_ASSERT_EQUAL(WHITE, curr->color);
+		TEST_ASSERT_EQUAL(WHITE_PAWNS, curr->piece);
 	}
 
-	if (parse_move(bb, curr, "b8c6")) {
+	if (parse_move(bb, curr, "e7e5"))
+	{
 		update_board(bb, curr);
-		display_move(curr);
+		TEST_ASSERT_EQUAL(E7, curr->start);
+		TEST_ASSERT_EQUAL(E5, curr->end);
+		TEST_ASSERT_EQUAL(BLACK, curr->color);
+		TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
 	}
 
-	if (parse_move(bb, curr, "f1b5")) {
+	if (parse_move(bb, curr, "g1f3"))
+	{
 		update_board(bb, curr);
-		display_move(curr);
+		TEST_ASSERT_EQUAL(G1, curr->start);
+		TEST_ASSERT_EQUAL(F3, curr->end);
+		TEST_ASSERT_EQUAL(WHITE, curr->color);
+		TEST_ASSERT_EQUAL(WHITE_KNIGHTS, curr->piece);
 	}
 
-	// print_bb(bb->white_all | bb->black_all);
-	bool ascii = true;
-	print_bb_pretty(bb, BLACK, BLACK, ascii);
-	print_bb_pretty(bb, WHITE, BLACK, ascii);
+	if (parse_move(bb, curr, "b8c6"))
+	{
+		update_board(bb, curr);
+		TEST_ASSERT_EQUAL(B8, curr->start);
+		TEST_ASSERT_EQUAL(C6, curr->end);
+		TEST_ASSERT_EQUAL(BLACK, curr->color);
+		TEST_ASSERT_EQUAL(BLACK_KNIGHTS, curr->piece);
+	}
 
-	ascii = false;
-	print_bb_pretty(bb, BLACK, BLACK, ascii);
-	print_bb_pretty(bb, WHITE, BLACK, ascii);
+	if (parse_move(bb, curr, "f1b5"))
+	{
+		update_board(bb, curr);
+		TEST_ASSERT_EQUAL(F1, curr->start);
+		TEST_ASSERT_EQUAL(B5, curr->end);
+		TEST_ASSERT_EQUAL(WHITE, curr->color);
+		TEST_ASSERT_EQUAL(WHITE_BISHOPS, curr->piece);
+	}
 
-	print_bb_small(bb, BLACK);
-	print_bb_small(bb, WHITE);
+	/* uncomment if you want to print the boards in all their forms */
+	// bool ascii = true;
+	// print_bb_pretty(bb, BLACK, BLACK, ascii);
+	// print_bb_pretty(bb, WHITE, BLACK, ascii);
+
+	// ascii = false;
+	// print_bb_pretty(bb, BLACK, BLACK, ascii);
+	// print_bb_pretty(bb, WHITE, BLACK, ascii);
+
+	// print_bb_small(bb, BLACK);
+	// print_bb_small(bb, WHITE);
 
 	TEST_ASSERT_EQUAL(0x1000EF00, bb->pieces[WHITE_PAWNS]);
-	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->white_all | bb->black_all);
+	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->all);
 
 	free(bb);
 	free(curr);
 	free(prev);
-}
-
-static void do_move(struct Move *curr, struct Move *prev, char command[], struct Bitboards *bb)
-{
-	printf("before transfer\n");
-	display_move(curr);
-	display_move(prev);
-	transfer_move(curr, prev);
-
-	printf("after transfer\n");
-	display_move(curr);
-	display_move(prev);
-
-	if (parse_move(bb, curr, command)) {
-		update_board(bb, curr);
-	}
-
-	printf("after parsing/moving\n");
-	display_move(curr);
-	display_move(prev);
-	print_bb_small(bb, BLACK);
 }
 
 void test_transfer_move(void)
@@ -188,15 +182,66 @@ void test_transfer_move(void)
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb(bb);
 
-	char command[] = "e2e4";
-	do_move(curr, prev, command, bb);
-	strcpy(command, "e7e5");
-	do_move(curr, prev, command, bb);
+	/* test the initialized values*/
+	TEST_ASSERT_EQUAL(BAD_SQUARE, curr->start);
+	TEST_ASSERT_EQUAL(BAD_SQUARE, curr->end);
+	TEST_ASSERT_EQUAL(WHITE, curr->color);
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->piece);
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
 
-	printf("***end of test***\ncurr: ");
-	display_move(curr);  // should be e7e5
-	printf("prev: ");
-	display_move(prev);  // should be e2e4
+	TEST_ASSERT_EQUAL(BAD_SQUARE, prev->start);
+	TEST_ASSERT_EQUAL(BAD_SQUARE, prev->end);
+	TEST_ASSERT_EQUAL(WHITE, prev->color);
+	TEST_ASSERT_EQUAL(NONEXISTENT, prev->piece);
+	TEST_ASSERT_EQUAL(NONEXISTENT, prev->promotion);
+
+	/* FIRST TRANSFER */
+	transfer_move(curr, prev);
+
+	// nothing should have changed
+	TEST_ASSERT_EQUAL(curr->start, prev->start);
+	TEST_ASSERT_EQUAL(curr->end, prev->end);
+	TEST_ASSERT_EQUAL(curr->color, prev->color);
+	TEST_ASSERT_EQUAL(curr->piece, prev->piece);
+	TEST_ASSERT_EQUAL(curr->promotion, prev->promotion);
+
+	// after parsing, curr will change
+	if (parse_move(bb, curr, "e2e4"))
+	{
+		update_board(bb, curr);
+		TEST_ASSERT_EQUAL(E2, curr->start);
+		TEST_ASSERT_EQUAL(E4, curr->end);
+		TEST_ASSERT_EQUAL(WHITE, curr->color);
+		TEST_ASSERT_EQUAL(WHITE_PAWNS, curr->piece);
+		TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
+
+		// prev should not have changed
+		TEST_ASSERT_EQUAL(BAD_SQUARE, prev->start);
+		TEST_ASSERT_EQUAL(BAD_SQUARE, prev->end);
+		TEST_ASSERT_EQUAL(WHITE, prev->color);
+		TEST_ASSERT_EQUAL(NONEXISTENT, prev->piece);
+		TEST_ASSERT_EQUAL(NONEXISTENT, prev->promotion);
+	}
+
+	/* SECOND TRANSFER */
+	transfer_move(curr, prev);
+
+	// prev will contain move information for "e2e4"
+	TEST_ASSERT_EQUAL(E2, prev->start);
+	TEST_ASSERT_EQUAL(E4, prev->end);
+	TEST_ASSERT_EQUAL(WHITE, prev->color);
+	TEST_ASSERT_EQUAL(WHITE_PAWNS, prev->piece);
+	TEST_ASSERT_EQUAL(NONEXISTENT, prev->promotion);
+
+	if (parse_move(bb, curr, "e7e5"))
+	{
+		update_board(bb, curr);
+		TEST_ASSERT_EQUAL(E7, curr->start);
+		TEST_ASSERT_EQUAL(E5, curr->end);
+		TEST_ASSERT_EQUAL(BLACK, curr->color);
+		TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
+		TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
+	}
 
 	free(bb);
 	free(curr);
