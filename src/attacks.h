@@ -14,6 +14,5 @@ U64 bishop_attack(U64 piece, U64 self, U64 enemy);
 U64 rook_attack(U64 piece, U64 self, U64 enemy);
 U64 king_attack(U64 piece, U64 self);
 U64 queen_attack(U64 piece, U64 self, U64 enemy);
-void update_attacks(struct Bitboards *bb);
 
 #endif

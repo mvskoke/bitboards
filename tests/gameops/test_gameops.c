@@ -10,12 +10,13 @@ move parsing, handling data structures, and printing the board.
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../src/bitboards.h"
-#include "../../src/colors.h"
-#include "../../src/display.h"
-#include "../../src/init.h"
-#include "../../src/move.h"
-#include "../../src/update.h"
+// -I../../src/
+#include "bitboards.h"
+#include "colors.h"
+#include "display.h"
+#include "init.h"
+#include "move.h"
+#include "update.h"
 
 #include "../../unity/unity.h"
 

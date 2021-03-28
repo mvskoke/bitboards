@@ -7,12 +7,13 @@ Test suite for attack calculation
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../src/attacks.h"
-#include "../../src/bitboards.h"
-#include "../../src/colors.h"
-#include "../../src/init.h"
-#include "../../src/move.h"
-#include "../../src/update.h"
+// -I../../src/
+#include "attacks.h"
+#include "bitboards.h"
+#include "colors.h"
+#include "init.h"
+#include "move.h"
+#include "update.h"
 
 #include "../../unity/unity.h"
 

@@ -6,6 +6,9 @@
 #include "bitboards.h"
 #include "move.h"
 
-bool validate_move(struct Bitboards *bb, struct Move *move, int turn);
+/* make these helpers static when you move back to cchess */
+bool validate_pawn_move(struct Bitboards *bb, struct Move *move);
+
+bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn);
 
 #endif

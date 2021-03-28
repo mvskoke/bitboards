@@ -9,10 +9,11 @@ Test suite for all basic bitboard operations
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../src/bitboards.h"
-#include "../../src/colors.h"
-#include "../../src/display.h"
-#include "../../src/init.h"
+// -I../../src/
+#include "bitboards.h"
+#include "colors.h"
+#include "display.h"
+#include "init.h"
 
 #include "../../unity/unity.h"
 
