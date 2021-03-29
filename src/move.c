@@ -81,37 +81,34 @@ static enum Piece parse_promotion(enum Color color, const char* command)
 
 static enum MoveType parse_move_type(struct Move *move)
 {
-	enum MoveType type;
-
 	// castling
 	// white castles
 	// I'm breaking K&R style because it otherwise looked horrendous
 	if (move->piece == WHITE_KING && move->start == E1 &&
 	    move->end == G1)
 	{
-		type = W_KINGSIDE_CASTLE;
+		return W_KINGSIDE_CASTLE;
 	}
 	else if (move->piece == WHITE_KING && move->start == E1 &&
 	         move->end == C1)
 	{
-		type = W_QUEENSIDE_CASTLE;
+		return W_QUEENSIDE_CASTLE;
 	}
 	// black castles
 	else if (move->piece == BLACK_KING && move->start == E8 &&
 	         move->end == G8)
 	{
-		type = B_KINGSIDE_CASTLE;
+		return B_KINGSIDE_CASTLE;
 	}
 	else if (move->piece == BLACK_KING && move->start == E8 &&
 	         move->end == C8)
 	{
-		type = B_QUEENSIDE_CASTLE;
+		return B_QUEENSIDE_CASTLE;
 	}
 	else
 	{
-		type = OTHER;
+		return OTHER;
 	}
-	return type;
 }
 
 // validate_command = legal syntax

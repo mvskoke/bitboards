@@ -40,22 +40,23 @@ static void update_pretty_board(struct Bitboards *bb, struct Move *move)
 void update_castling(struct Bitboards *bb, struct Move *move)
 {
 	// actual castling
+	// after you castle, no more castling
 	switch (move->type) {
 	case W_KINGSIDE_CASTLE:
-		bb->w_rook_h_moved = true;
-		bb->w_king_moved = true;
+		bb->w_kingside_castle = false;
+		bb->w_queenside_castle = false;
 		return;
 	case W_QUEENSIDE_CASTLE:
-		bb->w_rook_a_moved = true;
-		bb->w_king_moved = true;
+		bb->w_kingside_castle = false;
+		bb->w_queenside_castle = false;
 		return;
 	case B_KINGSIDE_CASTLE:
-		bb->b_rook_h_moved = true;
-		bb->b_king_moved = true;
+		bb->b_kingside_castle = false;
+		bb->b_queenside_castle = false;
 		return;
 	case B_QUEENSIDE_CASTLE:
-		bb->b_rook_a_moved = true;
-		bb->b_king_moved = true;
+		bb->b_kingside_castle = false;
+		bb->b_queenside_castle = false;
 		return;
 	default:
 		break;
@@ -63,20 +64,25 @@ void update_castling(struct Bitboards *bb, struct Move *move)
 
 	// ordinary moves
 	// white rooks
-	if (move->piece == WHITE_ROOKS && move->start == H1)
-		bb->w_rook_h_moved = true;
-	else if (move->piece == WHITE_ROOKS && move->start == A1)
-		bb->w_rook_a_moved = true;
+	if (move->piece == WHITE_ROOKS && move->start == H1) {
+		bb->w_kingside_castle = false;
+	} else if (move->piece == WHITE_ROOKS && move->start == A1) {
+		bb->w_queenside_castle = false;
+	}
 	// black rooks
-	else if (move->piece == BLACK_ROOKS && move->start == H8)
-		bb->b_rook_h_moved = true;
-	else if (move->piece == BLACK_ROOKS && move->start == A8)
-		bb->b_rook_a_moved = true;
+	else if (move->piece == BLACK_ROOKS && move->start == H8) {
+		bb->b_kingside_castle = false;
+	} else if (move->piece == BLACK_ROOKS && move->start == A8) {
+		bb->b_queenside_castle = false;
+	}
 	// kings
-	else if (move->piece == WHITE_KING && move->start == E1)
-		bb->w_king_moved = true;
-	else if (move->piece == BLACK_KING && move->start == E8)
-		bb->b_king_moved = true;
+	else if (move->piece == WHITE_KING && move->start == E1) {
+		bb->w_kingside_castle = false;
+		bb->w_queenside_castle = false;
+	} else if (move->piece == BLACK_KING && move->start == E8) {
+		bb->b_kingside_castle = false;
+		bb->b_queenside_castle = false;
+	}
 }
 
 // move a piece

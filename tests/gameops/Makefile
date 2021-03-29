@@ -5,8 +5,8 @@ OBJ = ../../obj
 SRC = ../../src
 UNITY = ../../unity/unity.o
 
-DEP = $(OBJ)/test_gameops.o $(OBJ)/bitboards.o $(OBJ)/display.o \
-	$(OBJ)/init.o $(OBJ)/move.o $(OBJ)/update.o
+DEP = $(OBJ)/test_gameops.o $(OBJ)/attacks.o $(OBJ)/bitboards.o \
+	$(OBJ)/display.o $(OBJ)/init.o $(OBJ)/move.o $(OBJ)/update.o
 
 test_gameops: $(DEP)
 	$(CC) $(CFLAGS) $^ $(UNITY) -o test_gameops

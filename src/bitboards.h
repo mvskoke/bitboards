@@ -56,14 +56,10 @@ struct Bitboards {
 	U64 b_pawn_pushes;
 
 	// keep track of castling privileges
-	bool w_rook_a_moved;
-	bool w_rook_h_moved;
-
-	bool b_rook_a_moved;
-	bool b_rook_h_moved;
-
-	bool w_king_moved;
-	bool b_king_moved;
+	bool w_queenside_castle;
+	bool w_kingside_castle;
+	bool b_queenside_castle;
+	bool b_kingside_castle;
 };
 
 U64 set_bit(U64 *bb, const int index);

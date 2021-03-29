@@ -11,6 +11,7 @@ move parsing, handling data structures, and printing the board.
 #include <string.h>
 
 // -I../../src/
+#include "attacks.h"
 #include "bitboards.h"
 #include "colors.h"
 #include "display.h"
@@ -186,12 +187,10 @@ void test_update_board(void)
 	enum Color orient = BLACK;
 	print_bb_pretty(bb, orient, turn, ascii);
 
-	TEST_ASSERT_EQUAL(false, bb->w_rook_a_moved);
-	TEST_ASSERT_EQUAL(false, bb->w_rook_h_moved);
-	TEST_ASSERT_EQUAL(false, bb->b_rook_a_moved);
-	TEST_ASSERT_EQUAL(false, bb->b_rook_h_moved);
-	TEST_ASSERT_EQUAL(false, bb->w_king_moved);
-	TEST_ASSERT_EQUAL(false, bb->b_king_moved);
+	TEST_ASSERT_EQUAL(true, bb->w_queenside_castle);
+	TEST_ASSERT_EQUAL(true, bb->w_kingside_castle);
+	TEST_ASSERT_EQUAL(true, bb->b_queenside_castle);
+	TEST_ASSERT_EQUAL(true, bb->b_kingside_castle);
 
 	if (parse_move(bb, curr, "e1g1")) {
 		update_board(bb, curr);
@@ -205,12 +204,10 @@ void test_update_board(void)
 	print_bb_pretty(bb, orient, turn, ascii);
 	print_bb_small(bb, orient);
 
-	TEST_ASSERT_EQUAL(false, bb->w_rook_a_moved);
-	TEST_ASSERT_EQUAL(true, bb->w_rook_h_moved);
-	TEST_ASSERT_EQUAL(false, bb->b_rook_a_moved);
-	TEST_ASSERT_EQUAL(false, bb->b_rook_h_moved);
-	TEST_ASSERT_EQUAL(true, bb->w_king_moved);
-	TEST_ASSERT_EQUAL(false, bb->b_king_moved);
+	TEST_ASSERT_EQUAL(false, bb->w_queenside_castle);
+	TEST_ASSERT_EQUAL(false, bb->w_kingside_castle);
+	TEST_ASSERT_EQUAL(true, bb->b_queenside_castle);
+	TEST_ASSERT_EQUAL(true, bb->b_kingside_castle);
 
 	if (parse_move(bb, curr, "e8e7")) {
 		update_board(bb, curr);
@@ -221,12 +218,10 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
 
-	TEST_ASSERT_EQUAL(false, bb->w_rook_a_moved);
-	TEST_ASSERT_EQUAL(true, bb->w_rook_h_moved);
-	TEST_ASSERT_EQUAL(false, bb->b_rook_a_moved);
-	TEST_ASSERT_EQUAL(false, bb->b_rook_h_moved);
-	TEST_ASSERT_EQUAL(true, bb->w_king_moved);
-	TEST_ASSERT_EQUAL(true, bb->b_king_moved);
+	TEST_ASSERT_EQUAL(false, bb->w_queenside_castle);
+	TEST_ASSERT_EQUAL(false, bb->w_kingside_castle);
+	TEST_ASSERT_EQUAL(false, bb->b_queenside_castle);
+	TEST_ASSERT_EQUAL(false, bb->b_kingside_castle);
 	print_bb_pretty(bb, orient, turn, ascii);
 
 	// test final board positions
@@ -331,12 +326,10 @@ void test_transfer_bitboards(void)
 	TEST_ASSERT_EQUAL(bb->w_pawn_pushes, copy->w_pawn_pushes);
 	TEST_ASSERT_EQUAL(bb->b_pawn_pushes, copy->b_pawn_pushes);
 
-	TEST_ASSERT_EQUAL(bb->w_rook_a_moved, copy->w_rook_a_moved);
-	TEST_ASSERT_EQUAL(bb->w_rook_h_moved, copy->w_rook_h_moved);
-	TEST_ASSERT_EQUAL(bb->b_rook_a_moved, copy->b_rook_a_moved);
-	TEST_ASSERT_EQUAL(bb->b_rook_h_moved, copy->b_rook_h_moved);
-	TEST_ASSERT_EQUAL(bb->w_king_moved, copy->w_king_moved);
-	TEST_ASSERT_EQUAL(bb->b_king_moved, copy->b_king_moved);
+	TEST_ASSERT_EQUAL(bb->w_queenside_castle, copy->w_queenside_castle);
+	TEST_ASSERT_EQUAL(bb->w_kingside_castle, copy->w_kingside_castle);
+	TEST_ASSERT_EQUAL(bb->b_queenside_castle, copy->b_queenside_castle);
+	TEST_ASSERT_EQUAL(bb->b_kingside_castle, copy->b_kingside_castle);
 
 	if (parse_move(bb, curr, "e2e4"))
 		update_board(bb, curr);
@@ -371,12 +364,10 @@ void test_transfer_bitboards(void)
 	TEST_ASSERT_EQUAL(bb->white_all, copy->white_all);
 	TEST_ASSERT_EQUAL(bb->black_all, copy->black_all);
 
-	TEST_ASSERT_EQUAL(bb->w_rook_a_moved, copy->w_rook_a_moved);
-	TEST_ASSERT_EQUAL(bb->w_rook_h_moved, copy->w_rook_h_moved);
-	TEST_ASSERT_EQUAL(bb->b_rook_a_moved, copy->b_rook_a_moved);
-	TEST_ASSERT_EQUAL(bb->b_rook_h_moved, copy->b_rook_h_moved);
-	TEST_ASSERT_EQUAL(bb->w_king_moved, copy->w_king_moved);
-	TEST_ASSERT_EQUAL(bb->b_king_moved, copy->b_king_moved);
+	TEST_ASSERT_EQUAL(bb->w_queenside_castle, copy->w_queenside_castle);
+	TEST_ASSERT_EQUAL(bb->w_kingside_castle, copy->w_kingside_castle);
+	TEST_ASSERT_EQUAL(bb->b_queenside_castle, copy->b_queenside_castle);
+	TEST_ASSERT_EQUAL(bb->b_kingside_castle, copy->b_kingside_castle);
 
 	free(bb);
 	free(copy);

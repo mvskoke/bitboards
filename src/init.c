@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "attacks.h"
 #include "bitboards.h"
 #include "colors.h"
 #include "init.h"
@@ -116,12 +117,10 @@ void init_bb(struct Bitboards *bb)
 	bb->b_pawn_pushes            = 0x0000FFFF00000000;
 
 	/**** CASTLING INFO ****/
-	bb->w_rook_a_moved = false;
-	bb->w_rook_h_moved = false;
-	bb->b_rook_a_moved = false;
-	bb->b_rook_h_moved = false;
-	bb->w_king_moved   = false;
-	bb->b_king_moved   = false;
+	bb->w_queenside_castle = true;
+	bb->w_kingside_castle  = true;
+	bb->b_queenside_castle = true;
+	bb->b_kingside_castle  = true;
 
 	/**** PRETTY BOARD ****/
 	// pretty_board[i][j]
@@ -257,4 +256,5 @@ void init_bb_fen(struct Bitboards *bb, char *fen)
 			index = rank * 8;
 		}
 	}
+	update_attacks(bb);
 }

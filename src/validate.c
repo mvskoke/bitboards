@@ -66,13 +66,8 @@ bool validate_pawn_move(struct Bitboards *bb, struct Move *move)
 	return ILLEGAL;
 }
 
-bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn)
+bool legal_dest(struct Bitboards *bb, struct Move *move)
 {
-	// that's not even your piece
-	if (turn != move->color)
-		return ILLEGAL;
-
-	/* legal destination */
 	// is your own piece on the end square?
 	if (move->color == WHITE) {
 		if (get_bit(bb->white_all, move->end))
@@ -81,19 +76,107 @@ bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn)
 		if (get_bit(bb->black_all, move->end))
 			return ILLEGAL;
 	}
+	return LEGAL;
+}
+
+// is the piece's attack bb set on the destination square bit?
+bool attacks_set(struct Bitboards *bb, struct Move *move)
+{
+	return get_bit(bb->attacks[move->piece], move->end);
+}
+
+bool safe_path(U64 attacks[], enum Color enemy,
+               enum Square sq1, enum Square sq2)
+{
+	enum Piece i;
+	enum Piece limit;
+	if (enemy == WHITE) {
+		// check the enemy's attacks
+		i = WHITE_PAWNS;
+		limit = TOTAL_ATTACKS;
+	} else {
+		i = BLACK_PAWNS;
+		limit = WHITE_PAWNS;
+	}
+
+	for (; i < limit; i++) {
+		if (get_bit(attacks[i], sq1) || get_bit(attacks[i], sq2))
+			return ILLEGAL;
+	}
+	return LEGAL;
+}
+
+bool validate_castle(struct Bitboards *bb, struct Move *move)
+{
+	// is castling legal?
+	if (!bb->w_kingside_castle && move->type == W_KINGSIDE_CASTLE)
+		return ILLEGAL;
+	else if (!bb->w_queenside_castle && move->type == W_QUEENSIDE_CASTLE)
+		return ILLEGAL;
+	else if (!bb->b_kingside_castle && move->type == B_KINGSIDE_CASTLE)
+		return ILLEGAL;
+	else if (!bb->b_queenside_castle && move->type == B_QUEENSIDE_CASTLE)
+		return ILLEGAL;
+
+	// would the king pass thru check?
+	switch (move->type) {
+	case W_KINGSIDE_CASTLE:
+		return safe_path(bb->attacks, BLACK, F1, G1);
+
+	case W_QUEENSIDE_CASTLE:
+		return safe_path(bb->attacks, BLACK, B1, C1);
+
+	case B_KINGSIDE_CASTLE:
+		return safe_path(bb->attacks, WHITE, F8, G8);
+
+	case B_QUEENSIDE_CASTLE:
+		return safe_path(bb->attacks, WHITE, B8, C8);
+
+	default:
+		return ILLEGAL;
+	}
+}
+
+// validates that a move is PSEUDO-LEGAL
+bool validate_king_move(struct Bitboards *bb, struct Move *move)
+{
+	if (move->type != OTHER)
+		return validate_castle(bb, move);
+	else
+		return (attacks_set(bb, move) && legal_dest(bb, move));
+	// REMOVE legal_dest() from this return statement later
+	// I added it to make the Unity testing easier
+}
+
+bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn)
+{
+	bool pseudo_legal = false;
+	bool full_legal = false;
+
+	// that's not even your piece
+	if (turn != move->color)
+		return ILLEGAL;
+
+	/* legal destination */
+	if (!legal_dest(bb, move))
+		return ILLEGAL;
 
 	// is the end square within reach of the piece?
 	switch (move->piece) {
 	// pawns and king are special
 	case WHITE_PAWNS:
 	case BLACK_PAWNS:
-		return validate_pawn_move(bb, move);
+		pseudo_legal = validate_pawn_move(bb, move);
+		break;
 	case WHITE_KING:
 	case BLACK_KING:
+		pseudo_legal = validate_king_move(bb, move);
 		break;
 	default:
+		pseudo_legal = attacks_set(bb, move);
 		break;
 	}
 
-	return LEGAL;
+	// full_legal = king_in_check();
+	return pseudo_legal && full_legal;
 }
