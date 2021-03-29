@@ -1,6 +1,7 @@
 #include <ctype.h>
-#include <stdlib.h>
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "bitboards.h"
 #include "colors.h"
@@ -31,6 +32,7 @@ void init_moves(struct Move *curr, struct Move *prev)
 	curr->color     = WHITE;
 	curr->piece     = NONEXISTENT;
 	curr->promotion = NONEXISTENT;
+	curr->type      = OTHER;
 
 	curr->start_x   = -1;
 	curr->end_x     = -1;
@@ -42,6 +44,7 @@ void init_moves(struct Move *curr, struct Move *prev)
 	prev->color     = curr->color;
 	prev->piece     = curr->piece;
 	prev->promotion = curr->promotion;
+	prev->type      = curr->type;
 
 	prev->start_x   = curr->start_x;
 	prev->end_x     = curr->end_x;
@@ -112,6 +115,14 @@ void init_bb(struct Bitboards *bb)
 	/**** PAWN PUSHES ****/
 	bb->w_pawn_pushes            = 0x00000000FFFF0000;
 	bb->b_pawn_pushes            = 0x0000FFFF00000000;
+
+	/**** CASTLING INFO ****/
+	bb->w_rook_a_moved = false;
+	bb->w_rook_h_moved = false;
+	bb->b_rook_a_moved = false;
+	bb->b_rook_h_moved = false;
+	bb->w_king_moved   = false;
+	bb->b_king_moved   = false;
 
 	/**** PRETTY BOARD ****/
 	// pretty_board[i][j]

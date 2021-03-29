@@ -18,6 +18,16 @@ enum Square
 	BAD_SQUARE
 };
 
+enum MoveType
+{
+	W_KINGSIDE_CASTLE,
+	W_QUEENSIDE_CASTLE,
+	B_KINGSIDE_CASTLE,
+	B_QUEENSIDE_CASTLE,
+	// EN_PASSANT,
+	OTHER
+};
+
 struct Move
 {
 	enum Square start;
@@ -25,6 +35,7 @@ struct Move
 	enum Color color;
 	enum Piece piece;
 	enum Piece promotion;
+	enum MoveType type;
 
 	// indexes for Bitboards->pretty_board[][]
 	int start_x;

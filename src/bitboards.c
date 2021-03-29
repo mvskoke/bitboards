@@ -84,6 +84,13 @@ struct Bitboards *transfer_bb(struct Bitboards *src, struct Bitboards *dest)
 	dest->w_pawn_pushes = src->w_pawn_pushes;
 	dest->b_pawn_pushes = src->b_pawn_pushes;
 
+	dest->w_rook_a_moved = src->w_rook_a_moved;
+	dest->w_rook_h_moved = src->w_rook_h_moved;
+	dest->b_rook_a_moved = src->b_rook_a_moved;
+	dest->b_rook_h_moved = src->b_rook_h_moved;
+	dest->w_king_moved = src->w_king_moved;
+	dest->b_king_moved = src->b_king_moved;
+
 	// there's no need to copy pretty_board[][]
 	// a copy of a Bitboards struct will ONLY ever be used for
 	// move validation. the pretty_board is, in that case, useless

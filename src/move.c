@@ -47,6 +47,77 @@ static enum Color get_piece_color(struct Bitboards *bb, int index)
 	return NONEXISTENT;
 }
 
+static enum Piece parse_promotion(enum Color color, const char* command)
+{
+	enum Piece promotion;
+
+	// O(1) version of strlen() != 4
+	// I know it looks like a ticking time bomb, and that time
+	// bomb is a segfault, but a move command will always have
+	// an accessible char at index 4.
+	if (command[4] != '\0')
+	{
+		switch (command[4])
+		{
+		case 'n':
+			promotion = BLACK_KNIGHTS;
+			break;
+		case 'b':
+			promotion = BLACK_BISHOPS;
+			break;
+		case 'r':
+			promotion = BLACK_ROOKS;
+			break;
+		case 'q':
+			promotion = BLACK_QUEENS;
+			break;
+		}
+		// use WHITE_PAWNS as an offset between black pieces'
+		// and white pieces' enums
+		if (color == WHITE)
+			promotion += WHITE_PAWNS;
+	}
+	else
+	{
+		promotion = NONEXISTENT;
+	}
+	return promotion;
+}
+
+static enum MoveType parse_move_type(struct Move *move)
+{
+	enum MoveType type;
+
+	// castling
+	// white castles
+	if (move->piece == WHITE_KING && move->start == E1 &&
+	    move->end == G1)
+	{
+		type = W_KINGSIDE_CASTLE;
+	}
+	else if (move->piece == WHITE_KING && move->start == E1 &&
+	         move->end == C1)
+	{
+		type = W_QUEENSIDE_CASTLE;
+	}
+	// black castles
+	else if (move->piece == BLACK_KING && move->start == E8 &&
+	         move->end == G8)
+	{
+		type = B_KINGSIDE_CASTLE;
+	}
+	else if (move->piece == BLACK_KING && move->start == E8 &&
+	         move->end == C8)
+	{
+		type = B_QUEENSIDE_CASTLE;
+	}
+	else
+	{
+		type = OTHER;
+	}
+	return type;
+}
+
 // validate_command = legal syntax
 // parse_move = piece exists
 // validate_move = legal
@@ -61,7 +132,7 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *const com
 {
 	char *tmp = command;
 	// I use tmp because I need *command to not change
-	// before the switch statement further down
+	// before I parse for a pawn promotion
 	move->start = get_sq_index(tmp);
 	move->end = get_sq_index(tmp += 2);
 
@@ -78,36 +149,10 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *const com
 
 	move->color = get_piece_color(bb, move->start);
 
-	// O(1) version of strlen() != 4
-	// I know it looks like a ticking time bomb, and that time
-	// bomb is a segfault, but a move command will always have
-	// an accessible char at index 4.
-	if (command[4] != '\0')
-	{
-		switch (command[4])
-		{
-		case 'n':
-			move->promotion = BLACK_KNIGHTS;
-			break;
-		case 'b':
-			move->promotion = BLACK_BISHOPS;
-			break;
-		case 'r':
-			move->promotion = BLACK_ROOKS;
-			break;
-		case 'q':
-			move->promotion = BLACK_QUEENS;
-			break;
-		}
-		// use WHITE_PAWNS as an offset between black pieces'
-		// and white pieces' enums
-		if (move->color == WHITE)
-			move->promotion += WHITE_PAWNS;
-	}
-	else
-	{
-		move->promotion = NONEXISTENT;
-	}
+	move->promotion = parse_promotion(move->color, command);
+
+	move->type = parse_move_type(move);
+
 	return move;
 }
 
@@ -124,6 +169,7 @@ struct Move *transfer_move(struct Move *curr, struct Move *prev)
 	prev->color = curr->color;
 	prev->piece = curr->piece;
 	prev->promotion = curr->promotion;
+	prev->type = curr->type;
 
 	prev->start_x = curr->start_x;
 	prev->end_x = curr->end_x;

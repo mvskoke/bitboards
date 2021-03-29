@@ -42,6 +42,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(A6, curr->end);
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
+	TEST_ASSERT_EQUAL(OTHER, curr->type);
 
 	// berlin defence
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "g8f6"));
@@ -50,6 +51,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(F6, curr->end);
 	TEST_ASSERT_EQUAL(BLACK_KNIGHTS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
+	TEST_ASSERT_EQUAL(OTHER, curr->type);
 
 	// nothing
 	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr, "a3a4"));
@@ -63,6 +65,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(D6, curr->end);
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
+	TEST_ASSERT_EQUAL(OTHER, curr->type);
 
 	// promotion (an illegal one, but I have to test it)
 	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
@@ -72,6 +75,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(D8, curr->end);
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
+	TEST_ASSERT_EQUAL(OTHER, curr->type);
 
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "f8c5"));
 	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
@@ -79,6 +83,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(C5, curr->end);
 	TEST_ASSERT_EQUAL(BLACK_BISHOPS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
+	TEST_ASSERT_EQUAL(OTHER, curr->type);
 
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "e1e2"));
 	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
@@ -86,6 +91,16 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(E2, curr->end);
 	TEST_ASSERT_EQUAL(WHITE_KING, curr->piece);
 	TEST_ASSERT_EQUAL(WHITE, curr->color);
+	TEST_ASSERT_EQUAL(OTHER, curr->type);
+
+	// white castles
+	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "e1g1"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
+	TEST_ASSERT_EQUAL(E1, curr->start);
+	TEST_ASSERT_EQUAL(G1, curr->end);
+	TEST_ASSERT_EQUAL(WHITE_KING, curr->piece);
+	TEST_ASSERT_EQUAL(WHITE, curr->color);
+	TEST_ASSERT_EQUAL(W_KINGSIDE_CASTLE, curr->type);
 
 	free(curr);
 	free(prev);
@@ -101,13 +116,14 @@ void test_update_board(void)
 	struct Move *prev = malloc(sizeof(struct Move));
 	init_moves(curr, prev);
 
-	// no move validation yet, don't try parsing other illegal
+	// no move validation yet, don't try parsing illegal
 	// moves where the piece DOES exist, because parse_move()
 	// only verifies the piece's existence!!!
 	//validate_move() will be tested SEPARATELY.
 
 	// setting up the ruy lopez
 	// 0xFDEF04121020EF9F
+	// remember, only test actual legal moves (for now)
 	if (parse_move(bb, curr, "e2e4"))
 	{
 		update_board(bb, curr);
@@ -115,6 +131,7 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(E4, curr->end);
 		TEST_ASSERT_EQUAL(WHITE, curr->color);
 		TEST_ASSERT_EQUAL(WHITE_PAWNS, curr->piece);
+		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
 
 	if (parse_move(bb, curr, "e7e5"))
@@ -124,6 +141,7 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(E5, curr->end);
 		TEST_ASSERT_EQUAL(BLACK, curr->color);
 		TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
+		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
 
 	if (parse_move(bb, curr, "g1f3"))
@@ -133,6 +151,7 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(F3, curr->end);
 		TEST_ASSERT_EQUAL(WHITE, curr->color);
 		TEST_ASSERT_EQUAL(WHITE_KNIGHTS, curr->piece);
+		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
 
 	if (parse_move(bb, curr, "b8c6"))
@@ -142,6 +161,7 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(C6, curr->end);
 		TEST_ASSERT_EQUAL(BLACK, curr->color);
 		TEST_ASSERT_EQUAL(BLACK_KNIGHTS, curr->piece);
+		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
 
 	if (parse_move(bb, curr, "f1b5"))
@@ -151,22 +171,77 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(B5, curr->end);
 		TEST_ASSERT_EQUAL(WHITE, curr->color);
 		TEST_ASSERT_EQUAL(WHITE_BISHOPS, curr->piece);
+		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
-
-	/* uncomment if you want to print the boards in all their forms */
-	// bool ascii = true;
-	// print_bb_pretty(bb, BLACK, BLACK, ascii);
-	// print_bb_pretty(bb, WHITE, BLACK, ascii);
-
-	// ascii = false;
-	// print_bb_pretty(bb, BLACK, BLACK, ascii);
-	// print_bb_pretty(bb, WHITE, BLACK, ascii);
-
-	// print_bb_small(bb, BLACK);
-	// print_bb_small(bb, WHITE);
 
 	TEST_ASSERT_EQUAL(0x1000EF00, bb->pieces[WHITE_PAWNS]);
 	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->all);
+
+	if (parse_move(bb, curr, "d7d6"))
+	{
+		update_board(bb, curr);
+		TEST_ASSERT_EQUAL(D7, curr->start);
+		TEST_ASSERT_EQUAL(D6, curr->end);
+		TEST_ASSERT_EQUAL(BLACK, curr->color);
+		TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
+		TEST_ASSERT_EQUAL(OTHER, curr->type);
+	}
+
+	bool ascii = false;
+	enum Color turn = WHITE;
+	enum Color orient = BLACK;
+	print_bb_pretty(bb, orient, turn, ascii);
+
+	TEST_ASSERT_EQUAL(false, bb->w_rook_a_moved);
+	TEST_ASSERT_EQUAL(false, bb->w_rook_h_moved);
+	TEST_ASSERT_EQUAL(false, bb->b_rook_a_moved);
+	TEST_ASSERT_EQUAL(false, bb->b_rook_h_moved);
+	TEST_ASSERT_EQUAL(false, bb->w_king_moved);
+	TEST_ASSERT_EQUAL(false, bb->b_king_moved);
+
+	if (parse_move(bb, curr, "e1g1"))
+	{
+		update_board(bb, curr);
+		TEST_ASSERT_EQUAL(E1, curr->start);
+		TEST_ASSERT_EQUAL(G1, curr->end);
+		TEST_ASSERT_EQUAL(WHITE, curr->color);
+		TEST_ASSERT_EQUAL(WHITE_KING, curr->piece);
+		TEST_ASSERT_EQUAL(W_KINGSIDE_CASTLE, curr->type);
+	}
+	turn = BLACK;
+	print_bb_pretty(bb, orient, turn, ascii);
+	print_bb_small(bb, orient);
+
+	TEST_ASSERT_EQUAL(false, bb->w_rook_a_moved);
+	TEST_ASSERT_EQUAL(true, bb->w_rook_h_moved);
+	TEST_ASSERT_EQUAL(false, bb->b_rook_a_moved);
+	TEST_ASSERT_EQUAL(false, bb->b_rook_h_moved);
+	TEST_ASSERT_EQUAL(true, bb->w_king_moved);
+	TEST_ASSERT_EQUAL(false, bb->b_king_moved);
+
+	if (parse_move(bb, curr, "e8e7"))
+	{
+		update_board(bb, curr);
+		TEST_ASSERT_EQUAL(E8, curr->start);
+		TEST_ASSERT_EQUAL(E7, curr->end);
+		TEST_ASSERT_EQUAL(BLACK, curr->color);
+		TEST_ASSERT_EQUAL(BLACK_KING, curr->piece);
+		TEST_ASSERT_EQUAL(OTHER, curr->type);
+	}
+
+	TEST_ASSERT_EQUAL(false, bb->w_rook_a_moved);
+	TEST_ASSERT_EQUAL(true, bb->w_rook_h_moved);
+	TEST_ASSERT_EQUAL(false, bb->b_rook_a_moved);
+	TEST_ASSERT_EQUAL(false, bb->b_rook_h_moved);
+	TEST_ASSERT_EQUAL(true, bb->w_king_moved);
+	TEST_ASSERT_EQUAL(true, bb->b_king_moved);
+	print_bb_pretty(bb, orient, turn, ascii);
+
+	// test final board positions
+	TEST_ASSERT_EQUAL(0x0000000000000021, bb->pieces[WHITE_ROOKS]);
+	TEST_ASSERT_EQUAL(0xEDF70C1000000000, bb->black_all);
+	TEST_ASSERT_EQUAL(0x000000021020EF6F, bb->white_all);
+	TEST_ASSERT_EQUAL(0xEDF70C121020EF6F, bb->all);
 
 	free(bb);
 	free(curr);
@@ -266,6 +341,13 @@ void test_transfer_bitboards(void)
 	TEST_ASSERT_EQUAL(bb->w_pawn_pushes, copy->w_pawn_pushes);
 	TEST_ASSERT_EQUAL(bb->b_pawn_pushes, copy->b_pawn_pushes);
 
+	TEST_ASSERT_EQUAL(bb->w_rook_a_moved, copy->w_rook_a_moved);
+	TEST_ASSERT_EQUAL(bb->w_rook_h_moved, copy->w_rook_h_moved);
+	TEST_ASSERT_EQUAL(bb->b_rook_a_moved, copy->b_rook_a_moved);
+	TEST_ASSERT_EQUAL(bb->b_rook_h_moved, copy->b_rook_h_moved);
+	TEST_ASSERT_EQUAL(bb->w_king_moved, copy->w_king_moved);
+	TEST_ASSERT_EQUAL(bb->b_king_moved, copy->b_king_moved);
+
 	if (parse_move(bb, curr, "e2e4"))
 		update_board(bb, curr);
 
@@ -287,7 +369,7 @@ void test_transfer_bitboards(void)
 	TEST_ASSERT_NOT_EQUAL(bb->white_all, copy->white_all);
 	TEST_ASSERT_EQUAL(bb->black_all, copy->black_all);
 
-	// not really a need to check w_pawn_pushes bitboards in this
+	// not really any need to check w_pawn_pushes bitboards in this
 	// stage of this test. we'll need to update_attacks() to check,
 	// which we will test in another module
 	// TEST_ASSERT_NOT_EQUAL(bb->w_pawn_pushes, copy->w_pawn_pushes);
@@ -300,6 +382,13 @@ void test_transfer_bitboards(void)
 	TEST_ASSERT_EQUAL_UINT64_ARRAY(bb->attacks, copy->attacks, TOTAL_ATTACKS);
 	TEST_ASSERT_EQUAL(bb->white_all, copy->white_all);
 	TEST_ASSERT_EQUAL(bb->black_all, copy->black_all);
+
+	TEST_ASSERT_EQUAL(bb->w_rook_a_moved, copy->w_rook_a_moved);
+	TEST_ASSERT_EQUAL(bb->w_rook_h_moved, copy->w_rook_h_moved);
+	TEST_ASSERT_EQUAL(bb->b_rook_a_moved, copy->b_rook_a_moved);
+	TEST_ASSERT_EQUAL(bb->b_rook_h_moved, copy->b_rook_h_moved);
+	TEST_ASSERT_EQUAL(bb->w_king_moved, copy->w_king_moved);
+	TEST_ASSERT_EQUAL(bb->b_king_moved, copy->b_king_moved);
 
 	free(bb);
 	free(copy);
