@@ -124,8 +124,7 @@ void test_update_board(void)
 	// setting up the ruy lopez
 	// 0xFDEF04121020EF9F
 	// remember, only test actual legal moves (for now)
-	if (parse_move(bb, curr, "e2e4"))
-	{
+	if (parse_move(bb, curr, "e2e4")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(E2, curr->start);
 		TEST_ASSERT_EQUAL(E4, curr->end);
@@ -134,8 +133,7 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
 
-	if (parse_move(bb, curr, "e7e5"))
-	{
+	if (parse_move(bb, curr, "e7e5")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(E7, curr->start);
 		TEST_ASSERT_EQUAL(E5, curr->end);
@@ -144,8 +142,7 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
 
-	if (parse_move(bb, curr, "g1f3"))
-	{
+	if (parse_move(bb, curr, "g1f3")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(G1, curr->start);
 		TEST_ASSERT_EQUAL(F3, curr->end);
@@ -154,8 +151,7 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
 
-	if (parse_move(bb, curr, "b8c6"))
-	{
+	if (parse_move(bb, curr, "b8c6")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(B8, curr->start);
 		TEST_ASSERT_EQUAL(C6, curr->end);
@@ -164,8 +160,7 @@ void test_update_board(void)
 		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
 
-	if (parse_move(bb, curr, "f1b5"))
-	{
+	if (parse_move(bb, curr, "f1b5")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(F1, curr->start);
 		TEST_ASSERT_EQUAL(B5, curr->end);
@@ -177,8 +172,7 @@ void test_update_board(void)
 	TEST_ASSERT_EQUAL(0x1000EF00, bb->pieces[WHITE_PAWNS]);
 	TEST_ASSERT_EQUAL(0xFDEF04121020EF9F, bb->all);
 
-	if (parse_move(bb, curr, "d7d6"))
-	{
+	if (parse_move(bb, curr, "d7d6")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(D7, curr->start);
 		TEST_ASSERT_EQUAL(D6, curr->end);
@@ -199,8 +193,7 @@ void test_update_board(void)
 	TEST_ASSERT_EQUAL(false, bb->w_king_moved);
 	TEST_ASSERT_EQUAL(false, bb->b_king_moved);
 
-	if (parse_move(bb, curr, "e1g1"))
-	{
+	if (parse_move(bb, curr, "e1g1")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(E1, curr->start);
 		TEST_ASSERT_EQUAL(G1, curr->end);
@@ -219,8 +212,7 @@ void test_update_board(void)
 	TEST_ASSERT_EQUAL(true, bb->w_king_moved);
 	TEST_ASSERT_EQUAL(false, bb->b_king_moved);
 
-	if (parse_move(bb, curr, "e8e7"))
-	{
+	if (parse_move(bb, curr, "e8e7")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(E8, curr->start);
 		TEST_ASSERT_EQUAL(E7, curr->end);
@@ -281,8 +273,7 @@ void test_transfer_move(void)
 	TEST_ASSERT_EQUAL(curr->promotion, prev->promotion);
 
 	// after parsing, curr will change
-	if (parse_move(bb, curr, "e2e4"))
-	{
+	if (parse_move(bb, curr, "e2e4")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(E2, curr->start);
 		TEST_ASSERT_EQUAL(E4, curr->end);
@@ -308,8 +299,7 @@ void test_transfer_move(void)
 	TEST_ASSERT_EQUAL(WHITE_PAWNS, prev->piece);
 	TEST_ASSERT_EQUAL(NONEXISTENT, prev->promotion);
 
-	if (parse_move(bb, curr, "e7e5"))
-	{
+	if (parse_move(bb, curr, "e7e5")) {
 		update_board(bb, curr);
 		TEST_ASSERT_EQUAL(E7, curr->start);
 		TEST_ASSERT_EQUAL(E5, curr->end);
@@ -352,16 +342,14 @@ void test_transfer_bitboards(void)
 		update_board(bb, curr);
 
 	/* AFTER MOVE -- ONLY pieces[WHITE_PAWNS] HAS CHANGED */
-	for (int i = 0; i < TOTAL_BB; i++)
-	{
+	for (int i = 0; i < TOTAL_BB; i++) {
 		// after e2e4, only WHITE_PAWNS
 		if (i == WHITE_PAWNS)
 			TEST_ASSERT_NOT_EQUAL(bb->pieces[i], copy->pieces[i]);
 		else
 			TEST_ASSERT_EQUAL(bb->pieces[i], copy->pieces[i]);
 	}
-	for (int j = 0; j < TOTAL_ATTACKS; j++)
-	{
+	for (int j = 0; j < TOTAL_ATTACKS; j++) {
 		// don't skip WHITE_PAWNS attacks, because I haven't
 		// implemented attack calculation yet.
 		TEST_ASSERT_EQUAL(bb->attacks[j], copy->attacks[j]);

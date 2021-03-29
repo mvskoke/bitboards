@@ -28,8 +28,7 @@ static enum Square get_sq_index(const char* sq)
 // the first two chars
 static enum Piece get_piece_type(struct Bitboards *bb, int index)
 {
-	for (int i = 0; i < TOTAL_BB; i++)
-	{
+	for (int i = 0; i < TOTAL_BB; i++) {
 		// bitboard is set at index
 		if (get_bit(bb->pieces[i], index))
 			return i;
@@ -55,10 +54,8 @@ static enum Piece parse_promotion(enum Color color, const char* command)
 	// I know it looks like a ticking time bomb, and that time
 	// bomb is a segfault, but a move command will always have
 	// an accessible char at index 4.
-	if (command[4] != '\0')
-	{
-		switch (command[4])
-		{
+	if (command[4] != '\0') {
+		switch (command[4]) {
 		case 'n':
 			promotion = BLACK_KNIGHTS;
 			break;
@@ -76,9 +73,7 @@ static enum Piece parse_promotion(enum Color color, const char* command)
 		// and white pieces' enums
 		if (color == WHITE)
 			promotion += WHITE_PAWNS;
-	}
-	else
-	{
+	} else {
 		promotion = NONEXISTENT;
 	}
 	return promotion;
@@ -90,6 +85,7 @@ static enum MoveType parse_move_type(struct Move *move)
 
 	// castling
 	// white castles
+	// I'm breaking K&R style because it otherwise looked horrendous
 	if (move->piece == WHITE_KING && move->start == E1 &&
 	    move->end == G1)
 	{

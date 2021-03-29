@@ -52,21 +52,17 @@ void print_bb(U64 bb)
 	int curr_bit;
 	int i = 0; // file
 	int j = 7; // rank
-	while (j != -1)
-	{
+	while (j != -1) {
 		index = i + 8 * j;
 		curr_bit = get_bit(bb, index);
 		printf("%i", curr_bit);
 
 		i++;
-		if (i == 8)
-		{
+		if (i == 8) {
 			i = 0;
 			j--;
 			printf("\n");
-		}
-		else
-		{
+		} else {
 			printf(" ");
 		}
 	}

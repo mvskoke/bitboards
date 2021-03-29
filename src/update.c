@@ -14,8 +14,7 @@ static void update_pretty_board(struct Bitboards *bb, struct Move *move)
 	bb->pretty_board[move->start_x][move->start_y] = EMPTY_SQ;
 
 	// handle castling
-	switch (move->type)
-	{
+	switch (move->type) {
 	case W_KINGSIDE_CASTLE:
 		// king already moved, just move the rooks
 		bb->pretty_board[5][0] = 'R';
@@ -41,8 +40,7 @@ static void update_pretty_board(struct Bitboards *bb, struct Move *move)
 void update_castling(struct Bitboards *bb, struct Move *move)
 {
 	// actual castling
-	switch (move->type)
-	{
+	switch (move->type) {
 	case W_KINGSIDE_CASTLE:
 		bb->w_rook_h_moved = true;
 		bb->w_king_moved = true;
@@ -66,31 +64,19 @@ void update_castling(struct Bitboards *bb, struct Move *move)
 	// ordinary moves
 	// white rooks
 	if (move->piece == WHITE_ROOKS && move->start == H1)
-	{
 		bb->w_rook_h_moved = true;
-	}
 	else if (move->piece == WHITE_ROOKS && move->start == A1)
-	{
 		bb->w_rook_a_moved = true;
-	}
 	// black rooks
 	else if (move->piece == BLACK_ROOKS && move->start == H8)
-	{
 		bb->b_rook_h_moved = true;
-	}
 	else if (move->piece == BLACK_ROOKS && move->start == A8)
-	{
 		bb->b_rook_a_moved = true;
-	}
 	// kings
 	else if (move->piece == WHITE_KING && move->start == E1)
-	{
 		bb->w_king_moved = true;
-	}
 	else if (move->piece == BLACK_KING && move->start == E8)
-	{
 		bb->b_king_moved = true;
-	}
 }
 
 // move a piece
@@ -107,20 +93,16 @@ void update_board(struct Bitboards *bb, struct Move *move)
 	set_bit(&(bb->pieces[move->piece]), move->end);
 
 	// update COLOR_all bitboards
-	if (move->color == WHITE)
-	{
+	if (move->color == WHITE) {
 		flip_bit(&(bb->white_all), move->start);
 		set_bit(&(bb->white_all), move->end);
-	}
-	else
-	{
+	} else {
 		flip_bit(&(bb->black_all), move->start);
 		set_bit(&(bb->black_all), move->end);
 	}
 
 	// handle castling
-	switch (move->type)
-	{
+	switch (move->type) {
 	case W_KINGSIDE_CASTLE:
 		// king already moved, just move the rooks
 		flip_bit(&(bb->pieces[WHITE_ROOKS]), H1);
@@ -160,5 +142,3 @@ void update_board(struct Bitboards *bb, struct Move *move)
 
 	bb->all = bb->white_all | bb->black_all;
 }
-
-// void update_game(struct Chess *Chess)

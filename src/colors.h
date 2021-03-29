@@ -1,8 +1,7 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-enum Color
-{
+enum Color {
 	BLACK,
 	WHITE
 };

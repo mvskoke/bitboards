@@ -78,17 +78,12 @@ static void print_black_on_top(struct Bitboards *bb, bool ascii)
 {
 	// we must start at top row (j coordinate),
 	// and go by columns (i coordinate)
-	for (int j = 7; j >= 0; j--)
-	{
+	for (int j = 7; j >= 0; j--) {
 		printf(" %d ", j+1);
-		for (int i = 0; i < FILES; i++)
-		{
-			if (bb->pretty_board[i][j] == EMPTY_SQ)
-			{
+		for (int i = 0; i < FILES; i++) {
+			if (bb->pretty_board[i][j] == EMPTY_SQ) {
 				print_empty_square(i, j, ascii);
-			}
-			else
-			{
+			} else {
 				// pass in entire bb instead of just the
 				// piece, makes the line length shorter
 				print_piece(bb, i, j, ascii);
@@ -101,19 +96,18 @@ static void print_black_on_top(struct Bitboards *bb, bool ascii)
 		// (but not if we're at the last rank)
 		// if black is on top, first rank is rank 7
 		// so the last rank is rank 0
-		if (j != 0)
+		if (j != 0) {
 			ascii ? puts(ASCII_ROW) : puts(UTF8_ROW);
+		}
 
 	}
 }
 
 static void print_white_on_top(struct Bitboards *bb, bool ascii)
 {
-	for (int j = 0; j < RANKS; j++)
-	{
+	for (int j = 0; j < RANKS; j++) {
 		printf(" %d ", j+1);
-		for (int i = 7; i >= 0; i--)
-		{
+		for (int i = 7; i >= 0; i--) {
 			if (bb->pretty_board[i][j] == EMPTY_SQ)
 				print_empty_square(i, j, ascii);
 			else
@@ -123,8 +117,9 @@ static void print_white_on_top(struct Bitboards *bb, bool ascii)
 
 		// if white is on top, first rank is rank 0
 		// so last rank is rank 7
-		if (j != 7)
+		if (j != 7) {
 			ascii ? puts(ASCII_ROW) : puts(UTF8_ROW);
+		}
 	}
 }
 
@@ -166,8 +161,7 @@ void print_bb_pretty(struct Bitboards *bb, int orient, int turn, bool ascii)
 
 static void small_black_top(struct Bitboards *bb)
 {
-	for (int j = 7; j >= 0; j--)
-	{
+	for (int j = 7; j >= 0; j--) {
 		printf("   %d ", j+1);
 
 		for (int i = 0; i < FILES; i++)
@@ -180,8 +174,7 @@ static void small_black_top(struct Bitboards *bb)
 
 static void small_white_top(struct Bitboards *bb)
 {
-	for (int j = 0; j < RANKS; j++)
-	{
+	for (int j = 0; j < RANKS; j++) {
 		printf("   %d ", j+1);
 
 		for (int i = 7; i >= 0; i--)

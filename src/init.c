@@ -14,8 +14,7 @@
 
 static void verify_safe_malloc(void *ptr)
 {
-	if (ptr == NULL)
-	{
+	if (ptr == NULL) {
 		fprintf(stderr, "ERROR: could not allocate enough memory.\n");
 		exit(EXIT_FAILURE);
 	}
@@ -130,14 +129,12 @@ void init_bb(struct Bitboards *bb)
 
 	// initialize empty squares to a period
 	// solely for the sake of print_bb_small()
-	for (int i = 0; i < FILES; i++)
-	{
+	for (int i = 0; i < FILES; i++) {
 		for (int j = 2; j <= 5; j++)
 			bb->pretty_board[i][j] = EMPTY_SQ;
 	}
 
-	for (int i = 0; i < 8; i++)
-	{
+	for (int i = 0; i < 8; i++) {
 		bb->pretty_board[i][1] = 'P';
 		bb->pretty_board[i][6] = 'p';
 	}
@@ -188,8 +185,7 @@ static void init_bb_blank(struct Bitboards *bb)
 	bb->b_pawn_pushes = 0;
 
 	// initialize pretty board
-	for (int i = 0; i < FILES; i++)
-	{
+	for (int i = 0; i < FILES; i++) {
 		for (int j = 0; j < RANKS; j++)
 			bb->pretty_board[i][j] = EMPTY_SQ;
 	}
@@ -197,8 +193,7 @@ static void init_bb_blank(struct Bitboards *bb)
 
 static enum Piece letter_to_piece_type(char c)
 {
-	switch (c)
-	{
+	switch (c) {
 	case 'p': return BLACK_PAWNS;
 	case 'n': return BLACK_KNIGHTS;
 	case 'b': return BLACK_BISHOPS;
@@ -251,18 +246,13 @@ void init_bb_fen(struct Bitboards *bb, char *fen)
 
 	for (char *tmp = fen; *tmp != '\0'; tmp++)
 	{
-		if (isalpha(*tmp))
-		{
+		if (isalpha(*tmp)) {
 			fen_updates_bb(bb, *tmp, index);
 			index++;
-		}
-		else if (isdigit(*tmp))
-		{
+		} else if (isdigit(*tmp)) {
 			// convert digit char to int
 			index += *tmp - '0';
-		}
-		else if (*tmp == '/')
-		{
+		} else if (*tmp == '/') {
 			rank--;
 			index = rank * 8;
 		}

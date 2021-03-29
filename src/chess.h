@@ -14,8 +14,7 @@ I will probably use this later
 #include "move.h"
 
 // Everything
-struct Chess
-{
+struct Chess {
 	struct Bitboards *bb;
 	struct Move *curr;
 	struct Move *prev;

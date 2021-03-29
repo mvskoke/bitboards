@@ -4,8 +4,7 @@
 #define NO 0
 #define YES 1
 
-enum Command
-{
+enum Command {
 	// start at 2 so it doesn't clash
 	// with the #define'd YES and NO
 	// I'm not sure if this is actually important,

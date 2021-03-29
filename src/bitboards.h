@@ -14,8 +14,7 @@
 typedef uint64_t U64;
 
 // indexing the arrays of bitboards
-enum Piece
-{
+enum Piece {
 	BLACK_PAWNS,   // 0 = i
 	BLACK_KNIGHTS, // 1
 	BLACK_BISHOPS, // 2
@@ -36,8 +35,7 @@ enum Piece
 	NONEXISTENT  // no piece
 };
 
-struct Bitboards
-{
+struct Bitboards {
 	// easier to print the board to screen
 	char pretty_board[FILES][RANKS];
 

@@ -44,8 +44,7 @@ char *get_command(char *buffer, const int size, const int turn)
 
 	turn == BLACK ? printf("Black >>> ") : printf("White >>> ");
 
-	do
-	{
+	do {
 		fgets(buffer, size, stdin);
 	} while ((token = strtok(buffer, delims)) == NULL);
 
@@ -108,10 +107,8 @@ static int validate_promotion(char *command)
 	bool first_rank = command[1] == '7';
 	bool promo_rank = command[3] == '8';
 
-	if (sq1 && sq2 && first_rank && promo_rank && promo_sq)
-	{
-		switch (command[4])
-		{
+	if (sq1 && sq2 && first_rank && promo_rank && promo_sq) {
+		switch (command[4]) {
 		case 'n':
 		case 'b':
 		case 'r':
@@ -180,18 +177,13 @@ int validate_command(char *command)
 
 	int len = strlen(copy);
 	enum Command type = ILLEGAL;
-	if (len == 1)
-	{
+	if (len == 1) {
 		// single-char commands i.e. r d f h q
 		type = validate_one_char(copy[0]);
-	}
-	else if (len == 4)
-	{
+	} else if (len == 4) {
 		// normal moves e.g. e2e4
 		type = validate_move(copy);
-	}
-	else if (len == 5)
-	{
+	} else if (len == 5) {
 		// pawn promotion e.g. a7a8q
 		type = validate_promotion(copy);
 	}
@@ -231,8 +223,7 @@ int get_yn(char *buffer, const int size, const int turn)
 {
 	char *input = NULL;
 	int answer;
-	do
-	{
+	do {
 		input = get_command(buffer, size, turn);
 	} while ((answer = validate_yn(input)) == ILLEGAL);
 	return answer;

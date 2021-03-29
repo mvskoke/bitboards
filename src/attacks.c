@@ -25,8 +25,7 @@
 #define SOUTH(bb)      (bb >> 8)
 #define SOUTHEAST(bb) ((bb >> 7) & NOT_A_FILE)
 
-enum Ray
-{
+enum Ray {
 	RAY_NORTHWEST,
 	RAY_NORTHEAST,
 	RAY_SOUTHWEST,
@@ -46,13 +45,10 @@ U64 pawn_attack(U64 piece, U64 self, enum Color color)
 		return 0;
 
 	U64 attack = 0;
-	if (color == WHITE)
-	{
+	if (color == WHITE) {
 		attack |= NORTHEAST(piece);
 		attack |= NORTHWEST(piece);
-	}
-	else
-	{
+	} else {
 		attack |= SOUTHWEST(piece);
 		attack |= SOUTHEAST(piece);
 	}
@@ -79,14 +75,11 @@ U64 pawn_push(U64 pawns, U64 all, enum Color color)
 	U64 white_twice = pawns & SECOND_RANK & ~white_blocked;
 	U64 black_twice = pawns & SEVENTH_RANK & ~black_blocked;
 
-	if (color == WHITE)
-	{
+	if (color == WHITE) {
 		// up twice if on the starting rank
 		push |= NORTH(NORTH(white_twice));
 		push |= NORTH(pawns);
-	}
-	else
-	{
+	} else {
 		push |= SOUTH(SOUTH(black_twice));
 		push |= SOUTH(pawns);
 	}
@@ -168,10 +161,8 @@ static U64 calc_ray(U64 enemy, U64 mask, U64 piece, enum Ray direction)
 	// If I have to stop one ray, I mask off that ray's bits from the
 	// shifted bits, and load that back into shift.
 
-	do
-	{
-		switch (direction)
-		{
+	do {
+		switch (direction) {
 		case RAY_NORTHWEST:
 			// use (=) instead of (|=)
 			// ONLY save the shifted bit(s)
@@ -230,16 +221,15 @@ the attack ray.
 		// if so, we must not go further, BUT on that ONE ray ONLY!
 		// we can stop the bit from shifting further by masking it off
 		// also prevents one ray from prematurely stopping a 2nd ray
-		if (shift & enemy)
-		{
+		if (shift & enemy) {
 			save = shift;
 
 			// mask off the attacked bit ONLY
 			save &= ~(shift & enemy);
 
-			shift = save;
 			// if shift becomes 0, then there are no more rays to
 			// calculate and the loop ends.
+			shift = save;
 		}
 	} while (shift != 0);
 	// stop after there are no bits remaining to shift
@@ -325,11 +315,9 @@ void update_attacks(struct Bitboards *bb)
 	blacks = bb->black_all;
 	whites = bb->white_all;
 
-	for (int i = 0; i < TOTAL_ATTACKS; i++)
-	{
+	for (int i = 0; i < TOTAL_ATTACKS; i++) {
 		piece = bb->pieces[i];
-		switch (i)
-		{
+		switch (i) {
 		case BLACK_PAWNS:
 			bb->attacks[i] = pawn_attack(piece, blacks, BLACK);
 			break;

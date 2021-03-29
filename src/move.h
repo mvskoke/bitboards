@@ -5,8 +5,7 @@
 #include "colors.h"
 
 // little endian rank-file mapping
-enum Square
-{
+enum Square {
 	A1, B1, C1, D1, E1, F1, G1, H1,
 	A2, B2, C2, D2, E2, F2, G2, H2,
 	A3, B3, C3, D3, E3, F3, G3, H3,
@@ -18,8 +17,7 @@ enum Square
 	BAD_SQUARE
 };
 
-enum MoveType
-{
+enum MoveType {
 	W_KINGSIDE_CASTLE,
 	W_QUEENSIDE_CASTLE,
 	B_KINGSIDE_CASTLE,
@@ -28,8 +26,7 @@ enum MoveType
 	OTHER
 };
 
-struct Move
-{
+struct Move {
 	enum Square start;
 	enum Square end;
 	enum Color color;
