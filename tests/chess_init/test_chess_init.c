@@ -19,6 +19,8 @@ void test_chess_init(void)
 {
 	struct Chess *chess = init_chess();
 	init_bb(chess->bb);
+	// do this once you go back to cchess:
+	// init_bb_fen(chess, "FEN string blblblbl w KQkq etc");
 	init_moves(chess->curr, chess->prev);
 
 	chess->ascii = false;

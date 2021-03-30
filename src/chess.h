@@ -2,6 +2,10 @@
 
 I will probably use this later
 
+I can't really use this in the bitboards repo, because it will
+mess up all my prior Unity tests. Make the necessary changes
+to all the functions once you go back to cchess.
+
 */
 
 #ifndef CHESS_H

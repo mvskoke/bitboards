@@ -300,6 +300,80 @@ void test_validate_king_move(void)
 	free(prev);
 }
 
+void test_king_in_check(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	// ruy lopez, berlin defence. white to move
+	init_bb_fen(bb, "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R");
+
+	struct Move *curr = malloc(sizeof(struct Move));
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
+
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+
+	/* Damiano Defence Demonstration*/
+	init_bb_fen(bb, "rnbqkbnr/pppp2pp/8/4p2Q/4P3/8/PPPP1PPP/RNB1KB1R");
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
+	TEST_ASSERT_EQUAL(true, king_in_check(bb, BLACK_KING));
+
+	// after Qxh5+, g6:
+	if (parse_move(bb, curr, "g7g6")) {
+		update_board(bb, curr);
+		update_attacks(bb);
+	}
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+
+	// Qxe5+
+	if (parse_move(bb, curr, "h5e5")) {
+		update_board(bb, curr);
+		update_attacks(bb);
+	}
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
+	TEST_ASSERT_EQUAL(true, king_in_check(bb, BLACK_KING));
+
+	// Be7
+	parse_move(bb, curr, "f8e7");
+	update_board(bb, curr);
+	update_attacks(bb);
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+
+	// Qxh8
+	parse_move(bb, curr, "e5h8");
+	update_board(bb, curr);
+	update_attacks(bb);
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+
+	// Kf8
+	parse_move(bb, curr, "e8f8");
+	update_board(bb, curr);
+	update_attacks(bb);
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+
+	// f3
+	parse_move(bb, curr, "f2f3");
+	update_board(bb, curr);
+	update_attacks(bb);
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+
+	// Bh4+
+	parse_move(bb, curr, "e7h4");
+	update_board(bb, curr);
+	update_attacks(bb);
+	TEST_ASSERT_EQUAL(true, king_in_check(bb, WHITE_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+
+	free(bb);
+	free(curr);
+	free(prev);
+}
+
 /*
 void test_validate_move(void)
 {
@@ -318,6 +392,7 @@ int main(void)
 	RUN_TEST(test_attacks_set);
 	RUN_TEST(test_safe_path);
 	RUN_TEST(test_validate_king_move);
+	RUN_TEST(test_king_in_check);
 	// RUN_TEST(test_validate_move);
 
 	return UNITY_END();

@@ -1,5 +1,4 @@
 #include <stdbool.h>
-#include <stdlib.h>
 
 #include "bitboards.h"
 #include "colors.h"
@@ -144,6 +143,29 @@ bool validate_king_move(struct Bitboards *bb, struct Move *move)
 	// I added it to make the Unity testing easier
 }
 
+// pass into this function a king and determine if that king
+// is in check
+bool king_in_check(struct Bitboards *bb, enum Piece king)
+{
+	enum Piece i;
+	enum Piece limit;
+	if (king == BLACK_KING) {
+		// check the enemy's attacks
+		// black king means white enemy
+		i = WHITE_PAWNS;
+		limit = TOTAL_ATTACKS;
+	} else {
+		i = BLACK_PAWNS;
+		limit = WHITE_PAWNS;
+	}
+
+	for (; i < limit; i++) {
+		if (bb->attacks[i] & bb->pieces[king])
+			return true;
+	}
+	return false;
+}
+
 bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn)
 {
 	bool pseudo_legal = false;
@@ -173,6 +195,8 @@ bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn)
 		break;
 	}
 
-	// full_legal = king_in_check();
+	// update_board(copy, move);
+	// update_attacks(copy);
+	// full_legal = !king_in_check(copy, turn);
 	return pseudo_legal && full_legal;
 }
