@@ -22,11 +22,6 @@ struct Chess {
 	enum Color orient;
 	enum Color turn;
 	bool ascii;
-
-	bool w_queenside_castle;
-	bool w_kingside_castle;
-	bool b_queenside_castle;
-	bool b_kingside_castle;
 };
 
 #endif

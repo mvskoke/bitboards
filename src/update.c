@@ -117,7 +117,6 @@ void update_board(struct Bitboards *bb, struct Move *move)
 		flip_bit(&(bb->white_all), H1);
 		set_bit(&(bb->white_all), F1);
 		break;
-
 	case W_QUEENSIDE_CASTLE:
 		flip_bit(&(bb->pieces[WHITE_ROOKS]), A1);
 		set_bit(&(bb->pieces[WHITE_ROOKS]), D1);
@@ -133,7 +132,6 @@ void update_board(struct Bitboards *bb, struct Move *move)
 		flip_bit(&(bb->black_all), H8);
 		set_bit(&(bb->black_all), F8);
 		break;
-
 	case B_QUEENSIDE_CASTLE:
 		flip_bit(&(bb->pieces[BLACK_ROOKS]), A8);
 		set_bit(&(bb->pieces[BLACK_ROOKS]), D8);

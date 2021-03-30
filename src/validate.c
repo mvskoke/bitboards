@@ -122,16 +122,12 @@ bool validate_castle(struct Bitboards *bb, struct Move *move)
 	switch (move->type) {
 	case W_KINGSIDE_CASTLE:
 		return safe_path(bb->attacks, BLACK, F1, G1);
-
 	case W_QUEENSIDE_CASTLE:
 		return safe_path(bb->attacks, BLACK, B1, C1);
-
 	case B_KINGSIDE_CASTLE:
 		return safe_path(bb->attacks, WHITE, F8, G8);
-
 	case B_QUEENSIDE_CASTLE:
 		return safe_path(bb->attacks, WHITE, B8, C8);
-
 	default:
 		return ILLEGAL;
 	}

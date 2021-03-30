@@ -2,9 +2,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "attacks.h"
 #include "bitboards.h"
+#include "chess.h"
 #include "colors.h"
 #include "init.h"
 #include "move.h"
@@ -183,6 +185,11 @@ static void init_bb_blank(struct Bitboards *bb)
 	bb->w_pawn_pushes = 0;
 	bb->b_pawn_pushes = 0;
 
+	bb->w_queenside_castle = true;
+	bb->w_kingside_castle = true;
+	bb->b_queenside_castle = true;
+	bb->b_kingside_castle = true;
+
 	// initialize pretty board
 	for (int i = 0; i < FILES; i++) {
 		for (int j = 0; j < RANKS; j++)
@@ -239,12 +246,21 @@ static void fen_updates_bb(struct Bitboards *bb, char piece, int index)
 
 void init_bb_fen(struct Bitboards *bb, char *fen)
 {
-	init_bb_blank(bb);
 	int index = 56; // MUST BE ZERO-INDEXED TO ALLOW EASY BIT-SETTING
 	int rank = 7;
+	char *tmp = NULL;  // current char to parse
+	char *token = NULL;  // current field of FEN string
+	// enum Color turn;
 
-	for (char *tmp = fen; *tmp != '\0'; tmp++)
-	{
+	// char *copy = malloc(strlen(fen));
+	// strcpy(copy, fen);
+
+	init_bb_blank(bb);
+
+	token = strtok(fen, " ");
+
+	// parse the first field: board position
+	for (tmp = token; *tmp != '\0'; tmp++) {
 		if (isalpha(*tmp)) {
 			fen_updates_bb(bb, *tmp, index);
 			index++;
@@ -257,4 +273,62 @@ void init_bb_fen(struct Bitboards *bb, char *fen)
 		}
 	}
 	update_attacks(bb);
+
+	// token = strtok(NULL, " ");
+	// if (token == NULL)
+	// 	return;
+
+	// // second field: current turn
+	// tmp = token;
+	// if (*tmp == 'w')
+	// 	turn = WHITE;
+	// else if (*tmp == 'b')
+	// 	turn = BLACK;
+	// else
+	// 	return;
+
+	// token = strtok(NULL, " ");
+	// if (token == NULL)
+	// 	return;
+
+	// // third field: castling privileges
+	// for (tmp = token; *tmp != '\0' || *tmp != '-'; tmp++) {
+	// 	if (*tmp == 'K')
+	// 		bb->w_kingside_castle = true;
+	// 	else if (*tmp == 'Q')
+	// 		bb->w_queenside_castle = true;
+	// 	else if (*tmp == 'k')
+	// 		bb->b_kingside_castle = true;
+	// 	else if (*tmp == 'q')
+	// 		bb->b_queenside_castle = true;
+	// 	else
+	// 		return;
+	// }
+}
+
+struct Chess *init_chess(void)
+{
+	struct Chess *chess = malloc(sizeof(struct Chess));
+	verify_safe_malloc(chess);
+
+	chess->bb = malloc(sizeof(struct Bitboards));
+	verify_safe_malloc(chess->bb);
+
+	chess->curr = malloc(sizeof(struct Move));
+	verify_safe_malloc(chess->curr);
+	chess->prev = malloc(sizeof(struct Move));
+	verify_safe_malloc(chess->prev);
+
+	chess->orient = BLACK;
+	chess->turn = WHITE;
+	chess->ascii = true;
+	return chess;
+}
+
+void destroy_chess(struct Chess *chess)
+{
+	free(chess->bb);
+	free(chess->curr);
+	free(chess->prev);
+	free(chess);
 }

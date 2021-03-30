@@ -4,6 +4,7 @@ unity/*.o
 
 tests/attacks/test_attacks
 tests/bitops/test_bitops
+tests/chess_init/test_chess_init
 tests/gameops/test_gameops
 tests/validate/test_validate
 
