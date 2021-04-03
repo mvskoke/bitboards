@@ -184,7 +184,6 @@ bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
 	if (turn != move->color)
 		return false;
 
-	/* legal destination */
 	if (!legal_dest(bb, move))
 		return false;
 

@@ -441,16 +441,6 @@ void test_validate_move(void)
 	parse_move(bb, curr, "g8g7");
 	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
 
-	// illegal attempts to castle
-	parse_move(bb, curr, "e1g1");
-	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
-	parse_move(bb, curr, "e1c1");
-	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
-	parse_move(bb, curr, "e8g8");
-	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
-	parse_move(bb, curr, "e8c8");
-	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
-
 	// Qe4??? (legal)
 	parse_move(bb, curr, "f5e4");
 	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
