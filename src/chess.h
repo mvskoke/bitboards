@@ -20,6 +20,7 @@ to all the functions once you go back to cchess.
 // Everything
 struct Chess {
 	struct Bitboards *bb;
+	struct Bitboards *copy;
 	struct Move *curr;
 	struct Move *prev;
 

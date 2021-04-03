@@ -147,12 +147,19 @@ bool validate_king_move(struct Bitboards *bb, struct Move *move)
 	// I added it to make the Unity testing easier
 }
 
-// pass into this function a king and determine if that king
-// is in check
-bool king_in_check(struct Bitboards *bb, enum Piece king)
+// pass into this function a color and determine
+// if that color's king is in check
+bool king_in_check(struct Bitboards *bb, enum Color color)
 {
 	enum Piece i;
 	enum Piece limit;
+	enum Piece king;
+
+	if (color == WHITE)
+		king = WHITE_KING;
+	else
+		king = BLACK_KING;
+
 	if (king == BLACK_KING) {
 		// check the enemy's attacks
 		// black king means white enemy
@@ -204,7 +211,7 @@ bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
 	// would the move put the king in check?
 	update_board(copy, move);
 	update_attacks(copy);
-	full_legal = !king_in_check(copy, move->piece);
+	full_legal = !king_in_check(copy, turn);
 
 	return pseudo_legal && full_legal;
 }

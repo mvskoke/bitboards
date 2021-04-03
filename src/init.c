@@ -313,6 +313,8 @@ struct Chess *init_chess(void)
 
 	chess->bb = malloc(sizeof(struct Bitboards));
 	verify_safe_malloc(chess->bb);
+	chess->copy = malloc(sizeof(struct Bitboards));
+	verify_safe_malloc(chess->bb);
 
 	chess->curr = malloc(sizeof(struct Move));
 	verify_safe_malloc(chess->curr);
@@ -328,6 +330,7 @@ struct Chess *init_chess(void)
 void destroy_chess(struct Chess *chess)
 {
 	free(chess->bb);
+	free(chess->copy);
 	free(chess->curr);
 	free(chess->prev);
 	free(chess);

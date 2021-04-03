@@ -310,64 +310,64 @@ void test_king_in_check(void)
 	struct Move *prev = malloc(sizeof(struct Move));
 	init_moves(curr, prev);
 
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK));
 
 	/* Damiano Defence Demonstration*/
 	init_bb_fen(bb, "rnbqkbnr/pppp2pp/8/4p2Q/4P3/8/PPPP1PPP/RNB1KB1R");
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
-	TEST_ASSERT_EQUAL(true, king_in_check(bb, BLACK_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE));
+	TEST_ASSERT_EQUAL(true, king_in_check(bb, BLACK));
 
 	// after Qxh5+, g6:
 	if (parse_move(bb, curr, "g7g6")) {
 		update_board(bb, curr);
 		update_attacks(bb);
 	}
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK));
 
 	// Qxe5+
 	if (parse_move(bb, curr, "h5e5")) {
 		update_board(bb, curr);
 		update_attacks(bb);
 	}
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
-	TEST_ASSERT_EQUAL(true, king_in_check(bb, BLACK_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE));
+	TEST_ASSERT_EQUAL(true, king_in_check(bb, BLACK));
 
 	// Be7
 	parse_move(bb, curr, "f8e7");
 	update_board(bb, curr);
 	update_attacks(bb);
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK));
 
 	// Qxh8
 	parse_move(bb, curr, "e5h8");
 	update_board(bb, curr);
 	update_attacks(bb);
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK));
 
 	// Kf8
 	parse_move(bb, curr, "e8f8");
 	update_board(bb, curr);
 	update_attacks(bb);
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK));
 
 	// f3
 	parse_move(bb, curr, "f2f3");
 	update_board(bb, curr);
 	update_attacks(bb);
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE_KING));
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, WHITE));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK));
 
 	// Bh4+
 	parse_move(bb, curr, "e7h4");
 	update_board(bb, curr);
 	update_attacks(bb);
-	TEST_ASSERT_EQUAL(true, king_in_check(bb, WHITE_KING));
-	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK_KING));
+	TEST_ASSERT_EQUAL(true, king_in_check(bb, WHITE));
+	TEST_ASSERT_EQUAL(false, king_in_check(bb, BLACK));
 
 	free(bb);
 	free(curr);
@@ -402,7 +402,9 @@ void test_validate_move(void)
 		TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
 		TEST_ASSERT_EQUAL(OTHER, curr->type);
 	}
-	turn = WHITE;
+
+	/*********!!!!!!!!! DON'T FORGET THIS !!!!!!!!!*********/
+	turn = !turn;
 
 	// Kxc2 (illegal)
 	parse_move(bb, curr, "b2c2");
@@ -433,7 +435,7 @@ void test_validate_move(void)
 	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
 	update_board(bb, curr);
 	update_attacks(bb);
-	turn = BLACK;
+	turn = !turn;
 
 	// Kg7 (illegal)
 	parse_move(bb, curr, "g8g7");
@@ -476,6 +478,119 @@ void test_validate_move(void)
 	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
 	update_board(bb, curr);
 	update_attacks(bb);
+	turn = !turn;
+
+	// Kb3 will be the only legal move
+
+	parse_move(bb, curr, "a3b2");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "a3b4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "a3a4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "a3a2");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "a3a5");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+
+	parse_move(bb, curr, "e2a4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "h6f8");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "d1d4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "h1g1");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "f3f4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "f3e4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "f3a8");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+
+	/************************** Kb3 **************************/
+	// Kb3 is the only legal move
+	parse_move(bb, curr, "a3b3");
+	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
+	update_board(bb, curr);
+	update_attacks(bb);
+	turn = !turn;
+
+	// Rfxf2 (illegal)
+	parse_move(bb, curr, "f8f2");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+
+	// Rfc1 (illegal)
+	// legal square for other rook but not this one (the f rook)
+	// parse_move(bb, curr, "f8c1");
+	// TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+
+	/************************** Qxa2+ **************************/
+	parse_move(bb, curr, "a5a2");
+	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
+	update_board(bb, curr);
+	update_attacks(bb);
+	turn = !turn;
+
+	// Qxa2 (illegal)
+	parse_move(bb, curr, "e2a2");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+
+	// Kc4
+	parse_move(bb, curr, "b3c4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+
+	/************************** Kb4 **************************/
+	parse_move(bb, curr, "b3b4");
+	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
+	update_board(bb, curr);
+	update_attacks(bb);
+	turn = !turn;
+
+	/************************** Bc5+ **************************/
+	parse_move(bb, curr, "d4c5");
+	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
+	update_board(bb, curr);
+	update_attacks(bb);
+	turn = !turn;
+
+	// Bxh8 (still illegal)
+	parse_move(bb, curr, "h6f8");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	update_board(bb, curr);
+	update_attacks(bb);
+
+	/************************** Kb5**************************/
+	parse_move(bb, curr, "b4b5");
+	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
+	update_board(bb, curr);
+	update_attacks(bb);
+	turn = !turn;
+
+	/************************** a5#**************************/
+	parse_move(bb, curr, "a7a6");
+	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
+	update_board(bb, curr);
+	update_attacks(bb);
+	turn = !turn;
+
+	// checkmate, no legal moves
+	parse_move(bb, curr, "b5a4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "b5b4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "b5c4");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "b5a5");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "b5c5");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "b5a6");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "b5b6");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "b5c6");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
 
 	free(bb);
 	free(copy);
