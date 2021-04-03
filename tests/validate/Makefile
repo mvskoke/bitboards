@@ -5,8 +5,8 @@ OBJ = ../../obj
 SRC = ../../src
 UNITY = ../../unity/unity.o
 
-DEP = $(OBJ)/test_validate.o $(OBJ)/attacks.o $(OBJ)/bitboards.o $(OBJ)/init.o \
-	$(OBJ)/move.o $(OBJ)/update.o $(OBJ)/validate.o
+DEP = $(OBJ)/test_validate.o $(OBJ)/attacks.o $(OBJ)/bitboards.o \
+	$(OBJ)/init.o $(OBJ)/move.o $(OBJ)/update.o $(OBJ)/validate.o
 
 test_validate: $(DEP)
 	$(CC) $(CFLAGS) $^ $(UNITY) -o test_validate

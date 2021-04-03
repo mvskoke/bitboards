@@ -7,9 +7,6 @@
 #include "update.h"
 #include "validate.h"
 
-#define ILLEGAL false
-#define LEGAL true
-
 #define NORTHWEST(index) (index + 7)
 #define NORTHEAST(index) (index + 9)
 #define SOUTHWEST(index) (index - 9)
@@ -23,12 +20,12 @@ static bool validate_pawn_push(struct Bitboards *bb, struct Move *move)
 {
 	if (move->color == WHITE) {
 		if (get_bit(bb->w_pawn_pushes, move->end))
-			return LEGAL;
+			return true;
 	} else {
 		if (get_bit(bb->b_pawn_pushes, move->end))
-			return LEGAL;
+			return true;
 	}
-	return ILLEGAL;
+	return false;
 }
 
 static bool validate_pawn_capture(struct Bitboards *bb, struct Move *move)
@@ -38,13 +35,13 @@ static bool validate_pawn_capture(struct Bitboards *bb, struct Move *move)
 		// there is a piece to capture
 		if (get_bit(bb->attacks[WHITE_PAWNS], move->end) &&
 		    get_bit(bb->black_all, move->end))
-			return LEGAL;
+			return true;
 	} else {
 		if (get_bit(bb->attacks[BLACK_PAWNS], move->end) &&
 		    get_bit(bb->white_all, move->end))
-			return LEGAL;
+			return true;
 	}
-	return ILLEGAL;
+	return false;
 }
 
 bool validate_pawn_move(struct Bitboards *bb, struct Move *move)
@@ -64,7 +61,7 @@ bool validate_pawn_move(struct Bitboards *bb, struct Move *move)
 		         move->end == SOUTHEAST(move->start))
 			return validate_pawn_capture(bb, move);
 	}
-	return ILLEGAL;
+	return false;
 }
 
 bool legal_dest(struct Bitboards *bb, struct Move *move)
@@ -72,12 +69,12 @@ bool legal_dest(struct Bitboards *bb, struct Move *move)
 	// is your own piece on the end square?
 	if (move->color == WHITE) {
 		if (get_bit(bb->white_all, move->end))
-			return ILLEGAL;
+			return false;
 	} else {
 		if (get_bit(bb->black_all, move->end))
-			return ILLEGAL;
+			return false;
 	}
-	return LEGAL;
+	return true;
 }
 
 // is the piece's attack bb set on the destination square bit?
@@ -113,13 +110,13 @@ bool validate_castle(struct Bitboards *bb, struct Move *move)
 {
 	// is castling legal?
 	if (!bb->w_kingside_castle && move->type == W_KINGSIDE_CASTLE)
-		return ILLEGAL;
+		return false;
 	else if (!bb->w_queenside_castle && move->type == W_QUEENSIDE_CASTLE)
-		return ILLEGAL;
+		return false;
 	else if (!bb->b_kingside_castle && move->type == B_KINGSIDE_CASTLE)
-		return ILLEGAL;
+		return false;
 	else if (!bb->b_queenside_castle && move->type == B_QUEENSIDE_CASTLE)
-		return ILLEGAL;
+		return false;
 
 	// would the king pass thru check?
 	switch (move->type) {
@@ -132,7 +129,7 @@ bool validate_castle(struct Bitboards *bb, struct Move *move)
 	case B_QUEENSIDE_CASTLE:
 		return safe_path(bb->attacks, WHITE, B8, C8);
 	default:
-		return ILLEGAL;
+		return false;
 	}
 }
 
@@ -185,11 +182,11 @@ bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
 
 	// that's not even your piece
 	if (turn != move->color)
-		return ILLEGAL;
+		return false;
 
 	/* legal destination */
 	if (!legal_dest(bb, move))
-		return ILLEGAL;
+		return false;
 
 	// is the end square within reach of the piece?
 	switch (move->piece) {
@@ -207,8 +204,10 @@ bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
 		break;
 	}
 
-	transfer_bb(bb, copy);
 	// would the move put the king in check?
+	// first, make sure the copy is up-to-date!!!
+	transfer_bb(bb, copy);
+	// second, do the move
 	update_board(copy, move);
 	update_attacks(copy);
 	full_legal = !king_in_check(copy, turn);

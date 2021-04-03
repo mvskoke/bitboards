@@ -480,8 +480,7 @@ void test_validate_move(void)
 	update_attacks(bb);
 	turn = !turn;
 
-	// Kb3 will be the only legal move
-
+	// Kb3 will be the only legal king move
 	parse_move(bb, curr, "a3b2");
 	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
 	parse_move(bb, curr, "a3b4");
@@ -493,6 +492,7 @@ void test_validate_move(void)
 	parse_move(bb, curr, "a3a5");
 	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
 
+	// other random (and illegal) moves
 	parse_move(bb, curr, "e2a4");
 	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
 	parse_move(bb, curr, "h6f8");
@@ -560,14 +560,14 @@ void test_validate_move(void)
 	update_board(bb, curr);
 	update_attacks(bb);
 
-	/************************** Kb5**************************/
+	/************************** Kb5 **************************/
 	parse_move(bb, curr, "b4b5");
 	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
 	update_board(bb, curr);
 	update_attacks(bb);
 	turn = !turn;
 
-	/************************** a5#**************************/
+	/************************** a5# **************************/
 	parse_move(bb, curr, "a7a6");
 	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
 	update_board(bb, curr);
