@@ -37,7 +37,7 @@ static void update_pretty_board(struct Bitboards *bb, struct Move *move)
 	}
 }
 
-void update_castling(struct Bitboards *bb, struct Move *move)
+void update_castle(struct Bitboards *bb, struct Move *move)
 {
 	// actual castling
 	// after you castle, no more castling
@@ -90,7 +90,7 @@ void update_castling(struct Bitboards *bb, struct Move *move)
 void update_board(struct Bitboards *bb, struct Move *move)
 {
 	update_pretty_board(bb, move);
-	update_castling(bb, move);
+	update_castle(bb, move);
 
 	// remove piece from the start...
 	flip_bit(&(bb->pieces[move->piece]), move->start);

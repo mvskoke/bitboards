@@ -1,8 +1,10 @@
 #include <stdbool.h>
 
+#include "attacks.h"
 #include "bitboards.h"
 #include "colors.h"
 #include "move.h"
+#include "update.h"
 #include "validate.h"
 
 #define ILLEGAL false
@@ -89,6 +91,8 @@ bool safe_path(U64 attacks[], enum Color enemy,
 {
 	enum Piece i;
 	enum Piece limit;
+	U64 squares = (1ULL << sq1) | (1ULL << sq2);
+
 	if (enemy == WHITE) {
 		// check the enemy's attacks
 		i = WHITE_PAWNS;
@@ -99,10 +103,10 @@ bool safe_path(U64 attacks[], enum Color enemy,
 	}
 
 	for (; i < limit; i++) {
-		if (get_bit(attacks[i], sq1) || get_bit(attacks[i], sq2))
-			return ILLEGAL;
+		if (attacks[i] & squares)
+			return false;
 	}
-	return LEGAL;
+	return true;
 }
 
 bool validate_castle(struct Bitboards *bb, struct Move *move)
@@ -166,7 +170,8 @@ bool king_in_check(struct Bitboards *bb, enum Piece king)
 	return false;
 }
 
-bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn)
+bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
+                   struct Move *move, enum Color turn)
 {
 	bool pseudo_legal = false;
 	bool full_legal = false;
@@ -195,8 +200,11 @@ bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn)
 		break;
 	}
 
-	// update_board(copy, move);
-	// update_attacks(copy);
-	// full_legal = !king_in_check(copy, turn);
+	transfer_bb(bb, copy);
+	// would the move put the king in check?
+	update_board(copy, move);
+	update_attacks(copy);
+	full_legal = !king_in_check(copy, move->piece);
+
 	return pseudo_legal && full_legal;
 }

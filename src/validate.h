@@ -16,6 +16,7 @@ bool validate_castle(struct Bitboards *bb, struct Move *move);
 bool validate_king_move(struct Bitboards *bb, struct Move *move);
 bool king_in_check(struct Bitboards *bb, enum Piece king);
 
-bool validate_move(struct Bitboards *bb, struct Move *move, enum Color turn);
+bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
+                   struct Move *move, enum Color turn);
 
 #endif
