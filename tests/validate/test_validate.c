@@ -1037,6 +1037,37 @@ void test_validate_move3(void)
 	free(prev);
 }
 
+// rooks on same row/diagonal are special
+// also bishops on the same diagonal
+// also queens on the same row/diagonal
+void test_special_case(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb_fen(bb, "kr5r/p7/8/8/4q3/8/1R3Q2/KR6");
+	enum Color turn = WHITE;
+
+	struct Bitboards *copy = malloc(sizeof(struct Bitboards));
+	transfer_bb(bb, copy);
+
+	struct Move *curr = malloc(sizeof(struct Move));
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
+
+	// Rxb8
+	parse_move(bb, curr, "b2b8");
+	TEST_ASSERT_EQUAL(CAPTURE, curr->type);
+	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
+
+	/********* validate_move() can't handle doubled rooks! *********/
+	// parse_move(bb, curr, "b1b8");
+	// TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+
+	free(bb);
+	free(copy);
+	free(curr);
+	free(prev);
+}
+
 int main(void)
 {
 	UNITY_BEGIN();
@@ -1050,6 +1081,7 @@ int main(void)
 	RUN_TEST(test_validate_move1);
 	RUN_TEST(test_validate_move2);
 	RUN_TEST(test_validate_move3);
+	RUN_TEST(test_special_case);
 
 	return UNITY_END();
 }
