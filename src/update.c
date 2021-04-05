@@ -107,7 +107,7 @@ void update_board(struct Bitboards *bb, struct Move *move)
 		set_bit(&(bb->black_all), move->end);
 	}
 
-	// handle castling
+	// special circumstances
 	switch (move->type) {
 	case W_KINGSIDE_CASTLE:
 		// king already moved, just move the rooks
@@ -138,6 +138,18 @@ void update_board(struct Bitboards *bb, struct Move *move)
 
 		flip_bit(&(bb->black_all), A8);
 		set_bit(&(bb->black_all), D8);
+		break;
+
+	case CAPTURE:
+		// if white captures, remove the captured
+		// bit from the BLACK bb
+		if (move->color == WHITE) {
+			flip_bit(&(bb->black_all), move->end);
+			flip_bit(&(bb->pieces[move->captured]), move->end);
+		} else {
+			flip_bit(&(bb->white_all), move->end);
+			flip_bit(&(bb->pieces[move->captured]), move->end);
+		}
 		break;
 
 	default:

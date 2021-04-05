@@ -35,6 +35,7 @@ void init_moves(struct Move *curr, struct Move *prev)
 	curr->piece     = NONEXISTENT;
 	curr->promotion = NONEXISTENT;
 	curr->type      = OTHER;
+	curr->captured  = NONEXISTENT;
 
 	curr->start_x   = -1;
 	curr->end_x     = -1;
@@ -47,6 +48,7 @@ void init_moves(struct Move *curr, struct Move *prev)
 	prev->piece     = curr->piece;
 	prev->promotion = curr->promotion;
 	prev->type      = curr->type;
+	prev->captured  = curr->captured;
 
 	prev->start_x   = curr->start_x;
 	prev->end_x     = curr->end_x;

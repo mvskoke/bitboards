@@ -79,36 +79,24 @@ static enum Piece parse_promotion(enum Color color, const char* command)
 	return promotion;
 }
 
-static enum MoveType parse_move_type(struct Move *move)
+static enum MoveType parse_move_type(struct Bitboards *bb, struct Move *move)
 {
-	// castling
-	// white castles
-	// I'm breaking K&R style because it otherwise looked horrendous
 	if (move->piece == WHITE_KING && move->start == E1 &&
 	    move->end == G1)
-	{
 		return W_KINGSIDE_CASTLE;
-	}
 	else if (move->piece == WHITE_KING && move->start == E1 &&
 	         move->end == C1)
-	{
 		return W_QUEENSIDE_CASTLE;
-	}
-	// black castles
 	else if (move->piece == BLACK_KING && move->start == E8 &&
 	         move->end == G8)
-	{
 		return B_KINGSIDE_CASTLE;
-	}
 	else if (move->piece == BLACK_KING && move->start == E8 &&
 	         move->end == C8)
-	{
 		return B_QUEENSIDE_CASTLE;
-	}
+	else if (get_piece_color(bb, move->end) == !move->color)
+		return CAPTURE;
 	else
-	{
 		return OTHER;
-	}
 }
 
 // validate_command = legal syntax
@@ -144,7 +132,9 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *const com
 
 	move->promotion = parse_promotion(move->color, command);
 
-	move->type = parse_move_type(move);
+	move->type = parse_move_type(bb, move);
+
+	move->captured = get_piece_type(bb, move->end);
 
 	return move;
 }

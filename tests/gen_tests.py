@@ -35,7 +35,7 @@ def gen_pawn_pushes():
     ranks = "34"
     for r in ranks:
         for f in files:
-            print(f"parse_move(bb, curr, \"{f}2{f}{r}\");\nTEST_ASSERT_EQUAL(true, validate_pawn_move(bb, curr));")
+            print(f"parse_move(bb, curr, \"{f}2{f}{r}\");\nTEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));")
 
 if __name__ == "__main__":
     gen_pawn_pushes()

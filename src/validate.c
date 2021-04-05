@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "attacks.h"
 #include "bitboards.h"
@@ -106,9 +107,19 @@ bool safe_path(U64 attacks[], enum Color enemy,
 	return true;
 }
 
+bool clear_path(struct Bitboards *bb, enum Square sq1, enum Square sq2)
+{
+	U64 squares = (1ULL << sq1) | (1ULL << sq2);
+	if (bb->all & squares)
+		return false;
+	return true;
+}
+
 bool validate_castle(struct Bitboards *bb, struct Move *move)
 {
-	// is castling legal?
+	bool legal = false;
+
+	// is castling even legal?
 	if (!bb->w_kingside_castle && move->type == W_KINGSIDE_CASTLE)
 		return false;
 	else if (!bb->w_queenside_castle && move->type == W_QUEENSIDE_CASTLE)
@@ -121,25 +132,34 @@ bool validate_castle(struct Bitboards *bb, struct Move *move)
 	// would the king pass thru check?
 	switch (move->type) {
 	case W_KINGSIDE_CASTLE:
-		return safe_path(bb->attacks, BLACK, F1, G1);
+		legal = safe_path(bb->attacks, BLACK, F1, G1);
+		legal &= clear_path(bb, F1, G1);
+		break;
 	case W_QUEENSIDE_CASTLE:
-		return safe_path(bb->attacks, BLACK, B1, C1);
+		legal = safe_path(bb->attacks, BLACK, B1, C1);
+		legal &= clear_path(bb, D1, C1);
+		break;
 	case B_KINGSIDE_CASTLE:
-		return safe_path(bb->attacks, WHITE, F8, G8);
+		legal = safe_path(bb->attacks, WHITE, F8, G8);
+		legal &= clear_path(bb, F8, G8);
+		break;
 	case B_QUEENSIDE_CASTLE:
-		return safe_path(bb->attacks, WHITE, B8, C8);
+		legal = safe_path(bb->attacks, WHITE, B8, C8);
+		legal &= clear_path(bb, B8, C8);
+		break;
 	default:
 		return false;
 	}
+	return legal;
 }
 
 // validates that a move is PSEUDO-LEGAL
 bool validate_king_move(struct Bitboards *bb, struct Move *move)
 {
-	if (move->type != OTHER)
+	if (move->type != OTHER && move->type != CAPTURE)
 		return validate_castle(bb, move);
 	else
-		return (attacks_set(bb, move) && legal_dest(bb, move));
+		return attacks_set(bb, move) && legal_dest(bb, move);
 	// REMOVE legal_dest() from this return statement later
 	// I added it to make the Unity testing easier
 }
@@ -174,6 +194,26 @@ bool king_in_check(struct Bitboards *bb, enum Color color)
 	return false;
 }
 
+// backup functions in case attacks_set() is inadequate
+static bool verify_rook_move(struct Move *move)
+{
+	bool same_file = move->start_x == move->end_x;
+	bool same_rank = move->start_y == move->end_y;
+	return same_file ^ same_rank;
+}
+
+static bool verify_bishop_move(struct Move *move)
+{
+	int file_diff = abs(move->end_x - move->start_x);
+	int rank_diff = abs(move->end_y - move->start_y);
+	return file_diff == rank_diff;
+}
+
+static bool verify_queen_move(struct Move *move)
+{
+	return verify_bishop_move(move) ^ verify_rook_move(move);
+}
+
 bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
                    struct Move *move, enum Color turn)
 {
@@ -197,6 +237,21 @@ bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
 	case WHITE_KING:
 	case BLACK_KING:
 		pseudo_legal = validate_king_move(bb, move);
+		break;
+	case BLACK_BISHOPS:
+	case WHITE_BISHOPS:
+		pseudo_legal = verify_bishop_move(move);
+		pseudo_legal &= attacks_set(bb, move);
+		break;
+	case BLACK_ROOKS:
+	case WHITE_ROOKS:
+		pseudo_legal = verify_rook_move(move);
+		pseudo_legal &= attacks_set(bb, move);
+		break;
+	case BLACK_QUEENS:
+	case WHITE_QUEENS:
+		pseudo_legal = verify_queen_move(move);
+		pseudo_legal &= attacks_set(bb, move);
 		break;
 	default:
 		pseudo_legal = attacks_set(bb, move);

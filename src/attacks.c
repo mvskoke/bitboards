@@ -150,14 +150,14 @@ static U64 calc_ray(U64 enemy, U64 mask, U64 piece, enum Ray direction)
 	U64 shift = piece;
 
 	U64 save = shift;
-	// previously, I would stop calculation if we shifted onto an
+	// previously, I would stop ALL calculation if we shifted onto an
 	// enemy piece. attack bitboards will be set on empty squares and
 	// enemy's pieces, so I would set the bit on the enemy piece and
 	// stop the loop.
 
 	// HOWEVER, if there were 2+ rays to calculate, and one ray stopped
 	// because it encountered an enemy piece, the other ray was also
-	// forced to stop prematurely. therefore I keep an extra U64 save
+	// forced to stop prematurely. therefore I keep this extra U64 save
 	// If I have to stop one ray, I mask off that ray's bits from the
 	// shifted bits, and load that back into shift.
 

@@ -36,6 +36,8 @@ void test_parse_move(void)
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
 	init_bb_fen(bb, "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R");
 
+	/* test any moves, regardless of whose turn it is */
+
 	// morphy defence
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "a7a6"));
 	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
@@ -44,6 +46,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
 	TEST_ASSERT_EQUAL(OTHER, curr->type);
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->captured);
 
 	// berlin defence
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "g8f6"));
@@ -53,6 +56,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(BLACK_KNIGHTS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
 	TEST_ASSERT_EQUAL(OTHER, curr->type);
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->captured);
 
 	// nothing
 	TEST_ASSERT_EQUAL(NULL, parse_move(bb, curr, "a3a4"));
@@ -67,6 +71,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
 	TEST_ASSERT_EQUAL(OTHER, curr->type);
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->captured);
 
 	// promotion (an illegal one, but I have to test it)
 	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
@@ -77,6 +82,8 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(BLACK_PAWNS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
 	TEST_ASSERT_EQUAL(OTHER, curr->type);
+	// promote to queen by self-capturing backwards
+	TEST_ASSERT_EQUAL(BLACK_QUEENS, curr->captured);
 
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "f8c5"));
 	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
@@ -85,6 +92,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(BLACK_BISHOPS, curr->piece);
 	TEST_ASSERT_EQUAL(BLACK, curr->color);
 	TEST_ASSERT_EQUAL(OTHER, curr->type);
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->captured);
 
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "e1e2"));
 	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
@@ -93,6 +101,7 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(WHITE_KING, curr->piece);
 	TEST_ASSERT_EQUAL(WHITE, curr->color);
 	TEST_ASSERT_EQUAL(OTHER, curr->type);
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->captured);
 
 	// white castles
 	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "e1g1"));
@@ -102,6 +111,17 @@ void test_parse_move(void)
 	TEST_ASSERT_EQUAL(WHITE_KING, curr->piece);
 	TEST_ASSERT_EQUAL(WHITE, curr->color);
 	TEST_ASSERT_EQUAL(W_KINGSIDE_CASTLE, curr->type);
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->captured);
+
+	// exchange bishop
+	TEST_ASSERT_EQUAL(curr, parse_move(bb, curr, "b5c6"));
+	TEST_ASSERT_EQUAL(NONEXISTENT, curr->promotion);
+	TEST_ASSERT_EQUAL(B5, curr->start);
+	TEST_ASSERT_EQUAL(C6, curr->end);
+	TEST_ASSERT_EQUAL(WHITE_BISHOPS, curr->piece);
+	TEST_ASSERT_EQUAL(WHITE, curr->color);
+	TEST_ASSERT_EQUAL(CAPTURE, curr->type);
+	TEST_ASSERT_EQUAL(BLACK_KNIGHTS, curr->captured);
 
 	free(curr);
 	free(prev);

@@ -22,6 +22,7 @@ enum MoveType {
 	W_QUEENSIDE_CASTLE,
 	B_KINGSIDE_CASTLE,
 	B_QUEENSIDE_CASTLE,
+	CAPTURE,
 	// EN_PASSANT,
 	OTHER
 };
@@ -33,6 +34,7 @@ struct Move {
 	enum Piece piece;
 	enum Piece promotion;
 	enum MoveType type;
+	enum Piece captured;
 
 	// indexes for Bitboards->pretty_board[][]
 	int start_x;
