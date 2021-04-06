@@ -25,17 +25,6 @@
 #define SOUTH(bb)      (bb >> 8)
 #define SOUTHEAST(bb) ((bb >> 7) & NOT_A_FILE)
 
-enum Ray {
-	RAY_NORTHWEST,
-	RAY_NORTHEAST,
-	RAY_SOUTHWEST,
-	RAY_SOUTHEAST,
-	RAY_NORTH,
-	RAY_EAST,
-	RAY_SOUTH,
-	RAY_WEST
-};
-
 // squares attacked by pawn(s) (diagonal captures)
 // exclude your own pieces
 // U64 self = all pieces of enum Color color

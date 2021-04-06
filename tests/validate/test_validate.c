@@ -1037,12 +1037,114 @@ void test_validate_move3(void)
 	free(prev);
 }
 
+void test_calc_ray(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb(bb);
+	struct Move *curr = malloc(sizeof(struct Move));
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
+
+	parse_move(bb, curr, "e2d3");
+	TEST_ASSERT_EQUAL(RAY_NORTHWEST, calc_ray(curr));
+	parse_move(bb, curr, "e2e3");
+	TEST_ASSERT_EQUAL(RAY_NORTH, calc_ray(curr));
+	parse_move(bb, curr, "e2f3");
+	TEST_ASSERT_EQUAL(RAY_NORTHEAST, calc_ray(curr));
+	parse_move(bb, curr, "e2d2");
+	TEST_ASSERT_EQUAL(RAY_WEST, calc_ray(curr));
+	parse_move(bb, curr, "e2f2");
+	TEST_ASSERT_EQUAL(RAY_EAST, calc_ray(curr));
+	parse_move(bb, curr, "e2d1");
+	TEST_ASSERT_EQUAL(RAY_SOUTHWEST, calc_ray(curr));
+	parse_move(bb, curr, "e2e1");
+	TEST_ASSERT_EQUAL(RAY_SOUTH, calc_ray(curr));
+	parse_move(bb, curr, "e2f1");
+	TEST_ASSERT_EQUAL(RAY_SOUTHEAST, calc_ray(curr));
+
+	free(bb);
+	free(curr);
+	free(prev);
+}
+
+void test_blocked_path(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb_fen(bb, "kr5r/p7/8/8/4q3/8/1R3Q2/KR6");
+
+	struct Move *curr = malloc(sizeof(struct Move));
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
+
+	parse_move(bb, curr, "b1b8");
+	TEST_ASSERT_EQUAL(RAY_NORTH, calc_ray(curr));
+	TEST_ASSERT_EQUAL(true, blocked_path(bb, curr, RAY_NORTH));
+
+	parse_move(bb, curr, "b1h1");
+	TEST_ASSERT_EQUAL(RAY_EAST, calc_ray(curr));
+	TEST_ASSERT_EQUAL(false, blocked_path(bb, curr, RAY_EAST));
+
+	/* custom position */
+	init_bb_fen(bb, "r4k1r/4npp1/1q5p/3Q1b2/1n6/1P1N1QP1/P4P1P/6K1");
+
+	parse_move(bb, curr, "f3c6");
+	TEST_ASSERT_EQUAL(RAY_NORTHWEST, calc_ray(curr));
+	TEST_ASSERT_EQUAL(true, blocked_path(bb, curr, RAY_NORTHWEST));
+	parse_move(bb, curr, "d5g2");
+	TEST_ASSERT_EQUAL(RAY_SOUTHEAST, calc_ray(curr));
+	TEST_ASSERT_EQUAL(true, blocked_path(bb, curr, RAY_SOUTHEAST));
+
+	free(bb);
+	free(curr);
+	free(prev);
+}
+
+void test_blocked_sliding_piece(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+
+	/* damiano puzzle */
+	init_bb_fen(bb, "kr5r/p7/8/8/4q3/8/1R3Q2/KR6");
+
+	struct Move *curr = malloc(sizeof(struct Move));
+	struct Move *prev = malloc(sizeof(struct Move));
+	init_moves(curr, prev);
+
+	parse_move(bb, curr, "b1b8");
+	TEST_ASSERT_EQUAL(true, blocked_sliding_piece(bb, curr));
+
+	parse_move(bb, curr, "b1h1");
+	TEST_ASSERT_EQUAL(false, blocked_sliding_piece(bb, curr));
+
+	/* cool mate position */
+	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
+
+	parse_move(bb, curr, "e2a6");
+	TEST_ASSERT_EQUAL(true, blocked_sliding_piece(bb, curr));
+	parse_move(bb, curr, "h1a1");
+	TEST_ASSERT_EQUAL(true, blocked_sliding_piece(bb, curr));
+
+	/* custom position */
+	init_bb_fen(bb, "r4k1r/4npp1/1q5p/3Q1b2/1n6/1P1N1QP1/P4P1P/6K1");
+
+	parse_move(bb, curr, "f3c6");
+	TEST_ASSERT_EQUAL(true, blocked_sliding_piece(bb, curr));
+	parse_move(bb, curr, "d5g2");
+	TEST_ASSERT_EQUAL(true, blocked_sliding_piece(bb, curr));
+
+	free(bb);
+	free(curr);
+	free(prev);
+}
+
 // rooks on same row/diagonal are special
 // also bishops on the same diagonal
 // also queens on the same row/diagonal
 void test_special_case(void)
 {
 	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+
+	/* damiano puzzle */
 	init_bb_fen(bb, "kr5r/p7/8/8/4q3/8/1R3Q2/KR6");
 	enum Color turn = WHITE;
 
@@ -1058,9 +1160,25 @@ void test_special_case(void)
 	TEST_ASSERT_EQUAL(CAPTURE, curr->type);
 	TEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));
 
-	/********* validate_move() can't handle doubled rooks! *********/
-	// parse_move(bb, curr, "b1b8");
-	// TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "b1b8");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+
+	/* cool mate position */
+	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
+	transfer_bb(bb, copy);
+
+	parse_move(bb, curr, "e2a6");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "h1a1");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+
+	/* custom position */
+	init_bb_fen(bb, "r4k1r/4npp1/1q5p/3Q1b2/1n6/1P1N1QP1/P4P1P/6K1");
+
+	parse_move(bb, curr, "f3c6");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
+	parse_move(bb, curr, "d5g2");
+	TEST_ASSERT_EQUAL(false, validate_move(bb, copy, curr, turn));
 
 	free(bb);
 	free(copy);
@@ -1081,6 +1199,9 @@ int main(void)
 	RUN_TEST(test_validate_move1);
 	RUN_TEST(test_validate_move2);
 	RUN_TEST(test_validate_move3);
+	RUN_TEST(test_calc_ray);
+	RUN_TEST(test_blocked_path);
+	RUN_TEST(test_blocked_sliding_piece);
 	RUN_TEST(test_special_case);
 
 	return UNITY_END();

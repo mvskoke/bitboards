@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -214,6 +215,93 @@ static bool verify_queen_move(struct Move *move)
 	return verify_bishop_move(move) ^ verify_rook_move(move);
 }
 
+// not the most glamorous solution, but it's all I got
+bool blocked_path(struct Bitboards *bb, struct Move *move, enum Ray ray)
+{
+	int i = move->start_x;
+	int j = move->start_y;
+	bool blocked = false;
+	while (!blocked) {
+		switch (ray) {
+		case RAY_NORTHWEST:
+			i--;
+			j++;
+			break;
+		case RAY_NORTHEAST:
+			i++;
+			j++;
+			break;
+		case RAY_SOUTHWEST:
+			i--;
+			j--;
+			break;
+		case RAY_SOUTHEAST:
+			i++;
+			j--;
+			break;
+		case RAY_NORTH:
+			j++;
+			break;
+		case RAY_EAST:
+			i++;
+			break;
+		case RAY_SOUTH:
+			j--;
+			break;
+		case RAY_WEST:
+			i--;
+			break;
+		}
+
+		if (i < 0 || i > 7 || j < 0 || j > 7)
+			break;
+		else if (i == move->end_x && j == move->end_y)
+			break;
+
+		if (move->color == WHITE) {
+			if (isupper(bb->pretty_board[i][j]))
+				blocked = true;
+		} else {
+			if (islower(bb->pretty_board[i][j]))
+				blocked = true;
+		}
+	}
+	return blocked;
+}
+
+enum Ray calc_ray(struct Move *move)
+{
+	if (move->end_x < move->start_x && move->end_y > move->start_y)
+		return RAY_NORTHWEST;
+	else if (move->end_x == move->start_x && move->end_y > move->start_y)
+		return RAY_NORTH;
+	else if (move->end_x > move->start_x && move->end_y > move->start_y)
+		return RAY_NORTHEAST;
+
+	else if (move->end_x < move->start_x && move->end_y == move->start_y)
+		return RAY_WEST;
+	else if (move->end_x > move->start_x && move->end_y == move->start_y)
+		return RAY_EAST;
+
+	else if (move->end_x < move->start_x && move->end_y < move->start_y)
+		return RAY_SOUTHWEST;
+	else if (move->end_x == move->start_x && move->end_y < move->start_y)
+		return RAY_SOUTH;
+	else if (move->end_x > move->start_x && move->end_y < move->start_y)
+		return RAY_SOUTHEAST;
+	else
+		return -1;
+}
+
+// is a sliding piece's path blocked by its own pieces?
+// can't check this with the bitboards, because how do you isolate
+// one sliding piece's attacks from the other piece? e.g. doubled rooks
+bool blocked_sliding_piece(struct Bitboards *bb, struct Move *move)
+{
+	enum Ray ray = calc_ray(move);
+	return blocked_path(bb, move, ray);
+}
+
 bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
                    struct Move *move, enum Color turn)
 {
@@ -242,16 +330,19 @@ bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
 	case WHITE_BISHOPS:
 		pseudo_legal = verify_bishop_move(move);
 		pseudo_legal &= attacks_set(bb, move);
+		pseudo_legal &= !blocked_sliding_piece(bb, move);
 		break;
 	case BLACK_ROOKS:
 	case WHITE_ROOKS:
 		pseudo_legal = verify_rook_move(move);
 		pseudo_legal &= attacks_set(bb, move);
+		pseudo_legal &= !blocked_sliding_piece(bb, move);
 		break;
 	case BLACK_QUEENS:
 	case WHITE_QUEENS:
 		pseudo_legal = verify_queen_move(move);
 		pseudo_legal &= attacks_set(bb, move);
+		pseudo_legal &= !blocked_sliding_piece(bb, move);
 		break;
 	default:
 		pseudo_legal = attacks_set(bb, move);

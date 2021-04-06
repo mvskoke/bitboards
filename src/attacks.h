@@ -4,6 +4,17 @@
 #include "bitboards.h"
 #include "colors.h"
 
+enum Ray {
+	RAY_NORTHWEST,
+	RAY_NORTHEAST,
+	RAY_SOUTHWEST,
+	RAY_SOUTHEAST,
+	RAY_NORTH,
+	RAY_EAST,
+	RAY_SOUTH,
+	RAY_WEST
+};
+
 void update_attacks(struct Bitboards *bb);
 
 //make these static once you transfer back to cchess
