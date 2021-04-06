@@ -19,8 +19,8 @@ enum Command {
 	ILLEGAL // invalid command
 };
 
-char* get_command(char* buffer, const int size, const int turn);
-int validate_command(char* command);
-int get_yn(char* buffer, const int size, const int turn);
+char *get_command(char *buffer, const int size, const int turn);
+int validate_command(char *command);
+int get_yn(char *buffer, const int size, const int turn);
 
 #endif
