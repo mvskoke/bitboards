@@ -15,7 +15,7 @@
 // to calling any of the init functions, and these functions
 // will check the malloc'd pointer
 
-static void verify_safe_malloc(void *ptr)
+void verify_safe_malloc(void *ptr)
 {
 	if (ptr == NULL) {
 		fprintf(stderr, "ERROR: could not allocate enough memory.\n");
@@ -306,34 +306,4 @@ void init_bb_fen(struct Bitboards *bb, char *fen)
 	// 	else
 	// 		return;
 	// }
-}
-
-struct Chess *init_chess(void)
-{
-	struct Chess *chess = malloc(sizeof(struct Chess));
-	verify_safe_malloc(chess);
-
-	chess->bb = malloc(sizeof(struct Bitboards));
-	verify_safe_malloc(chess->bb);
-	chess->copy = malloc(sizeof(struct Bitboards));
-	verify_safe_malloc(chess->bb);
-
-	chess->curr = malloc(sizeof(struct Move));
-	verify_safe_malloc(chess->curr);
-	chess->prev = malloc(sizeof(struct Move));
-	verify_safe_malloc(chess->prev);
-
-	chess->orient = BLACK;
-	chess->turn = WHITE;
-	chess->ascii = true;
-	return chess;
-}
-
-void destroy_chess(struct Chess *chess)
-{
-	free(chess->bb);
-	free(chess->copy);
-	free(chess->curr);
-	free(chess->prev);
-	free(chess);
 }

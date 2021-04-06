@@ -13,9 +13,14 @@ to all the functions once you go back to cchess.
 
 #include <stdbool.h>
 
+#include "attacks.h"
 #include "bitboards.h"
 #include "colors.h"
+#include "display.h"
+#include "init.h"
 #include "move.h"
+#include "update.h"
+#include "validate.h"
 
 // Everything
 struct Chess {
@@ -28,5 +33,8 @@ struct Chess {
 	enum Color turn;
 	bool ascii;
 };
+
+struct Chess *init_chess(void);
+void destroy_chess(struct Chess *chess);
 
 #endif

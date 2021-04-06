@@ -1,14 +1,7 @@
 #include <stdbool.h>
 
 // -I../../src/
-// #include "attacks.h"
-// #include "bitboards.h"
 #include "chess.h"
-// #include "colors.h"
-#include "display.h"
-#include "init.h"
-#include "move.h"
-#include "update.h"
 
 #include "../../unity/unity.h"
 
@@ -55,11 +48,23 @@ void test_chess_init(void)
 	destroy_chess(chess);
 }
 
+// PLAY A WHOLE GAME
+void test_game(void)
+{
+	struct Chess *chess = init_chess();
+	init_bb(chess->bb);
+	transfer_bb(chess->bb, chess->copy);
+	init_moves(chess->curr, chess->prev);
+
+	destroy_chess(chess);
+}
+
 int main(void)
 {
 	UNITY_BEGIN();
 
 	RUN_TEST(test_chess_init);
+	RUN_TEST(test_game);
 
 	return UNITY_END();
 }
