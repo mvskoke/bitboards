@@ -7,6 +7,7 @@ tests/bitops/test_bitops
 tests/chess_init/test_chess_init
 tests/gameops/test_gameops
 tests/validate/test_validate
+tests/chess/test_chess
 
 tests/output.c
 
