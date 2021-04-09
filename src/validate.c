@@ -195,26 +195,6 @@ bool king_in_check(struct Bitboards *bb, enum Color color)
 	return false;
 }
 
-// backup functions in case attacks_set() is inadequate
-static bool verify_rook_move(struct Move *move)
-{
-	bool same_file = move->start_x == move->end_x;
-	bool same_rank = move->start_y == move->end_y;
-	return same_file ^ same_rank;
-}
-
-static bool verify_bishop_move(struct Move *move)
-{
-	int file_diff = abs(move->end_x - move->start_x);
-	int rank_diff = abs(move->end_y - move->start_y);
-	return file_diff == rank_diff;
-}
-
-static bool verify_queen_move(struct Move *move)
-{
-	return verify_bishop_move(move) ^ verify_rook_move(move);
-}
-
 // not the most glamorous solution, but it's all I got
 bool blocked_path(struct Bitboards *bb, struct Move *move, enum Ray ray)
 {
@@ -271,23 +251,30 @@ bool blocked_path(struct Bitboards *bb, struct Move *move, enum Ray ray)
 
 enum Ray calc_ray(struct Move *move)
 {
-	if (move->end_x < move->start_x && move->end_y > move->start_y)
+	bool west = move->end_x < move->start_x;
+	bool north = move->end_y > move->start_y;
+	bool vertical = move->end_x == move->start_x;
+	bool horizontal = move->end_y == move->start_y;
+	bool east = move->end_x > move->start_x;
+	bool south = move->end_y < move->start_y;
+
+	if (west && north)
 		return RAY_NORTHWEST;
-	else if (move->end_x == move->start_x && move->end_y > move->start_y)
+	else if (vertical && north)
 		return RAY_NORTH;
-	else if (move->end_x > move->start_x && move->end_y > move->start_y)
+	else if (east && north)
 		return RAY_NORTHEAST;
 
-	else if (move->end_x < move->start_x && move->end_y == move->start_y)
+	else if (west && horizontal)
 		return RAY_WEST;
-	else if (move->end_x > move->start_x && move->end_y == move->start_y)
+	else if (east && horizontal)
 		return RAY_EAST;
 
-	else if (move->end_x < move->start_x && move->end_y < move->start_y)
+	else if (west && south)
 		return RAY_SOUTHWEST;
-	else if (move->end_x == move->start_x && move->end_y < move->start_y)
+	else if (vertical && south)
 		return RAY_SOUTH;
-	else if (move->end_x > move->start_x && move->end_y < move->start_y)
+	else if (east && south)
 		return RAY_SOUTHEAST;
 	else
 		return -1;
@@ -328,20 +315,17 @@ bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
 		break;
 	case BLACK_BISHOPS:
 	case WHITE_BISHOPS:
-		pseudo_legal = verify_bishop_move(move);
-		pseudo_legal &= attacks_set(bb, move);
+		pseudo_legal = attacks_set(bb, move);
 		pseudo_legal &= !blocked_sliding_piece(bb, move);
 		break;
 	case BLACK_ROOKS:
 	case WHITE_ROOKS:
-		pseudo_legal = verify_rook_move(move);
-		pseudo_legal &= attacks_set(bb, move);
+		pseudo_legal = attacks_set(bb, move);
 		pseudo_legal &= !blocked_sliding_piece(bb, move);
 		break;
 	case BLACK_QUEENS:
 	case WHITE_QUEENS:
-		pseudo_legal = verify_queen_move(move);
-		pseudo_legal &= attacks_set(bb, move);
+		pseudo_legal = attacks_set(bb, move);
 		pseudo_legal &= !blocked_sliding_piece(bb, move);
 		break;
 	default:
