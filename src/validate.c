@@ -313,16 +313,11 @@ bool validate_move(struct Bitboards *bb, struct Bitboards *copy,
 	case BLACK_KING:
 		pseudo_legal = validate_king_move(bb, move);
 		break;
+	// sliding piece moves
 	case BLACK_BISHOPS:
 	case WHITE_BISHOPS:
-		pseudo_legal = attacks_set(bb, move);
-		pseudo_legal &= !blocked_sliding_piece(bb, move);
-		break;
 	case BLACK_ROOKS:
 	case WHITE_ROOKS:
-		pseudo_legal = attacks_set(bb, move);
-		pseudo_legal &= !blocked_sliding_piece(bb, move);
-		break;
 	case BLACK_QUEENS:
 	case WHITE_QUEENS:
 		pseudo_legal = attacks_set(bb, move);
