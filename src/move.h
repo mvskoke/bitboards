@@ -44,6 +44,7 @@ struct Move {
 };
 
 struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *command);
+struct Move *parse_move_for_mate(struct Bitboards *bb, struct Move *move);
 struct Move *transfer_move(struct Move *curr, struct Move *prev);
 
 #endif

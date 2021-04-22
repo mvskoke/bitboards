@@ -4,10 +4,10 @@ unity/*.o
 
 tests/attacks/test_attacks
 tests/bitops/test_bitops
-tests/chess_init/test_chess_init
+tests/chess/test_chess
+tests/mate/test_mate
 tests/gameops/test_gameops
 tests/validate/test_validate
-tests/chess/test_chess
 
 tests/output.c
 

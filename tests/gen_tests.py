@@ -37,5 +37,9 @@ def gen_pawn_pushes():
         for f in files:
             print(f"parse_move(bb, curr, \"{f}2{f}{r}\");\nTEST_ASSERT_EQUAL(true, validate_move(bb, copy, curr, turn));")
 
+def gen_bitscans():
+    for i in range(4, 64):
+        print(f"TEST_ASSERT_EQUAL({i},  bitscan_forward(0x{2**i:016x}));")
+
 if __name__ == "__main__":
-    gen_pawn_pushes()
+    gen_bitscans()

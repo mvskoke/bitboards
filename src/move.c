@@ -109,7 +109,8 @@ static enum MoveType parse_move_type(struct Bitboards *bb, struct Move *move)
 
 // destructive: modifies *move
 // encodes a move command into an easy-to-parse form for move validation
-struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *const command)
+struct Move *parse_move(struct Bitboards *bb, struct Move *move,
+                        char *const command)
 {
 	char *tmp = command;
 	// I use tmp because I need *command to not change
@@ -128,14 +129,24 @@ struct Move *parse_move(struct Bitboards *bb, struct Move *move, char *const com
 	if (move->piece == NONEXISTENT)
 		return NULL;
 
-	move->color = get_piece_color(bb, move->start);
-
+	move->color     = get_piece_color(bb, move->start);
 	move->promotion = parse_promotion(move->color, command);
+	move->type      = parse_move_type(bb, move);
+	move->captured  = get_piece_type(bb, move->end);
+	return move;
+}
 
-	move->type = parse_move_type(bb, move);
+// used by mate.c
+// tested in tests/mate/test_mate.c
+struct Move *parse_move_for_mate(struct Bitboards *bb, struct Move *move)
+{
+	move->piece = get_piece_type(bb, move->start);
+	if (move->piece == NONEXISTENT)
+		return NULL;
 
-	move->captured = get_piece_type(bb, move->end);
-
+	move->color     = get_piece_color(bb, move->start);
+	move->type      = parse_move_type(bb, move);
+	move->captured  = get_piece_type(bb, move->end);
 	return move;
 }
 
@@ -147,16 +158,16 @@ struct Move *transfer_move(struct Move *curr, struct Move *prev)
 	if (curr == NULL || prev == NULL)
 		return NULL;
 
-	prev->start = curr->start;
-	prev->end = curr->end;
-	prev->color = curr->color;
-	prev->piece = curr->piece;
+	prev->start     = curr->start;
+	prev->end       = curr->end;
+	prev->color     = curr->color;
+	prev->piece     = curr->piece;
 	prev->promotion = curr->promotion;
-	prev->type = curr->type;
+	prev->type      = curr->type;
 
 	prev->start_x = curr->start_x;
-	prev->end_x = curr->end_x;
+	prev->end_x   = curr->end_x;
 	prev->start_y = curr->start_y;
-	prev->end_y = curr->end_y;
+	prev->end_y   = curr->end_y;
 	return prev;
 }
