@@ -19,7 +19,7 @@ const int lsb_64_table[64] =
 // special thanks to the Chess Programming Wiki for this algorithm
 int bitscan_forward(U64 bb)
 {
-	// folded MUST be an unsigned int, not U64 or
+	// folded MUST be an unsigned int (32bit), not U64 or
 	// a normal int anything
 	unsigned int folded;
 	bb ^= bb-1;
@@ -28,13 +28,13 @@ int bitscan_forward(U64 bb)
 }
 
 struct Move *gen_move_from_1b(struct Bitboards *bb, struct Move *move_gen,
-                             U64 piece, U64 dest)
+                              U64 piece, U64 dest)
 {
 	U64 piece_lsb;
 	int piece_lsb_index;
 	int dest_lsb_index;
 
-	piece_lsb = piece & ~piece;
+	piece_lsb = piece & -piece;
 	piece_lsb_index = bitscan_forward(piece_lsb);
 	dest_lsb_index = bitscan_forward(dest);
 
