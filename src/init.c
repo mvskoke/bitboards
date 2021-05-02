@@ -56,6 +56,22 @@ void init_moves(struct Move *curr, struct Move *prev)
 	prev->end_y     = curr->end_y;
 }
 
+// *move_gen is used for move generation
+void init_move_gen(struct Move *move_gen)
+{
+	verify_safe_malloc(move_gen);
+
+	// init the values that aren't used to safe values
+	move_gen->start_x   = 0;
+	move_gen->end_x     = 1;
+	move_gen->start_y   = 0;
+	move_gen->end_y     = 1;
+
+	// there's never a sitution where the type of
+	// piece makes a move illegal/legal
+	move_gen->promotion = NONEXISTENT;
+}
+
 void init_bb(struct Bitboards *bb)
 {
 	verify_safe_malloc(bb);

@@ -1,8 +1,11 @@
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "bitboards.h"
+#include "colors.h"
 #include "mate.h"
 #include "move.h"
+#include "validate.h"
 
 const int lsb_64_table[64] =
 {
@@ -27,6 +30,13 @@ int bitscan_forward(U64 bb)
 	return lsb_64_table[folded * 0x78291ACF >> 26];
 }
 
+U64 lsb(U64 bb)
+{
+	return bb & -bb;
+}
+
+// piece        the bitboard in bb->pieces[]
+// dest         single bit set on the destination  square
 struct Move *gen_move_from_1b(struct Bitboards *bb, struct Move *move_gen,
                               U64 piece, U64 dest)
 {
@@ -34,7 +44,7 @@ struct Move *gen_move_from_1b(struct Bitboards *bb, struct Move *move_gen,
 	int piece_lsb_index;
 	int dest_lsb_index;
 
-	piece_lsb = piece & -piece;
+	piece_lsb = lsb(piece);
 	piece_lsb_index = bitscan_forward(piece_lsb);
 	dest_lsb_index = bitscan_forward(dest);
 
@@ -43,6 +53,64 @@ struct Move *gen_move_from_1b(struct Bitboards *bb, struct Move *move_gen,
 	parse_move_for_mate(bb, move_gen);
 
 	return move_gen;
+}
+
+bool king_has_moves(struct Bitboards *bb, struct Bitboards *copy,
+                    struct Move *move_gen, enum Color turn)
+{
+	enum Piece color_king;
+	U64 king;
+	U64 attacks;
+	U64 attacks_lsb;
+
+	if (turn == WHITE)
+		color_king = WHITE_KING;
+	else
+		color_king = BLACK_KING;
+
+	king = bb->pieces[color_king];
+	attacks = bb->attacks[color_king];
+	while (attacks != 0) {
+		attacks_lsb = lsb(attacks);
+		gen_move_from_1b(bb, move_gen, king, attacks_lsb);
+		if (validate_move(bb, copy, move_gen, turn))
+			return true;
+		else
+			attacks ^= attacks_lsb;
+	}
+	return false;
+}
+
+// checker      piece bitboard of the checking piece
+bool can_cap_checker(struct Bitboards *bb, struct Bitboards *copy,
+                     struct Move *move_gen, enum Color turn, U64 checker)
+{
+	enum Piece i;
+	enum Piece limit;
+	if (turn == WHITE) {
+		// check your own attacks
+		i = WHITE_PAWNS;
+		limit = TOTAL_ATTACKS;
+	} else {
+		i = BLACK_PAWNS;
+		limit = WHITE_PAWNS;
+	}
+
+	U64 intersect;
+	U64 piece;
+	for (; i < limit; i++) {
+		if (i == WHITE_KING || i == BLACK_KING)
+			continue;
+
+		piece = bb->pieces[i];
+		intersect = bb->attacks[i] & checker;
+		if (intersect) {
+			gen_move_from_1b(bb, move_gen, piece, intersect);
+			if (validate_move(bb, copy, move_gen, turn))
+				return true;
+		}
+	}
+	return false;
 }
 
 /*

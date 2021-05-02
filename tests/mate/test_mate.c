@@ -4,6 +4,7 @@ Test suite for all checkmate and mate detection functions.
 
 */
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 // -I../../src/
@@ -18,6 +19,7 @@ void setUp(void) {}
 void tearDown(void) {}
 
 // making sure the Chess Programming Wiki isn't lying to me
+// or, making sure I didn't mess up their code
 void test_bitscan_forward(void)
 {
 	TEST_ASSERT_EQUAL(0,  bitscan_forward(0x0000000000000001));
@@ -99,6 +101,7 @@ void test_gen_move_from_1b(void)
 	// triple fork
 	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
 	struct Move *move_gen = malloc(sizeof(struct Move));
+	init_move_gen(move_gen);
 
 	piece = bb->pieces[BLACK_KING];
 	dest = bb->attacks[BLACK_KING];
@@ -137,12 +140,95 @@ void test_gen_move_from_1b(void)
 	free(move_gen);
 }
 
+void test_king_has_moves(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	init_bb(bb);
+	struct Bitboards *copy = malloc(sizeof(struct Bitboards));
+	transfer_bb(bb, copy);
+
+	struct Move *move_gen = malloc(sizeof(struct Move));
+	init_move_gen(move_gen);
+
+	// starting position
+	enum Color turn = WHITE;
+	TEST_ASSERT_EQUAL(false, king_has_moves(bb, copy, move_gen, turn));
+	turn = BLACK;
+	TEST_ASSERT_EQUAL(false, king_has_moves(bb, copy, move_gen, turn));
+
+	// cool mate
+	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
+	turn = WHITE;
+	TEST_ASSERT_EQUAL(false, king_has_moves(bb, copy, move_gen, turn));
+	turn = BLACK;
+	TEST_ASSERT_EQUAL(true, king_has_moves(bb, copy, move_gen, turn));
+
+	// triple fork
+	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
+	TEST_ASSERT_EQUAL(true, king_has_moves(bb, copy, move_gen, turn));
+	turn = WHITE;
+	TEST_ASSERT_EQUAL(true, king_has_moves(bb, copy, move_gen, turn));
+
+	free(bb);
+	free(copy);
+	free(move_gen);
+}
+
+void test_can_cap_checker(void)
+{
+	struct Bitboards *bb = malloc(sizeof(struct Bitboards));
+	// cool mate
+	init_bb_fen(bb, "5rk1/1p2pp1p/p2p2pB/1Kb5/8/5P2/q1r1QP1P/3R3R");
+	enum Color turn = WHITE;
+
+	struct Bitboards *copy = malloc(sizeof(struct Bitboards));
+	transfer_bb(bb, copy);
+
+	struct Move *move_gen = malloc(sizeof(struct Move));
+	init_move_gen(move_gen);
+
+	U64 checker = bb->pieces[BLACK_PAWNS];
+	TEST_ASSERT_EQUAL(false, can_cap_checker(bb, copy, move_gen, turn, checker));
+
+	// triple fork
+	init_bb_fen(bb, "2k2r2/ppp5/1b3q2/3nN3/PP1Pp1Q1/2P1P2P/5PP1/2R1KR2");
+	checker = bb->pieces[WHITE_QUEENS];
+	turn = BLACK;
+	TEST_ASSERT_EQUAL(false, can_cap_checker(bb, copy, move_gen, turn, checker));
+
+	// custom position
+	init_bb_fen(bb, "r4k1r/4npp1/7p/3Q1b2/1n6/1P1N1QP1/P4q1P/6K1");
+	checker = bb->pieces[BLACK_QUEENS];
+	turn = WHITE;
+	TEST_ASSERT_EQUAL(true, can_cap_checker(bb, copy, move_gen, turn, checker));
+
+	// above position, slightly modified
+	init_bb_fen(bb, "r4k2/4npp1/7p/b7/8/1PQ1rNP1/P6P/3nK3");
+	checker = bb->pieces[BLACK_ROOKS];
+	turn = WHITE;
+	TEST_ASSERT_EQUAL(false, can_cap_checker(bb, copy, move_gen, turn, checker));
+
+	// above position, slightly modified
+	// checker is black rook, piece attacks the checker but also
+	// the other black rook
+	init_bb_fen(bb, "2r2k2/4npp1/7p/b7/8/1PQ1rNP1/P6P/3nK3");
+	checker = bb->pieces[BLACK_ROOKS];
+	turn = WHITE;
+	TEST_ASSERT_EQUAL(false, can_cap_checker(bb, copy, move_gen, turn, checker));
+
+	free(bb);
+	free(copy);
+	free(move_gen);
+}
+
 int main(void)
 {
 	UNITY_BEGIN();
 
 	RUN_TEST(test_bitscan_forward);
 	RUN_TEST(test_gen_move_from_1b);
+	RUN_TEST(test_king_has_moves);
+	RUN_TEST(test_can_cap_checker);
 
 	return UNITY_END();
 }
